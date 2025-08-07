@@ -35,8 +35,8 @@ import com.hchen.himiuix.R;
  * @author 焕晨HChen
  */
 public class MiuixTextView extends AppCompatTextView {
-    private boolean focusable = false;
-    private boolean singleLineCenter = false;
+    private boolean focusable;
+    private boolean singleLineCenter;
 
     public MiuixTextView(@NonNull Context context) {
         this(context, null);

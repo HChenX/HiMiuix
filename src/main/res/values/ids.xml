@@ -19,6 +19,7 @@
     <!-- group -->
     <item name="miuix_divider" type="id" />
     <item name="miuix_divider_title" type="id" />
+    <item name="miuix_card" type="id" />
     <item name="miuix_group" type="id" />
 
     <!-- dialog -->

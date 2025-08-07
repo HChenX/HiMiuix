@@ -18,7 +18,7 @@
     <dimen name="miuix_title">17sp</dimen>
     <dimen name="miuix_summary">14sp</dimen>
     <dimen name="miuix_tip">13sp</dimen>
-    <dimen name="miuix_tip_max_width">80dp</dimen>
+    <dimen name="miuix_tip_max_width">100dp</dimen>
 
     <!-- indicator -->
     <dimen name="miuix_indicator_margin_start">5dp</dimen>
@@ -40,7 +40,7 @@
     <!-- divider -->
     <dimen name="miuix_divider_padding_start">28dp</dimen>
     <dimen name="miuix_divider_padding_end">28dp</dimen>
-    <dimen name="miuix_divider_padding_top">20dp</dimen>
+    <dimen name="miuix_divider_padding_top">16dp</dimen>
     <dimen name="miuix_divider_padding_bottom">8dp</dimen>
     <dimen name="miuix_divider_text">13sp</dimen>
     <dimen name="miuix_divider_height">16dp</dimen>
@@ -77,6 +77,7 @@
     <dimen name="miuix_item_padding_top_bottom">5dp</dimen>
     <dimen name="miuix_item_padding_start_end">20dp</dimen>
     <dimen name="miuix_item_margin">15dp</dimen>
+    <dimen name="miuix_item_margin_indicator">45dp</dimen>
     <dimen name="miuix_item_radius">@dimen/miuix_basic_radius</dimen>
     <dimen name="miuix_item_text_padding">30dp</dimen>
     <dimen name="miuix_item_min_text">100dp</dimen>

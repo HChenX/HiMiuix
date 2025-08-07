@@ -42,7 +42,7 @@ public class MiuixDropDownView extends MiuixBasicView {
     private String value;
     private boolean isShowOnTip;
     private OnChooseItemListener listener;
-    private boolean isShowing = false;
+    private boolean isShowing;
 
     public MiuixDropDownView(@NonNull Context context) {
         super(context);

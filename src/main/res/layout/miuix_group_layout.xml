@@ -19,11 +19,11 @@
         android:focusable="false" />
 
     <androidx.cardview.widget.CardView
+        android:id="@id/miuix_card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/miuix_basic_margin"
         android:layout_marginEnd="@dimen/miuix_basic_margin"
-        android:layout_marginBottom="@dimen/miuix_basic_margin"
         app:cardBackgroundColor="@android:color/transparent"
         app:cardCornerRadius="@dimen/miuix_basic_radius"
         app:cardElevation="0dp"

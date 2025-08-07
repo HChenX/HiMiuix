@@ -82,6 +82,7 @@ public class MiuixColorPickerView extends MiuixBasicView implements OnColorChang
         super.loadViewWhenBuild();
         colorSelectView = findViewById(R.id.miuix_color_indicator);
         colorPickerView = new ColorPickerView(getContext());
+        colorPickerView.setColorValue(color);
         colorPickerView.setOnColorChangedListener(this);
         if (isDialogModeEnabled) colorPickerView.setDialogMode(true);
         else setCustomView(colorPickerView);
@@ -99,8 +100,7 @@ public class MiuixColorPickerView extends MiuixBasicView implements OnColorChang
     void updateViewContent() {
         super.updateViewContent();
         colorSelectView.setColor(color);
-        if (isShowValueOnTip)
-            getTipView().setText("#" + colorPickerView.formatColor(color));
+        if (isShowValueOnTip) getTipView().setText("#" + colorPickerView.formatColor(color));
         colorPickerView.setAlwaysHapticFeedback(isAlwaysHapticFeedback);
     }
 

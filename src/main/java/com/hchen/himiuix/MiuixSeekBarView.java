@@ -57,8 +57,8 @@ public class MiuixSeekBarView extends MiuixBasicView {
     private boolean isShowValueOnTip;
     private boolean isShowDefaultPoint;
     private boolean isDialogModeEnabled;
-    private boolean isStep = false;
-    private boolean isShowing = false;
+    private boolean isStep;
+    private boolean isShowing;
     private boolean isAlwaysHapticFeedback;
     private MiuixEditText xEditText;
     private SeekBar.OnSeekBarChangeListener listener;
@@ -357,6 +357,8 @@ public class MiuixSeekBarView extends MiuixBasicView {
         if (isStep) return;
 
         if (stepValue != Integer.MIN_VALUE && maxValue != Integer.MIN_VALUE && minValue != Integer.MIN_VALUE) {
+            if (value == Integer.MIN_VALUE) value = minValue;
+
             // 计算步数
             stepCount = Math.round((float) (maxValue - minValue) / stepValue);
             if (stepCount * stepValue != maxValue - minValue) {

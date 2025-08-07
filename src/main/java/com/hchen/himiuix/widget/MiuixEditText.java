@@ -63,7 +63,7 @@ public class MiuixEditText extends LinearLayout implements OnImeVisibilityChange
     private ImageView iconView;
     private EditText editText;
     private boolean isIntercept;
-    private boolean isAutoRequestFocus = false;
+    private boolean isAutoRequestFocus;
 
     public MiuixEditText(Context context) {
         this(context, null);

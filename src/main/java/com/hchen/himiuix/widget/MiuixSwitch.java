@@ -50,7 +50,7 @@ public class MiuixSwitch extends LinearLayout {
     private final float ANIMATION_TENSION = 1.2f;
     private ViewPropertyAnimator thumbViewAnimator;
     private ValueAnimator valueAnimator;
-    private boolean isChecked = false;
+    private boolean isChecked;
     private TransitionDrawable offToOnTransition;
     private TransitionDrawable onToOffTransition;
     private OnStateChangeListener onStateChangeListener;

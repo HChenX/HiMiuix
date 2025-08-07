@@ -19,16 +19,14 @@
         android:layout_gravity="center"
         android:layout_weight="1"
         android:focusable="true"
-        android:gravity="left|center_vertical"
-        android:maxWidth="@dimen/miuix_item_max_text"
-        android:minWidth="@dimen/miuix_item_min_text" />
+        android:gravity="left|center" />
 
     <com.hchen.himiuix.widget.MiuixCheckBox
         android:id="@id/miuix_item_check_box"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginStart="@dimen/miuix_item_margin"
+        android:layout_marginStart="@dimen/miuix_item_margin_indicator"
         android:button="@drawable/miuix_radio_button"
         android:hapticFeedbackEnabled="false" />
 </LinearLayout>

@@ -39,6 +39,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.hchen.himiuix.callback.OnRefreshViewListener;
 import com.hchen.himiuix.helper.ShadowHelper;
@@ -66,10 +67,10 @@ public class MiuixBasicView extends LinearLayout {
     private Drawable indicator;
     private View customView;
     private boolean enabled;
+    private boolean isAdded;
     private boolean isHapticFeedbackEnabled;
     private boolean isShadowEnabled;
     private ShadowHelper shadowHelper;
-    private boolean isAdded = false;
     private OnRefreshViewListener onRefreshViewListener;
 
     public MiuixBasicView(@NonNull Context context) {
@@ -133,6 +134,14 @@ public class MiuixBasicView extends LinearLayout {
             View view = group.getChildAt(i);
             if (view instanceof ViewGroup viewGroup) {
                 viewGroup.setEnabled(enabled);
+                if (viewGroup instanceof RecyclerView recyclerView) {
+                    recyclerView.setLayoutFrozen(!enabled);
+                    recyclerView.setOnTouchListener((v, event) -> !enabled);
+                    recyclerView.post(() -> {
+                        setEnabledInner(recyclerView, enabled);
+                    });
+                    return;
+                }
                 setEnabledInner(viewGroup, enabled);
             } else {
                 // 使用 50% 透明度作为 Disabled 状态
@@ -445,5 +454,11 @@ public class MiuixBasicView extends LinearLayout {
 
     void removeView(@NonNull ViewGroup group, @NonNull View view) {
         group.removeView(view);
+    }
+
+    @Override
+    public void setOnClickListener(@Nullable OnClickListener l) {
+        super.setOnClickListener(l);
+        refreshView();
     }
 }

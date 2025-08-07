@@ -34,7 +34,7 @@ import com.hchen.himiuix.widget.MiuixSwitch;
  */
 public class MiuixSwitchView extends MiuixStateView implements OnStateChangeListener {
     private MiuixSwitch xSwitch;
-    private boolean pass = false;
+    private boolean pass;
 
     public MiuixSwitchView(@NonNull Context context) {
         super(context);

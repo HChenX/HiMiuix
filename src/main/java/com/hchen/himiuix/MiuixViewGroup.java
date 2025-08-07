@@ -28,6 +28,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 
 /**
  * Miuix 视图组
@@ -36,6 +37,7 @@ import androidx.annotation.Nullable;
  */
 public class MiuixViewGroup extends LinearLayout {
     private String dividerTitle;
+    private boolean isMarginBottomEnabled;
     private LinearLayout innerLayout;
 
     public MiuixViewGroup(Context context) {
@@ -58,6 +60,7 @@ public class MiuixViewGroup extends LinearLayout {
     private void init(@Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         final TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.MiuixViewGroup, defStyleAttr, defStyleRes);
         dividerTitle = typedArray.getString(R.styleable.MiuixViewGroup_dividerTitle);
+        isMarginBottomEnabled = typedArray.getBoolean(R.styleable.MiuixViewGroup_marginBottomEnabled, false);
         typedArray.recycle();
 
         LayoutInflater.from(getContext()).inflate(R.layout.miuix_group_layout, this, true);
@@ -65,6 +68,12 @@ public class MiuixViewGroup extends LinearLayout {
         updateDivider();
 
         innerLayout = findViewById(R.id.miuix_group);
+        CardView cardView = findViewById(R.id.miuix_card);
+        if (isMarginBottomEnabled) {
+            LinearLayout.LayoutParams params = (LayoutParams) cardView.getLayoutParams();
+            params.bottomMargin = getContext().getResources().getDimensionPixelSize(R.dimen.miuix_basic_margin);
+            cardView.setLayoutParams(params);
+        }
     }
 
     @Nullable

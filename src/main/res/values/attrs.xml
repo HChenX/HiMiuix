@@ -21,6 +21,7 @@
 
     <declare-styleable name="MiuixViewGroup">
         <attr name="dividerTitle" format="string" />
+        <attr name="marginBottomEnabled" format="boolean" />
     </declare-styleable>
 
     <declare-styleable name="MiuixTextView">
