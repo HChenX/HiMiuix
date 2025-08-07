@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        style="@style/MiuixSummaryStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/color_hue" />
+
+    <com.hchen.himiuix.color.ColorPickerHue
+        android:id="@id/miuix_color_hue"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/miuix_color_picker_margin_top"
+        android:layout_marginBottom="@dimen/miuix_color_picker_margin_bottom" />
+
+    <TextView
+        style="@style/MiuixSummaryStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/color_saturation" />
+
+    <com.hchen.himiuix.color.ColorPickerSaturation
+        android:id="@id/miuix_color_saturation"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/miuix_color_picker_margin_top"
+        android:layout_marginBottom="@dimen/miuix_color_picker_margin_bottom" />
+
+    <TextView
+        style="@style/MiuixSummaryStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/color_lightness" />
+
+    <com.hchen.himiuix.color.ColorPickerLightness
+        android:id="@id/miuix_color_lightness"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/miuix_color_picker_margin_top"
+        android:layout_marginBottom="@dimen/miuix_color_picker_margin_bottom" />
+
+    <TextView
+        style="@style/MiuixSummaryStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/color_alpha" />
+
+    <com.hchen.himiuix.color.ColorPickerAlpha
+        android:id="@id/miuix_color_alpha"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/miuix_color_picker_margin_top"
+        android:layout_marginBottom="@dimen/miuix_color_picker_margin_bottom" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/miuix_color_picker_expand_margin"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <View
+            android:id="@id/miuix_color_view"
+            android:layout_width="@dimen/miuix_color_picker_show_width"
+            android:layout_height="@dimen/miuix_color_picker_show_height"
+            android:layout_weight="0" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="0.55555" />
+
+        <com.hchen.himiuix.widget.MiuixEditText
+            android:id="@id/miuix_color_edit"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/miuix_color_picker_edit_height"
+            android:layout_weight="1" />
+    </LinearLayout>
+</LinearLayout>

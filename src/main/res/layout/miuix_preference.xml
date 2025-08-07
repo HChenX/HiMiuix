@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.hchen.himiuix.widget.MiuixCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/miuix_prefs_margin"
+    android:layout_marginEnd="@dimen/miuix_prefs_margin">
+
+    <com.hchen.himiuix.MiuixBasicView
+        android:id="@id/miuix_prefs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</com.hchen.himiuix.widget.MiuixCardView>

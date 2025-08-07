@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- preference -->
+    <string name="prefs_name">HiMiuix_prefs</string>
+
+    <!-- color -->
+    <string name="color_hue">色相</string>
+    <string name="color_saturation">饱和度</string>
+    <string name="color_lightness">亮度</string>
+    <string name="color_alpha">不透明度</string>
+
+    <!-- dialog -->
+    <string name="dialog_negative">取消</string>
+    <string name="dialog_positive">确认</string>
+    <string name="dialog_color_title">Color</string>
+    <string name="dialog_color_message">请输入 8 位颜色值</string>
+</resources>

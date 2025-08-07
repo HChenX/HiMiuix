@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="MiuixBasicView">
+        <attr name="tip" format="string" />
+        <attr name="android:icon" />
+        <attr name="android:title" />
+        <attr name="android:summary" />
+        <attr name="android:enabled" />
+        <attr name="shadowEnabled" format="boolean" />
+        <attr name="indicator" format="reference" />
+        <attr name="android:hapticFeedbackEnabled" />
+    </declare-styleable>
+
+    <declare-styleable name="MiuixStateView">
+        <attr name="tipOn" format="string" />
+        <attr name="tipOff" format="string" />
+        <attr name="android:checked" />
+        <attr name="android:summaryOn" />
+        <attr name="android:summaryOff" />
+    </declare-styleable>
+
+    <declare-styleable name="MiuixViewGroup">
+        <attr name="dividerTitle" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="MiuixTextView">
+        <attr name="android:focusable" />
+        <attr name="singleLineCenter" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="MiuixDropDownView">
+        <attr name="android:entries" />
+        <attr name="android:value" />
+        <attr name="entry" format="string" />
+        <attr name="showOnTip" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="MiuixEditTextView">
+        <attr name="editTip" format="string" />
+        <attr name="editIcon" format="reference" />
+        <attr name="autoRequestFocus" format="boolean" />
+        <attr name="android:hint" />
+    </declare-styleable>
+
+    <declare-styleable name="MiuixSeekBarView">
+        <attr name="android:value" />
+        <attr name="android:format" />
+        <attr name="android:defaultValue" />
+        <attr name="maxValue" format="string" />
+        <attr name="minValue" format="string" />
+        <attr name="stepValue" format="string" />
+        <attr name="dividerValue" format="string" />
+        <attr name="showValueOnTip" format="boolean" />
+        <attr name="showDefaultPoint" format="boolean" />
+        <attr name="enableDialogMode" format="boolean" />
+        <attr name="alwaysHapticFeedback" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="MiuixColorPickerView">
+        <attr name="android:color" />
+        <attr name="showValueOnTip" />
+        <attr name="enableDialogMode" />
+        <attr name="alwaysHapticFeedback" />
+    </declare-styleable>
+
+    <declare-styleable name="MiuixCheckBox">
+        <attr name="android:button" />
+    </declare-styleable>
+
+    <declare-styleable name="MiuixRadioButton">
+        <attr name="android:button" />
+    </declare-styleable>
+
+    <declare-styleable name="MiuixListView">
+        <attr name="android:entries" />
+        <attr name="android:maxHeight" />
+        <attr name="enableDialogMode" />
+        <attr name="multipleChoiceEnabled" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="MiuixCardView">
+        <attr name="cardTopLeftRadius" format="dimension" />
+        <attr name="cardTopRightRadius" format="dimension" />
+        <attr name="cardBottomLeftRadius" format="dimension" />
+        <attr name="cardBottomRightRadius" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="MiuixPreference">
+        <attr name="tip" />
+        <attr name="indicator" />
+        <attr name="shadowEnabled" />
+        <attr name="android:hapticFeedbackEnabled" />
+    </declare-styleable>
+
+    <declare-styleable name="MiuixStatePreference">
+        <attr name="tipOn" />
+        <attr name="tipOff" />
+        <attr name="android:summaryOn" />
+        <attr name="android:summaryOff" />
+        <attr name="disableDependentsState" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="MiuixColorPickerPreference">
+        <attr name="android:color" />
+        <attr name="showValueOnTip" />
+        <attr name="alwaysHapticFeedback" />
+    </declare-styleable>
+
+    <declare-styleable name="MiuixSeekBarPreference">
+        <attr name="android:value" />
+        <attr name="android:format" />
+        <attr name="android:defaultValue" />
+        <attr name="maxValue" />
+        <attr name="minValue" />
+        <attr name="stepValue" />
+        <attr name="dividerValue" />
+        <attr name="showValueOnTip" />
+        <attr name="showDefaultPoint" />
+        <attr name="enableDialogMode" />
+        <attr name="alwaysHapticFeedback" />
+    </declare-styleable>
+
+    <declare-styleable name="MiuixEditPreference">
+        <attr name="editTip" />
+        <attr name="editIcon" />
+        <attr name="android:hint" />
+        <attr name="autoRequestFocus" />
+    </declare-styleable>
+
+    <declare-styleable name="MiuixDropDownPreference">
+        <attr name="android:entries" />
+        <attr name="android:value" />
+        <attr name="entry" />
+        <attr name="showOnTip" />
+    </declare-styleable>
+
+    <declare-styleable name="MiuixListPreference">
+        <attr name="android:entries" />
+        <attr name="android:maxHeight" />
+        <attr name="multipleChoiceEnabled" />
+    </declare-styleable>
+</resources>

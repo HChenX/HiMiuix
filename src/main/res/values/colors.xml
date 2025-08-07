@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- main -->
+    <color name="miuix_theme_color">#F7F7F7</color>
+
+    <!-- basic -->
+    <color name="miuix_basic_background_color">@android:color/white</color>
+    <color name="miuix_title_color">@android:color/black</color>
+    <color name="miuix_summary_color">#666666</color>
+    <color name="miuix_tip_color">#666666</color>
+    <color name="miuix_arrow_right">#B2B2B2</color>
+
+    <!-- switch -->
+    <color name="miuix_switch_off">#E5E5E5</color>
+    <color name="miuix_switch_on">#4980F7</color>
+    <color name="miuix_thumb">@android:color/white</color>
+
+    <!-- checkbox -->
+    <color name="miuix_checkbox_on">#4980F7</color>
+    <color name="miuix_checkbox_off">#F0F0F0</color>
+
+    <!-- radio button -->
+    <color name="miuix_radio_button_checked">#4980F7</color>
+
+    <!-- divider -->
+    <color name="miuix_divider_color">#8D92AF</color>
+
+    <!-- dialog -->
+    <color name="miuix_dialog_background">@android:color/white</color>
+    <color name="miuix_dialog_title">@android:color/black</color>
+    <color name="miuix_dialog_message">#333333</color>
+    <color name="miuix_dialog_divider">#D8D8D8</color>
+    <color name="miuix_dialog_button_1">#F0F0F0</color>
+    <color name="miuix_dialog_button_2">#4980F7</color>
+    <color name="miuix_dialog_button_text_1">@android:color/black</color>
+    <color name="miuix_dialog_button_text_2">@android:color/white</color>
+
+    <!-- item -->
+    <color name="miuix_item_text">@android:color/black</color>
+    <color name="miuix_item_background">@android:color/white</color>
+    <color name="miuix_item_choose_text">#487FF6</color>
+    <color name="miuix_item_choose_background">#EAF0FC</color>
+
+    <!-- up down -->
+    <color name="miuix_up_down">#B2B2B2</color>
+
+    <!-- edit -->
+    <color name="miuix_edit_background">#F0F0F0</color>
+    <color name="miuix_edit_border">#4980F7</color>
+    <color name="miuix_edit_cursor">#4980F7</color>
+    <color name="miuix_edit_hint">#A8A8A8</color>
+
+    <!-- seekbar -->
+    <color name="miuix_seekbar_background">#EBF1FD</color>
+    <color name="miuix_seekbar_progress">#4980F7</color>
+    <color name="miuix_seekbar_def">#AAD7DDE9</color>
+
+    <!-- color select -->
+    <color name="miuix_color_select_def">@android:color/white</color>
+
+    <!-- other -->
+    <color name="miuix_card_other">#F0F0F0</color>
+</resources>

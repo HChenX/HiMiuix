@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:name="arrow"
+    android:width="@dimen/miuix_radio_button_width"
+    android:height="@dimen/miuix_radio_button_height"
+    android:viewportWidth="56.0"
+    android:viewportHeight="56.0">
+
+    <path android:strokeColor="@android:color/transparent" />
+</vector>
