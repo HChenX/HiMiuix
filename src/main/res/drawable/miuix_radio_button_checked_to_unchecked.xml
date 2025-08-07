@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/miuix_radio_button_checked">
+    <target
+        android:name="arrow"
+        android:animation="@animator/miuix_radio_button_checked_to_unchecked" />
+</animated-vector>

@@ -1,138 +1,142 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <attr name="hint" format="string" />
-    <attr name="disableDependentsState" format="boolean" /> <!--false: 在 false 状态下禁用家属。反之亦然。-->
-    <attr name="summaryOn" format="string" />
-    <attr name="summaryOff" format="string" />
-    <attr name="reverseLayout" format="boolean" />
-
-    <declare-styleable name="MiuiPreference">
-        <attr name="layout" format="reference" />
-        <attr name="android:layout" />
+    <declare-styleable name="MiuixBasicView">
         <attr name="tip" format="string" />
-        <attr name="disableTouchFeedback" format="boolean" />
-        <attr name="disableBackgroundStyle" format="boolean" /> <!-- 是否禁用背景样式 -->
-        <attr name="disableDependentsState" />
-        <attr name="android:disableDependentsState" /> <!--false: 在 false 状态下禁用家属。反之亦然。-->
+        <attr name="android:icon" />
+        <attr name="android:title" />
+        <attr name="android:summary" />
+        <attr name="android:enabled" />
+        <attr name="shadowEnabled" format="boolean" />
+        <attr name="indicator" format="reference" />
+        <attr name="android:hapticFeedbackEnabled" />
     </declare-styleable>
 
-    <declare-styleable name="MiuiSwitchPreference">
-        <attr name="summaryOn" />
-        <attr name="summaryOff" />
+    <declare-styleable name="MiuixStateView">
+        <attr name="tipOn" format="string" />
+        <attr name="tipOff" format="string" />
+        <attr name="android:checked" />
         <attr name="android:summaryOn" />
         <attr name="android:summaryOff" />
-        <attr name="disableDependentsState" />
-        <attr name="android:disableDependentsState" />
     </declare-styleable>
 
-    <declare-styleable name="MiuiTextView">
-        <attr name="focusable" format="boolean" />
-        <attr name="singeLineCenter" format="boolean" />
+    <declare-styleable name="MiuixViewGroup">
+        <attr name="dividerTitle" format="string" />
     </declare-styleable>
 
-    <declare-styleable name="MiuiEditText">
-        <attr name="editHeight" format="dimension" />
-        <attr name="background" format="reference" />
-        <attr name="android:hint" />
-        <attr name="hint" />
+    <declare-styleable name="MiuixTextView">
+        <attr name="android:focusable" />
+        <attr name="singleLineCenter" format="boolean" />
     </declare-styleable>
 
-    <declare-styleable name="MiuiDropDownPreference">
-        <attr name="entries" format="reference" />
+    <declare-styleable name="MiuixDropDownView">
         <attr name="android:entries" />
-        <attr name="entryValues" format="reference" />
-        <attr name="android:entryValues" />
-        <attr name="showOnSummary" format="boolean" /> <!--选择结果显示在 summary 上-->
+        <attr name="android:value" />
+        <attr name="entry" format="string" />
+        <attr name="showOnTip" format="boolean" />
     </declare-styleable>
 
-    <declare-styleable name="MiuiSeekBarPreference">
-        <attr name="maxValue" format="integer" />
-        <attr name="minValue" format="integer" />
-        <attr name="format" format="string" /> <!--可以理解为单位-->
-        <attr name="stepValue" format="integer" /> <!--跳跃值-->
-        <attr name="showDefTip" format="boolean" /> <!--是否显示默认值位置提示标-->
-        <attr name="defValueString" format="string" /> <!--处于默认值时显示的字符-->
-        <attr name="dialogEnabled" format="boolean" />
-        <attr name="showSeekBarValue" format="boolean" />
-        <attr name="displayDividerValue" format="integer" /> <!--可用于显示小数-->
-    </declare-styleable>
-
-    <declare-styleable name="MiuiCardPreference">
-        <attr name="customCardView" format="reference" />
-        <attr name="backgroundColor" format="color" /> <!--更改卡片背景色-->
-        <attr name="iconArrowRight" format="boolean" /> <!--使用向右图标-->
-        <attr name="iconCancel" format="boolean" /> <!--使用默认关闭图标-->
-        <attr name="iconColor" format="color" /> <!--图标背景-->
-    </declare-styleable>
-
-    <declare-styleable name="MiuiPreferenceCategory">
-        <attr name="goneDivider" format="boolean" /> <!--不需要分割线-->
-    </declare-styleable>
-
-    <declare-styleable name="MiuiEditTextPreference">
-        <attr name="hint" />
+    <declare-styleable name="MiuixEditTextView">
+        <attr name="editTip" format="string" />
+        <attr name="editIcon" format="reference" />
+        <attr name="autoRequestFocus" format="boolean" />
         <attr name="android:hint" />
-        <attr name="android:inputType" />
     </declare-styleable>
 
-    <declare-styleable name="MiuiColorPickerPreference">
-        <attr name="defaultColor" format="color" />
+    <declare-styleable name="MiuixSeekBarView">
+        <attr name="android:value" />
+        <attr name="android:format" />
+        <attr name="android:defaultValue" />
+        <attr name="maxValue" format="string" />
+        <attr name="minValue" format="string" />
+        <attr name="stepValue" format="string" />
+        <attr name="dividerValue" format="string" />
+        <attr name="showValueOnTip" format="boolean" />
+        <attr name="showDefaultPoint" format="boolean" />
+        <attr name="enableDialogMode" format="boolean" />
+        <attr name="alwaysHapticFeedback" format="boolean" />
     </declare-styleable>
 
-    <declare-styleable name="MiuiCheckBoxPreference">
-        <attr name="summaryOn" />
-        <attr name="summaryOff" />
-        <attr name="android:summaryOn" />
-        <attr name="android:summaryOff" />
-        <attr name="disableDependentsState" />
-        <attr name="android:disableDependentsState" />
-        <attr name="buttonLocation">
-            <enum name="start" value="0" />
-            <enum name="end" value="1" />
-        </attr>
+    <declare-styleable name="MiuixColorPickerView">
+        <attr name="android:color" />
+        <attr name="showValueOnTip" />
+        <attr name="enableDialogMode" />
+        <attr name="alwaysHapticFeedback" />
     </declare-styleable>
 
-    <declare-styleable name="MiuiRadioButtonPreference">
-        <attr name="summaryOn" />
-        <attr name="summaryOff" />
-        <attr name="android:summaryOn" />
-        <attr name="android:summaryOff" />
-        <attr name="disableDependentsState" />
-        <attr name="android:disableDependentsState" />
-        <attr name="buttonLocation" />
-    </declare-styleable>
-
-    <declare-styleable name="SpringBackLayout">
-        <attr name="scrollableView" format="reference" />
-        <attr name="scrollOrientation" format="integer" />
-        <attr name="springBackMode" format="integer" />
-    </declare-styleable>
-
-    <declare-styleable name="MiuiXCheckBox">
+    <declare-styleable name="MiuixCheckBox">
         <attr name="android:button" />
     </declare-styleable>
 
-    <declare-styleable name="MiuiXItem">
-        <attr name="reverseLayout" />
+    <declare-styleable name="MiuixRadioButton">
+        <attr name="android:button" />
     </declare-styleable>
 
-    <declare-styleable name="MiuiXCheckBoxItem">
-        <attr name="reverseLayout" />
+    <declare-styleable name="MiuixListView">
+        <attr name="android:entries" />
+        <attr name="android:maxHeight" />
+        <attr name="enableDialogMode" />
+        <attr name="multipleChoiceEnabled" format="boolean" />
     </declare-styleable>
 
-    <declare-styleable name="MiuiXSwitchItem">
-        <attr name="reverseLayout" />
+    <declare-styleable name="MiuixCardView">
+        <attr name="cardTopLeftRadius" format="dimension" />
+        <attr name="cardTopRightRadius" format="dimension" />
+        <attr name="cardBottomLeftRadius" format="dimension" />
+        <attr name="cardBottomRightRadius" format="dimension" />
     </declare-styleable>
 
-    <declare-styleable name="MiuiXColorPickerItem">
-        <attr name="reverseLayout" />
+    <declare-styleable name="MiuixPreference">
+        <attr name="tip" />
+        <attr name="indicator" />
+        <attr name="shadowEnabled" />
+        <attr name="android:hapticFeedbackEnabled" />
     </declare-styleable>
 
-    <declare-styleable name="MiuiXRadioButtonItem">
-        <attr name="reverseLayout" />
+    <declare-styleable name="MiuixStatePreference">
+        <attr name="tipOn" />
+        <attr name="tipOff" />
+        <attr name="android:summaryOn" />
+        <attr name="android:summaryOff" />
+        <attr name="disableDependentsState" format="boolean" />
     </declare-styleable>
 
-    <declare-styleable name="MiuiXItemGroup">
-        <attr name="dividerTitle" format="string" />
+    <declare-styleable name="MiuixColorPickerPreference">
+        <attr name="android:color" />
+        <attr name="showValueOnTip" />
+        <attr name="alwaysHapticFeedback" />
+    </declare-styleable>
+
+    <declare-styleable name="MiuixSeekBarPreference">
+        <attr name="android:value" />
+        <attr name="android:format" />
+        <attr name="android:defaultValue" />
+        <attr name="maxValue" />
+        <attr name="minValue" />
+        <attr name="stepValue" />
+        <attr name="dividerValue" />
+        <attr name="showValueOnTip" />
+        <attr name="showDefaultPoint" />
+        <attr name="enableDialogMode" />
+        <attr name="alwaysHapticFeedback" />
+    </declare-styleable>
+
+    <declare-styleable name="MiuixEditPreference">
+        <attr name="editTip" />
+        <attr name="editIcon" />
+        <attr name="android:hint" />
+        <attr name="autoRequestFocus" />
+    </declare-styleable>
+
+    <declare-styleable name="MiuixDropDownPreference">
+        <attr name="android:entries" />
+        <attr name="android:value" />
+        <attr name="entry" />
+        <attr name="showOnTip" />
+    </declare-styleable>
+
+    <declare-styleable name="MiuixListPreference">
+        <attr name="android:entries" />
+        <attr name="android:maxHeight" />
+        <attr name="multipleChoiceEnabled" />
     </declare-styleable>
 </resources>

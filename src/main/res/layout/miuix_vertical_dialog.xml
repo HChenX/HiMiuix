@@ -1,39 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/MiuixAlertDialogStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingStart="24dp"
-    android:paddingTop="24dp"
-    android:paddingEnd="24dp"
-    android:paddingBottom="24dp">
+    android:orientation="vertical">
 
-    <include
-        android:id="@+id/dialog_text_view"
-        layout="@layout/miuix_dialog_title_message"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <ImageView
+        android:id="@id/miuix_dialog_icon"
+        style="@style/MiuixIconStyle"
+        android:layout_width="@dimen/miuix_dialog_icon"
+        android:layout_height="@dimen/miuix_dialog_icon"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_default_icon" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/dialog_custom_view"
-        android:layout_width="0dp"
+    <TextView
+        android:id="@id/miuix_dialog_title"
+        style="@style/MiuixDialogTitleStyle"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/dialog_button_view"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dialog_text_view" />
+        android:gravity="center"
+        android:text="Test Title" />
+
+    <com.hchen.himiuix.widget.MiuixTextView
+        android:id="@id/miuix_dialog_message"
+        style="@style/MiuixDialogMessageStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Test Message"
+        app:singleLineCenter="true" />
 
     <LinearLayout
-        android:id="@+id/dialog_button_view"
-        android:layout_width="0dp"
+        android:id="@id/miuix_dialog_custom"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dialog_custom_view" />
+        android:visibility="gone" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <LinearLayout
+        android:id="@id/miuix_dialog_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
+</LinearLayout>

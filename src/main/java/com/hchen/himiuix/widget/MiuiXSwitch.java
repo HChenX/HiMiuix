@@ -1,392 +1,288 @@
 /*
- * This file is part of HiMiuiX.
-
- * HiMiuiX is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License.
-
- * This program is distributed in the hope that it will be useful,
+ * This file is part of HiMiuix.
+ *
+ * HiMiuix is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * HiMiuix is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
-
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
-
- * Copyright (C) 2023-2025 HChenX
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with HiMiuix. If not, see <https://www.gnu.org/licenses/lgpl-2.1>.
+ *
+ * Copyright (C) 2023–2025 HChenX
  */
 package com.hchen.himiuix.widget;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.SuppressLint;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.TransitionDrawable;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.util.AttributeSet;
-import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewPropertyAnimator;
 import android.view.animation.AnticipateOvershootInterpolator;
+import android.widget.LinearLayout;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.content.res.AppCompatResources;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.core.content.ContextCompat;
 
-import com.hchen.himiuix.MiuiXUtils;
 import com.hchen.himiuix.R;
+import com.hchen.himiuix.callback.OnStateChangeListener;
+import com.hchen.himiuix.helper.HapticFeedbackHelper;
 
-public class MiuiXSwitch extends ConstraintLayout {
-    private static final String TAG = "MiuiPreference";
-    private static final int ANIMATION_NEXT = 0;
-    private static final int ANIMATION_DONE = 1;
-    private final int ANIMATION_DURATION = 320;
-    private final float ANIMATION_TENSION = 1.2f;
-    private int THUMB_MARGINS;
+/**
+ * Miuix Switch
+ *
+ * @author 焕晨HChen
+ */
+public class MiuixSwitch extends LinearLayout {
+    static final String TAG = "HiMiuix";
     private View thumbView;
+    private int THUMB_MARGINS;
+    private int movableDistance = 0;
+    private final int ANIMATION_DURATION = 280;
+    private final float ANIMATION_TENSION = 1.2f;
     private ViewPropertyAnimator thumbViewAnimator;
-    private OnSwitchStateChangeListener onSwitchStateChangeListener;
+    private ValueAnimator valueAnimator;
     private boolean isChecked = false;
-    private boolean isAnimationShowing = false;
     private TransitionDrawable offToOnTransition;
     private TransitionDrawable onToOffTransition;
-    /*
-     * 控制开关动画，如按钮触摸移动动画。
-     * */
-    private final OnTouchAnimationListener switchAnimationAction = new OnTouchAnimationListener() {
-        private float switchViewX;
-        private boolean shouldHaptic;
-        private float maxMoveX;
-        private float minMoveX;
-        private boolean isMoved;
+    private OnStateChangeListener onStateChangeListener;
 
-        @Override
-        @SuppressLint("ClickableViewAccessibility")
-        public boolean onTouch(View v, MotionEvent event) {
-            if (isAnimationShowing) return true;
-
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    isMoved = false;
-                    int[] outLocation = new int[2];
-                    getLocationInWindow(outLocation);
-                    switchViewX = outLocation[0];
-                    maxMoveX = getWidth() - thumbView.getWidth() - THUMB_MARGINS;
-                    minMoveX = THUMB_MARGINS;
-                    v.getParent().requestDisallowInterceptTouchEvent(true);
-                    animZoom();
-                    break;
-                case MotionEvent.ACTION_MOVE:
-                    isMoved = true;
-                    float moveX = event.getRawX() - switchViewX;
-                    if (moveX >= maxMoveX) {
-                        moveX = maxMoveX;
-                        hapticFeedbackIfNeed(v);
-                    } else if (moveX <= minMoveX) {
-                        moveX = minMoveX;
-                        hapticFeedbackIfNeed(v);
-                    } else if (moveX > minMoveX && moveX < maxMoveX) {
-                        shouldHaptic = true;
-                    }
-                    v.setX(moveX);
-                    break;
-                case MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL:
-                    animRevert();
-                    if (isMoved) {
-                        float finalX = v.getX();
-                        boolean newCheckedState;
-                        if (finalX < (minMoveX + maxMoveX) / 2) {
-                            finalX = minMoveX;
-                            newCheckedState = false;
-                        } else {
-                            finalX = maxMoveX;
-                            newCheckedState = true;
-                        }
-                        thumbViewAnimator.x(finalX)
-                            .setInterpolator(new AnticipateOvershootInterpolator(ANIMATION_TENSION))
-                            .setDuration(ANIMATION_DURATION);
-                        if (newCheckedState != isChecked()) {
-                            clickListener.onClick(null);
-                        } else thumbViewAnimator.start();
-                    } else
-                        clickListener.onClick(v);
-
-                    v.getParent().requestDisallowInterceptTouchEvent(false);
-                    break;
-                default:
-                    return false;
-            }
-            return true;
-        }
-
-        private void hapticFeedbackIfNeed(View v) {
-            if (shouldHaptic)
-                v.performHapticFeedback(HapticFeedbackConstants.CONFIRM);
-            shouldHaptic = false;
-        }
-
-        public void animZoom() {
-            thumbViewAnimator.scaleX(1.1f).scaleY(1.1f);
-        }
-
-        public void animRevert() {
-            thumbViewAnimator.scaleX(1f).scaleY(1f);
-        }
-    };
-
-    /*
-     * 监听鼠标动作
-     * */
-    private final View.OnHoverListener hoverListener = new View.OnHoverListener() {
-        @Override
-        public boolean onHover(View v, MotionEvent event) {
-            if (isAnimationShowing) return true;
-
-            if (event.getAction() == MotionEvent.ACTION_HOVER_ENTER) {
-                switchAnimationAction.animZoom();
-            } else if (event.getAction() == MotionEvent.ACTION_HOVER_EXIT) {
-                switchAnimationAction.animRevert();
-            } else return false;
-            return true;
-        }
-    };
-
-    private final Handler animationHandler = new Handler(Looper.getMainLooper()) {
-        private boolean shouldShowNextAnimation = false;
-        private boolean nextValue = false;
-        private boolean showAnimation = false;
-
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            switch (msg.what) {
-                case ANIMATION_NEXT -> {
-                    shouldShowNextAnimation = true;
-                    Object[] objs = (Object[]) msg.obj;
-                    nextValue = (boolean) objs[0];
-                    showAnimation = (boolean) objs[1];
-                }
-                case ANIMATION_DONE -> {
-                    if (shouldShowNextAnimation) {
-                        showThumbAnimationIfNeed(nextValue, showAnimation);
-                        shouldShowNextAnimation = false;
-                    }
-                }
-            }
-        }
-    };
-
-    private final View.OnClickListener clickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (isAnimationShowing)
-                return;
-
-            final boolean newValue = !isChecked();
-            if (onSwitchStateChangeListener == null)
-                setChecked(newValue);
-            else if (onSwitchStateChangeListener.onSwitchStateChange(newValue)) {
-                setChecked(newValue);
-            }
-
-            if (v != null)
-                v.performHapticFeedback(HapticFeedbackConstants.CONFIRM);
-        }
-    };
-
-    public MiuiXSwitch(@NonNull Context context) {
+    public MiuixSwitch(Context context) {
         this(context, null);
     }
 
-    public MiuiXSwitch(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public MiuixSwitch(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public MiuiXSwitch(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public MiuixSwitch(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         this(context, attrs, defStyleAttr, 0);
     }
 
-    public MiuiXSwitch(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public MiuixSwitch(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init();
     }
 
     private void init() {
-        ConstraintLayout.LayoutParams params = new LayoutParams(
-            MiuiXUtils.dp2px(getContext(), 49),
-            MiuiXUtils.dp2px(getContext(), 28)
+        setClickable(true);
+        setHapticFeedbackEnabled(true);
+        setOrientation(LinearLayout.HORIZONTAL);
+        LayoutParams params = new LayoutParams(
+            getContext().getResources().getDimensionPixelSize(R.dimen.miuix_switch_width),
+            getContext().getResources().getDimensionPixelSize(R.dimen.miuix_switch_height)
         );
         setLayoutParams(params);
-        setBackground(AppCompatResources.getDrawable(getContext(), R.drawable.switch_background_off));
+        setBackground(ContextCompat.getDrawable(getContext(), R.drawable.miuix_switch_background_off));
 
-        View view = new View(getContext());
-        view.setId(R.id.switch_thumb);
+        thumbView = new View(getContext()) {
+            private float switchViewX;
+            private float maxMoveX;
+            private float minMoveX;
+            private boolean isMoved;
+            private boolean shouldHapticFeedback;
+            private final int[] location = new int[2];
 
-        THUMB_MARGINS = MiuiXUtils.dp2px(getContext(), 4.2f);
+            @Override
+            public boolean dispatchTouchEvent(MotionEvent event) {
+                if (!isEnabled()) return true;
+
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN -> {
+                        isMoved = false;
+                        getLocationInWindow(location);
+                        switchViewX = location[0];
+                        maxMoveX = movableDistance + THUMB_MARGINS;
+                        minMoveX = THUMB_MARGINS;
+                        zoomAnimation();
+                        getParent().requestDisallowInterceptTouchEvent(true);
+                        return true;
+                    }
+                    case MotionEvent.ACTION_MOVE -> {
+                        isMoved = true;
+                        float moveX = event.getRawX() - switchViewX;
+                        if (moveX > maxMoveX) {
+                            moveX = maxMoveX;
+                            hapticFeedbackIfNeed();
+                        } else if (moveX < minMoveX) {
+                            moveX = minMoveX;
+                            hapticFeedbackIfNeed();
+                        } else shouldHapticFeedback = true;
+                        setX(moveX);
+                        return true;
+                    }
+                    case MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                        getParent().requestDisallowInterceptTouchEvent(false);
+                        revertAnimation();
+                        if (isMoved) {
+                            float finalX = getX();
+                            boolean change = false;
+                            if (finalX < (minMoveX + maxMoveX) / 2) {
+                                finalX = minMoveX;
+                            } else {
+                                finalX = maxMoveX;
+                                change = true;
+                            }
+                            thumbViewAnimator.x(finalX);
+                            if (change != isChecked()) {
+                                if (!MiuixSwitch.this.setChecked(!isChecked())) {
+                                    if (isChecked()) thumbViewAnimator.x(maxMoveX);
+                                    else thumbViewAnimator.x(minMoveX);
+                                }
+                            }
+                        } else {
+                            MiuixSwitch.this.setChecked(!isChecked());
+                            MiuixSwitch.this.performHapticFeedback();
+                        }
+                        return true;
+                    }
+                }
+                return super.dispatchTouchEvent(event);
+            }
+
+            @Override
+            protected boolean dispatchHoverEvent(MotionEvent event) {
+                if (!isEnabled()) return true;
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_HOVER_ENTER -> {
+                        zoomAnimation();
+                        return true;
+                    }
+                    case MotionEvent.ACTION_HOVER_EXIT -> {
+                        revertAnimation();
+                        return true;
+                    }
+                }
+                return super.dispatchHoverEvent(event);
+            }
+
+            private void hapticFeedbackIfNeed() {
+                if (!shouldHapticFeedback) return;
+                MiuixSwitch.this.performHapticFeedback();
+                shouldHapticFeedback = false;
+            }
+
+            private void zoomAnimation() {
+                thumbViewAnimator.scaleX(1.1f).scaleY(1.1f);
+            }
+
+            private void revertAnimation() {
+                thumbViewAnimator.scaleX(1f).scaleY(1f);
+            }
+        };
+        THUMB_MARGINS = getContext().getResources().getDimensionPixelSize(R.dimen.miuix_switch_thumb_margin);
         params = new LayoutParams(
-            MiuiXUtils.dp2px(getContext(), 20f),
-            MiuiXUtils.dp2px(getContext(), 20f)
+            getContext().getResources().getDimensionPixelSize(R.dimen.miuix_switch_thumb_width),
+            getContext().getResources().getDimensionPixelSize(R.dimen.miuix_switch_thumb_height)
         );
-        params.setMargins(
-            THUMB_MARGINS,
-            THUMB_MARGINS,
-            THUMB_MARGINS,
-            THUMB_MARGINS
-        );
-        view.setLayoutParams(params);
-        view.setBackground(AppCompatResources.getDrawable(getContext(), R.drawable.thumb_background));
-        addView(view);
+        params.setMargins(THUMB_MARGINS, THUMB_MARGINS, THUMB_MARGINS, THUMB_MARGINS);
+        thumbView.setLayoutParams(params);
+        thumbView.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.miuix_thumb));
+        addView(thumbView);
 
-        ConstraintSet constraintSet = new ConstraintSet();
-        constraintSet.clone(this);
+        post(() -> {
+            movableDistance = getWidth() - thumbView.getWidth() - THUMB_MARGINS * 2;
+            valueAnimator = ValueAnimator.ofInt(0, movableDistance);
+            valueAnimator.setDuration(ANIMATION_DURATION);
+            valueAnimator.setInterpolator(new AnticipateOvershootInterpolator(ANIMATION_TENSION));
+        });
 
-        constraintSet.connect(view.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM);
-        constraintSet.connect(view.getId(), ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.START);
-        constraintSet.connect(view.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP);
-
-        constraintSet.applyTo(this);
-
-        thumbView = view;
-        thumbViewAnimator = thumbView.animate();
-        Drawable[] switchOffToOnDrawables = MiuiXUtils.getDrawables(
-            getContext(),
-            R.drawable.switch_background_off,
-            R.drawable.switch_background_on
-        );
-        Drawable[] switchOnToOffDrawables = MiuiXUtils.getDrawables(
-            getContext(),
-            R.drawable.switch_background_on,
-            R.drawable.switch_background_off
-        );
-        offToOnTransition = new TransitionDrawable(switchOffToOnDrawables);
-        onToOffTransition = new TransitionDrawable(switchOnToOffDrawables);
-
-        initListener();
+        thumbViewAnimator = thumbView.animate()
+            .setInterpolator(new AnticipateOvershootInterpolator(ANIMATION_TENSION))
+            .setDuration(ANIMATION_DURATION);
+        offToOnTransition = new TransitionDrawable(new Drawable[]{
+            ContextCompat.getDrawable(getContext(), R.drawable.miuix_switch_background_off),
+            ContextCompat.getDrawable(getContext(), R.drawable.miuix_switch_background_on)
+        });
+        onToOffTransition = new TransitionDrawable(new Drawable[]{
+            ContextCompat.getDrawable(getContext(), R.drawable.miuix_switch_background_on),
+            ContextCompat.getDrawable(getContext(), R.drawable.miuix_switch_background_off)
+        });
     }
 
-    private void initListener() {
-        setOnClickListener(clickListener);
-        thumbView.setOnTouchListener(switchAnimationAction);
-        thumbView.setOnHoverListener(hoverListener);
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        if (thumbView != null)
+            thumbView.setEnabled(enabled);
     }
 
-    public boolean isAnimationShowing() {
-        return isAnimationShowing;
+    @Override
+    public boolean performClick() {
+        setChecked(!isChecked());
+        performHapticFeedback();
+
+        return super.performClick();
     }
 
     public boolean isChecked() {
         return isChecked;
     }
 
-    public void setChecked(boolean checked) {
-        setChecked(checked, true);
-    }
-
-    public void setChecked(boolean checked, boolean showAnimation) {
+    /**
+     * 当且仅当 onStateChange 拦截操作时才会返回 false
+     */
+    public boolean setChecked(boolean checked) {
         final boolean changed = isChecked != checked;
         if (changed) {
-            isChecked = checked;
-            if (isAnimationShowing)
-                animationHandler.sendMessage(
-                    animationHandler.obtainMessage(
-                        ANIMATION_NEXT,
-                        new Object[]{isChecked, showAnimation}
-                    )
-                );
-            else
-                showThumbAnimationIfNeed(isChecked, showAnimation);
+            if (onStateChangeListener == null || onStateChangeListener.onStateChange(checked)) {
+                isChecked = checked;
+                showThumbAnimation(isChecked);
+                return true;
+            }
+            return false;
         }
+        return true;
     }
 
-    @Override
-    public void setEnabled(boolean enabled) {
-        super.setEnabled(enabled);
-
-        if (thumbView == null) return;
-        thumbView.setEnabled(enabled);
-        updateSwitchState(false);
+    public void setOnStateChangeListener(OnStateChangeListener listener) {
+        onStateChangeListener = listener;
     }
 
-    public void setOnSwitchStateChangeListener(OnSwitchStateChangeListener onSwitchStateChangeListener) {
-        this.onSwitchStateChangeListener = onSwitchStateChangeListener;
+    private void performHapticFeedback() {
+        if (isHapticFeedbackEnabled())
+            HapticFeedbackHelper.performHapticFeedback(this, HapticFeedbackHelper.MIUI_FLICK);
     }
 
-    private void showThumbAnimationIfNeed(boolean toRight, boolean showAnimation) {
-        if (isAnimationShowing) return;
-        isAnimationShowing = true;
+    private void showThumbAnimation(boolean toRight) {
+        if (valueAnimator != null) {
+            if (valueAnimator.isRunning()) valueAnimator.end();
 
-        updateSwitchState(showAnimation);
-        int translationX = getWidth() - thumbView.getWidth() - (THUMB_MARGINS * 2);
-        if (!showAnimation) {
-            thumbView.post(() -> {
-                if (toRight)
-                    thumbView.setTranslationX(getWidth() - thumbView.getWidth() - (THUMB_MARGINS * 2));
-                else thumbView.setTranslationX(0);
-                isAnimationShowing = false;
+            valueAnimator.removeAllUpdateListeners();
+            valueAnimator.addUpdateListener(animation -> {
+                int x = (int) animation.getAnimatedValue();
+                thumbView.setTranslationX(x);
             });
-            return;
-        }
-        int thumbPosition = toRight ? translationX : 0;
-
-        thumbViewAnimator
-            .translationX(thumbPosition)
-            .setDuration(ANIMATION_DURATION)
-            .setInterpolator(new AnticipateOvershootInterpolator(ANIMATION_TENSION))
-            .setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    animationHandler.sendEmptyMessage(ANIMATION_DONE);
-                    isAnimationShowing = false;
-                }
-            })
-            .start();
-    }
-
-    private void updateSwitchState(boolean useAnimation) {
-        if (isEnabled()) {
-            if (useAnimation) {
-                if (isChecked()) {
-                    setBackground(offToOnTransition);
-                    offToOnTransition.startTransition(ANIMATION_DURATION);
-                } else {
-                    setBackground(onToOffTransition);
-                    onToOffTransition.startTransition(ANIMATION_DURATION);
-                }
-            } else {
-                setBackgroundResource(
-                    isChecked() ?
-                        R.drawable.switch_background_on :
-                        R.drawable.switch_background_off
-                );
-            }
-            thumbView.setBackgroundResource(R.drawable.thumb_background);
+            if (toRight) valueAnimator.start();
+            else valueAnimator.reverse();
         } else {
-            if (isChecked()) {
-                setBackgroundResource(R.drawable.switch_background_disable_on);
-                thumbView.setBackgroundResource(R.drawable.thumb_disable_on_background);
-            } else {
-                setBackgroundResource(R.drawable.switch_background_disable_off);
-                thumbView.setBackgroundResource(R.drawable.thumb_disable_off_background);
-            }
+            thumbView.post(() -> {
+                if (toRight) thumbView.setTranslationX(movableDistance);
+                else thumbView.setTranslationX(0);
+            });
         }
+        updateSwitchBackground();
     }
 
-    public interface OnSwitchStateChangeListener {
-        boolean onSwitchStateChange(boolean newValue);
-    }
-
-    private interface OnTouchAnimationListener extends View.OnTouchListener {
-        @Override
-        boolean onTouch(View v, MotionEvent event);
-
-        void animZoom();
-
-        void animRevert();
+    private void updateSwitchBackground() {
+        if (valueAnimator != null) {
+            if (isChecked()) {
+                setBackground(offToOnTransition);
+                offToOnTransition.startTransition(ANIMATION_DURATION);
+            } else {
+                setBackground(onToOffTransition);
+                onToOffTransition.startTransition(ANIMATION_DURATION);
+            }
+        } else {
+            setBackgroundResource(isChecked() ? R.drawable.miuix_switch_background_on : R.drawable.miuix_switch_background_off);
+        }
     }
 }

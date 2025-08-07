@@ -1,79 +1,102 @@
 /*
- * This file is part of HiMiuiX.
-
- * HiMiuiX is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License.
-
- * This program is distributed in the hope that it will be useful,
+ * This file is part of HiMiuix.
+ *
+ * HiMiuix is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * HiMiuix is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
-
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
-
- * Copyright (C) 2023-2025 HChenX
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with HiMiuix. If not, see <https://www.gnu.org/licenses/lgpl-2.1>.
+ *
+ * Copyright (C) 2023–2025 HChenX
  */
 package com.hchen.himiuix.widget;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.widget.CheckBox;
+import android.view.animation.Animation;
+import android.view.animation.OvershootInterpolator;
+import android.view.animation.ScaleAnimation;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatCheckBox;
 
 import com.hchen.himiuix.R;
+import com.hchen.himiuix.callback.OnStateChangeListener;
 
-@SuppressLint("AppCompatCustomView")
-public class MiuiXCheckBox extends CheckBox {
-    private OnCheckStateChangeListener mOnCheckStateChangeListener;
+/**
+ * Miuix CheckBox
+ *
+ * @author 焕晨HChen
+ */
+public class MiuixCheckBox extends AppCompatCheckBox {
+    private OnStateChangeListener onStateChangeListener;
 
-    public MiuiXCheckBox(Context context) {
+    public MiuixCheckBox(@NonNull Context context) {
         this(context, null);
     }
 
-    public MiuiXCheckBox(Context context, AttributeSet attrs) {
+    public MiuixCheckBox(@NonNull Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public MiuiXCheckBox(Context context, AttributeSet attrs, int defStyleAttr) {
-        this(context, attrs, defStyleAttr, 0);
+    public MiuixCheckBox(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init(attrs, defStyleAttr);
     }
 
-    public MiuiXCheckBox(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-
-        try (TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.MiuiXCheckBox)) {
-            if (typedArray.hasValue(R.styleable.MiuiXCheckBox_android_button)) {
-                Drawable drawable = typedArray.getDrawable(R.styleable.MiuiXCheckBox_android_button);
-                setButtonDrawable(drawable);
-            } else {
-                setButtonDrawable(R.drawable.btn_checkbox);
-            }
-        }
+    private void init(@Nullable AttributeSet attrs, int defStyleAttr) {
+        final TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.MiuixCheckBox, defStyleAttr, 0);
+        int buttonId = typedArray.getResourceId(R.styleable.MiuixCheckBox_android_button, 0);
+        typedArray.recycle();
 
         setClickable(true);
         setBackground(null);
-        setHapticFeedbackEnabled(false);
+        if (buttonId == 0) setButtonDrawable(R.drawable.miuix_checkbox);
+        else setButtonDrawable(buttonId);
     }
 
     @Override
     public void setChecked(boolean checked) {
-        if (isChecked() == checked) return;
-        if (mOnCheckStateChangeListener == null) {
-            super.setChecked(checked);
-            return;
-        }
-
-        if (mOnCheckStateChangeListener.onCheckChange(this, checked)) {
-            super.setChecked(checked);
-        }
+        setCheckedInner(checked);
     }
 
-    public void setOnCheckStateChangeListener(OnCheckStateChangeListener onCheckStateChangeListener) {
-        mOnCheckStateChangeListener = onCheckStateChangeListener;
+    /**
+     * 当且仅当 onStateChange 拦截操作时才会返回 false
+     */
+    public boolean setCheckedInner(boolean checked) {
+        if (isChecked() == checked) return true;
+
+        if (onStateChangeListener == null || onStateChangeListener.onStateChange(checked)) {
+            playScaleAnimation(checked);
+            super.setChecked(checked);
+            return true;
+        }
+        return false;
+    }
+
+    public void setOnStateChangeListener(OnStateChangeListener listener) {
+        this.onStateChangeListener = listener;
+    }
+
+    private void playScaleAnimation(boolean checked) {
+        ScaleAnimation anim = new ScaleAnimation(
+            1f, checked ? 1.05f : 0.95f, checked ? 1.05f : 0.95f, checked ? 1.05f : 0.95f,
+            Animation.RELATIVE_TO_SELF, 0.5f,
+            Animation.RELATIVE_TO_SELF, 0.5f
+        );
+        anim.setDuration(100);
+        anim.setRepeatCount(1);
+        anim.setRepeatMode(Animation.REVERSE);
+        anim.setInterpolator(new OvershootInterpolator(1.3f));
+        startAnimation(anim);
     }
 }

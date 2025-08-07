@@ -1,4 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">HiMiuiX</string>
-    <string name="prefs_name">himiuix_prefs</string>
+    <!-- Preference -->
+    <string name="prefs_name">HiMiuix_prefs</string>
+
+    <!-- Dialog -->
+    <string name="dialog_negative">取消</string>
+    <string name="dialog_positive">确认</string>
+    <string name="dialog_color_title">Color</string>
+    <string name="dialog_color_message">请输入 8 位颜色值</string>
 </resources>

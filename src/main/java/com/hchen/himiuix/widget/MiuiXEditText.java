@@ -1,239 +1,373 @@
 /*
- * This file is part of HiMiuiX.
-
- * HiMiuiX is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License.
-
- * This program is distributed in the hope that it will be useful,
+ * This file is part of HiMiuix.
+ *
+ * HiMiuix is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2.1 of the License, or
+ * (at your option) any later version.
+ *
+ * HiMiuix is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
-
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <https://www.gnu.org/licenses/>.
-
- * Copyright (C) 2023-2025 HChenX
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with HiMiuix. If not, see <https://www.gnu.org/licenses/lgpl-2.1>.
+ *
+ * Copyright (C) 2023–2025 HChenX
  */
 package com.hchen.himiuix.widget;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
-import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.Icon;
+import android.os.Build;
+import android.text.InputFilter;
 import android.text.InputType;
-import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.text.method.KeyListener;
 import android.util.AttributeSet;
 import android.view.Gravity;
-import android.view.View;
+import android.view.MotionEvent;
 import android.view.ViewGroup;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.content.res.AppCompatResources;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.annotation.StringRes;
+import androidx.core.content.ContextCompat;
 
-import com.hchen.himiuix.MiuiXUtils;
 import com.hchen.himiuix.R;
+import com.hchen.himiuix.callback.OnImeVisibilityChangedListener;
+import com.hchen.himiuix.helper.ImeHelper;
 
-public class MiuiXEditText extends ConstraintLayout {
-    private Context context;
+/**
+ * Miuix Edit Text
+ *
+ * @author 焕晨HChen
+ */
+public class MiuixEditText extends LinearLayout implements OnImeVisibilityChangedListener {
+    private static final String TAG = "HiMiuix";
     private TextView tipView;
-    private EditText editTextView;
     private ImageView iconView;
-    private LayoutParams params;
-    private final int editLayoutHeight;
-    private final Drawable editBackground;
-    private final String hint;
-    private boolean isErrorBorder = false;
+    private EditText editText;
+    private boolean isIntercept;
+    private boolean isAutoRequestFocus = false;
 
-    public MiuiXEditText(@NonNull Context context) {
+    public MiuixEditText(Context context) {
         this(context, null);
     }
 
-    public MiuiXEditText(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public MiuixEditText(Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public MiuiXEditText(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public MiuixEditText(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         this(context, attrs, defStyleAttr, 0);
     }
 
-    public MiuiXEditText(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public MiuixEditText(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-
-        try (TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.MiuiEditText)) {
-            editLayoutHeight = (int) typedArray.getDimension(R.styleable.MiuiEditText_editHeight, MiuiXUtils.dp2px(getContext(), 50));
-            hint = typedArray.getString(R.styleable.MiuiEditText_android_hint);
-            if (typedArray.hasValue(R.styleable.MiuiEditText_background))
-                editBackground = typedArray.getDrawable(R.styleable.MiuiEditText_background);
-            else
-                editBackground = AppCompatResources.getDrawable(context, R.drawable.ic_edit_bg);
-        }
-        init(context);
+        init();
     }
 
-    private void init(Context context) {
-        this.context = context;
-        params = new LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        );
-        setLayoutParams(params);
-        setBackground(editBackground);
+    @SuppressLint("AppCompatCustomView")
+    private void init() {
+        ImeHelper.init((Activity) getContext());
 
-        tipView = new TextView(context);
-        editTextView = new EditText(context);
-        iconView = new ImageView(context);
-        loadEditTextTipView();
-        loadEditTextView();
-        loadEditTextImageView();
-        applyLayout();
-        updateEditTextBackground();
-    }
+        setVerticalScrollBarEnabled(false);
+        setHorizontalScrollBarEnabled(false);
+        setOrientation(LinearLayout.HORIZONTAL);
+        setPadding(getResources().getDimensionPixelSize(R.dimen.miuix_edit_margin), 0, 0, 0);
+        setBackgroundResource(R.drawable.miuix_edit_non_focused_border);
 
-    private void loadEditTextTipView() {
-        tipView.setId(R.id.edit_tip);
+        tipView = new TextView(getContext(), null, 0, R.style.MiuixTitleStyle);
+        LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.gravity = Gravity.CENTER;
+        params.rightMargin = getResources().getDimensionPixelSize(R.dimen.miuix_edit_margin);
+        tipView.setLayoutParams(params);
+        tipView.setClickable(true);
+        addView(tipView);
+
+        editText = new EditText(getContext()) {
+            private OnClickListener clickListener;
+
+            @Override
+            public boolean dispatchTouchEvent(MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    if (isIntercept) {
+                        if (clickListener != null)
+                            clickListener.onClick(editText);
+                        return true;
+                    }
+                }
+                return super.dispatchTouchEvent(event);
+            }
+
+            @Override
+            public void setOnClickListener(@Nullable OnClickListener l) {
+                clickListener = l;
+                super.setOnClickListener(l);
+            }
+
+            @Override
+            protected void onFocusChanged(boolean focused, int direction, Rect previouslyFocusedRect) {
+                if (!isIntercept) updateBackground(focused);
+                super.onFocusChanged(focused, direction, previouslyFocusedRect);
+            }
+        };
+        params = new LayoutParams(0, getResources().getDimensionPixelSize(R.dimen.miuix_edit_height));
+        params.weight = 1;
+        params.gravity = Gravity.CENTER;
+        editText.setLayoutParams(params);
+        editText.setBackground(null);
+        editText.setSingleLine(true);
+        editText.setIncludeFontPadding(false);
+        editText.setVerticalScrollBarEnabled(false);
+        editText.setHorizontalScrollBarEnabled(false);
+        editText.setPadding(0, 0, 0, 0);
+        editText.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
+        editText.setHintTextColor(getContext().getColor(R.color.miuix_edit_hint));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM)
+            editText.setLocalePreferredLineHeightForMinimumUsed(false);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
+            editText.setTextCursorDrawable(ContextCompat.getDrawable(getContext(), R.drawable.miuix_edit_cursor));
+        addView(editText);
+
+        iconView = new ImageView(getContext(), null, 0, R.style.MiuixIconStyle);
         params = new LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
-            editLayoutHeight
+            ViewGroup.LayoutParams.WRAP_CONTENT
         );
-        params.setMarginStart(MiuiXUtils.dp2px(context, 15));
-        tipView.setLayoutParams(params);
-        tipView.setGravity(Gravity.CENTER);
-        tipView.setSingleLine(true);
-        tipView.setEllipsize(TextUtils.TruncateAt.MARQUEE);
-        tipView.setTextColor(context.getColor(R.color.edit_text));
-        tipView.setTextSize(17);
-        tipView.setVisibility(GONE);
-        addView(tipView);
-    }
-
-    private void loadEditTextView() {
-        editTextView.setId(R.id.edit_text);
-        params = new LayoutParams(
-            0,
-            editLayoutHeight
-        );
-        params.setMarginStart(MiuiXUtils.dp2px(context, 15));
-        params.setMarginEnd(MiuiXUtils.dp2px(context, 15));
-        editTextView.setLayoutParams(params);
-        editTextView.setBackground(null);
-        editTextView.setClickable(true);
-        editTextView.setFocusable(true);
-        editTextView.setFocusableInTouchMode(true);
-        editTextView.setSingleLine(true);
-        editTextView.setHint(hint);
-        editTextView.setTextAlignment(TEXT_ALIGNMENT_VIEW_START);
-        editTextView.setInputType(InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS);
-        editTextView.setHintTextColor(context.getColor(R.color.edit_hint));
-        editTextView.setTextCursorDrawable(AppCompatResources.getDrawable(context, R.drawable.edit_cursor));
-        addView(editTextView);
-    }
-
-    private void loadEditTextImageView() {
-        iconView.setId(R.id.edit_image);
-        params = new LayoutParams(
-            editLayoutHeight,
-            editLayoutHeight
-        );
+        params.gravity = Gravity.CENTER;
+        params.leftMargin = getResources().getDimensionPixelSize(R.dimen.miuix_edit_margin);
+        params.rightMargin = getResources().getDimensionPixelSize(R.dimen.miuix_edit_margin);
+        iconView.setMaxHeight(getResources().getDimensionPixelSize(R.dimen.miuix_edit_icon));
+        iconView.setMaxWidth(getResources().getDimensionPixelSize(R.dimen.miuix_edit_icon));
         iconView.setLayoutParams(params);
-        iconView.setPadding(
-            0,
-            MiuiXUtils.dp2px(context, 8),
-            0,
-            MiuiXUtils.dp2px(context, 8)
-        );
-        iconView.setAdjustViewBounds(true);
-        iconView.setScaleType(ImageView.ScaleType.CENTER);
-        iconView.setVisibility(GONE);
+        iconView.setClickable(true);
         addView(iconView);
     }
 
-    private void applyLayout() {
-        ConstraintSet constraintSet = new ConstraintSet();
-        constraintSet.clone(this);
-
-        constraintSet.connect(tipView.getId(), ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.LEFT);
-        constraintSet.connect(tipView.getId(), ConstraintSet.RIGHT, editTextView.getId(), ConstraintSet.LEFT);
-        constraintSet.connect(tipView.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP);
-        constraintSet.connect(tipView.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM);
-
-        constraintSet.connect(editTextView.getId(), ConstraintSet.LEFT, tipView.getId(), ConstraintSet.RIGHT);
-        constraintSet.connect(editTextView.getId(), ConstraintSet.RIGHT, iconView.getId(), ConstraintSet.LEFT);
-        constraintSet.connect(editTextView.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP);
-        constraintSet.connect(editTextView.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM);
-
-        constraintSet.connect(iconView.getId(), ConstraintSet.LEFT, editTextView.getId(), ConstraintSet.RIGHT);
-        constraintSet.connect(iconView.getId(), ConstraintSet.RIGHT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT);
-        constraintSet.connect(iconView.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP);
-        constraintSet.connect(iconView.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM);
-
-        constraintSet.applyTo(this);
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        ImeHelper.addListeners(this);
+        showInputIfNeed();
     }
 
-    private void updateEditTextBackground() {
-        editTextView.clearFocus();
-        editTextView.setOnFocusChangeListener(new OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    updateErrorBorderState();
-                } else {
-                    hideInputIfNeed();
-                    MiuiXEditText.this.setBackgroundResource(R.drawable.nofocused_border_input_box);
-                }
-            }
-        });
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        ImeHelper.removeListeners(this);
     }
 
-    public EditText getEditTextView() {
-        return editTextView;
+    // -------------------- Inner EditText --------------------
+    public final void setHint(@StringRes int resId) {
+        editText.setHint(resId);
     }
 
-    public TextView getTipView() {
+    public void setHint(@Nullable CharSequence hint) {
+        editText.setHint(hint);
+    }
+
+    @Nullable
+    public CharSequence getHint() {
+        return editText.getHint();
+    }
+
+    public void setText(@StringRes int resId) {
+        editText.setText(resId);
+    }
+
+    public void setText(@Nullable CharSequence text) {
+        editText.setText(text);
+    }
+
+    @Nullable
+    public CharSequence getText() {
+        return editText.getText();
+    }
+
+    public void setInputType(int type) {
+        editText.setInputType(type);
+    }
+
+    public void setImeOptions(int imeOptions) {
+        editText.setImeOptions(imeOptions);
+    }
+
+    public void setOnClickListener(OnClickListener listener) {
+        editText.setOnClickListener(listener);
+    }
+
+    public void addTextChangedListener(TextWatcher watcher) {
+        editText.addTextChangedListener(watcher);
+    }
+
+    public void removeTextChangedListener(TextWatcher watcher) {
+        editText.removeTextChangedListener(watcher);
+    }
+
+    public void setKeyListener(KeyListener listener) {
+        editText.setKeyListener(listener);
+    }
+
+    @Nullable
+    public KeyListener getKeyListener() {
+        return editText.getKeyListener();
+    }
+
+    public void setFilters(InputFilter[] filters) {
+        editText.setFilters(filters);
+    }
+
+    @Nullable
+    public InputFilter[] getFilters() {
+        return editText.getFilters();
+    }
+
+    public boolean hasEditFocus() {
+        return editText.hasFocus();
+    }
+
+    @Override
+    public void clearFocus() {
+        editText.clearFocus();
+        iconView.clearFocus();
+        tipView.clearFocus();
+    }
+
+    // -------------------------------------------------------
+
+    // ------------------- Inner TipView --------------------
+    public void setTipText(@StringRes int text) {
+        tipView.setText(text);
+    }
+
+    public void setTipText(CharSequence text) {
+        tipView.setText(text);
+    }
+
+    @Nullable
+    public CharSequence getTipText() {
+        return tipView.getText();
+    }
+
+    public void setTipOnClickListener(OnClickListener listener) {
+        tipView.setOnClickListener(listener);
+    }
+
+    // -------------------------------------------------------
+
+    // -------------------- Inner IconView --------------------
+    public void setImageDrawable(Drawable drawable) {
+        iconView.setImageDrawable(drawable);
+    }
+
+    public void setImageIcon(Icon icon) {
+        iconView.setImageIcon(icon);
+    }
+
+    public void setImageBitmap(Bitmap bitmap) {
+        iconView.setImageBitmap(bitmap);
+    }
+
+    public void setImageResource(@DrawableRes int resId) {
+        iconView.setImageResource(resId);
+    }
+
+    public Drawable getDrawable() {
+        return iconView.getDrawable();
+    }
+
+    public void setIconOnClickListener(OnClickListener listener) {
+        iconView.setOnClickListener(listener);
+    }
+
+    // ---------------------------------------------------------
+
+    // ------------------------ Inner --------------------------
+    @NonNull
+    public EditText getInnerEditText() {
+        return editText;
+    }
+
+    @NonNull
+    public TextView getInnerTipView() {
         return tipView;
     }
 
-    public ImageView getIconView() {
+    @NonNull
+    public ImageView getInnerIconView() {
         return iconView;
     }
 
-    public void setErrorBorderState(boolean error) {
-        if (isErrorBorder != error) {
-            isErrorBorder = error;
+    // ---------------------------------------------------------
 
-            updateErrorBorderState();
-        }
+    /**
+     * 是否自动请求焦点并弹出键盘
+     */
+    public void setAutoRequestFocus(boolean auto) {
+        this.isAutoRequestFocus = auto;
+        invalidate();
     }
 
-    private void updateErrorBorderState() {
-        if (isErrorBorder) setBackgroundResource(R.drawable.error_border_input_box);
-        else setBackgroundResource(R.drawable.focused_border_input_box);
+    /**
+     * 将会拦截键盘弹出
+     * <p>
+     * 您可以自定义点击后动作
+     */
+    public void setIntercept(boolean intercept) {
+        isIntercept = intercept;
+        invalidate();
     }
 
-    private void hideInputIfNeed() {
-        if (isInputVisible()) {
-            WindowInsetsController windowInsetsController = getWindowInsetsController();
-            if (windowInsetsController != null)
-                windowInsetsController.hide(WindowInsets.Type.ime());
-            else {
-                InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(getWindowToken(), 0);
+    public void updateBackground(boolean hasBorder) {
+        if (hasBorder) setBackgroundResource(R.drawable.miuix_edit_focused_border);
+        else setBackgroundResource(R.drawable.miuix_edit_non_focused_border);
+    }
+
+    private void showInputIfNeed() {
+        if (!isAutoRequestFocus) return;
+        if (editText == null) return;
+        editText.setFocusable(true);
+        editText.setFocusableInTouchMode(true);
+        editText.requestFocus();
+        if (!isInputVisible()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                WindowInsetsController windowInsetsController = getRootView().getWindowInsetsController();
+                if (windowInsetsController != null) {
+                    windowInsetsController.show(WindowInsets.Type.ime());
+                }
+            } else {
+                InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(editText, 0);
             }
         }
     }
 
     private boolean isInputVisible() {
-        if (editTextView == null) return false;
-        if (editTextView.getRootWindowInsets() == null) return false;
-        return editTextView.getRootWindowInsets().isVisible(WindowInsets.Type.ime());
+        Rect r = new Rect();
+        getWindowVisibleDisplayFrame(r);
+        int screenHeight = getRootView().getHeight();
+        int keypadHeight = screenHeight - r.bottom;
+        return keypadHeight > screenHeight * 0.15;
+    }
+
+    @Override
+    public void visibilityChanged(boolean isShown) {
+        if (!isShown) clearFocus();
     }
 }

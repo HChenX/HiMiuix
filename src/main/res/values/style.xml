@@ -1,73 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="MiuiXItemContainerStyle">
-        <!-- 外边距 -->
-        <item name="android:layout_marginStart">13dp</item>
-        <item name="android:layout_marginEnd">13dp</item>
+    <style name="MiuixBasicStyle">
+        <!--<item name="android:layout_marginStart">@dimen/miuix_basic_margin_start</item>-->
+        <!--<item name="android:layout_marginEnd">@dimen/miuix_basic_margin_end</item>-->
 
-        <!-- 内边距 -->
-        <item name="android:paddingStart">15dp</item>
-        <item name="android:paddingTop">10dp</item>
-        <item name="android:paddingEnd">15dp</item>
-        <item name="android:paddingBottom">10dp</item>
+        <item name="android:paddingStart">@dimen/miuix_basic_padding</item>
+        <item name="android:paddingEnd">@dimen/miuix_basic_padding</item>
+        <item name="android:paddingTop">@dimen/miuix_basic_padding</item>
+        <item name="android:paddingBottom">@dimen/miuix_basic_padding</item>
 
-        <!-- 最小高度 -->
-        <item name="android:minHeight">65dp</item>
+        <item name="android:minHeight">@dimen/miuix_basic_min_height</item>
+        <item name="android:background">@drawable/miuix_basic_background</item>
     </style>
 
-    <style name="MiuiXItemTitleStyle">
-        <item name="android:ellipsize">marquee</item>
-        <item name="android:focusable">true</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
-        <item name="android:maxLines">1</item>
-        <item name="android:requiresFadingEdge">horizontal</item>
-        <item name="android:scrollbars">none</item>
-        <item name="android:scrollHorizontally">true</item>
-        <item name="android:singleLine">true</item>
+    <style name="MiuixIconStyle">
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:scaleType">centerInside</item>
+    </style>
+
+    <style name="MiuixTextBasicStyle">
+        <!--
         <item name="android:textAlignment">textStart</item>
-        <item name="android:textSize">17sp</item>
-        <item name="android:textColor">@color/title</item>
+        -->
+        <item name="android:textDirection">locale</item>
     </style>
 
-    <style name="MiuiXItemSummaryStyle">
-        <item name="android:focusable">false</item>
+    <style name="MiuixSingleLineStyle" parent="MiuixTextBasicStyle">
+        <item name="android:singleLine">true</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:scrollbars">none</item>
+        <item name="android:ellipsize">marquee</item>
+        <item name="android:scrollHorizontally">true</item>
+    </style>
+
+    <style name="MiuixTitleStyle" parent="MiuixSingleLineStyle">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">@dimen/miuix_title</item>
+        <item name="android:textColor">@color/miuix_title_color</item>
+        <item name="android:focusable">true</item>
+    </style>
+
+    <style name="MiuixSummaryStyle">
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:scrollbars">none</item>
-        <item name="android:scrollHorizontally">true</item>
         <item name="android:singleLine">false</item>
-        <item name="android:textAlignment">textStart</item>
-        <item name="android:textSize">14sp</item>
-        <item name="android:textColor">@color/summary</item>
+        <item name="android:textSize">@dimen/miuix_summary</item>
+        <item name="android:textColor">@color/miuix_summary_color</item>
     </style>
 
-    <style name="MiuiXItemTipStyle">
-        <item name="android:gravity">center_horizontal</item>
-        <item name="android:maxLines">1</item>
-        <item name="android:singleLine">true</item>
-        <item name="android:scrollbars">none</item>
-        <item name="android:textColor">@color/tip</item>
+    <style name="MiuixTipStyle" parent="MiuixSingleLineStyle">
+        <item name="android:textColor">@color/miuix_tip_color</item>
         <item name="android:textSize">13sp</item>
+        <item name="android:focusable">true</item>
     </style>
 
-
-    <style name="MiuiXItemDividerTextStyle">
-        <item name="android:paddingStart">28dp</item>
-        <item name="android:paddingEnd">28dp</item>
-        <item name="android:paddingTop">20dp</item>
-        <item name="android:paddingBottom">8dp</item>
-        <item name="android:maxLines">1</item>
-        <item name="android:singleLine">true</item>
+    <style name="MiuixDividerStyle" parent="MiuixSingleLineStyle">
+        <item name="android:paddingStart">@dimen/miuix_divider_padding_start</item>
+        <item name="android:paddingEnd">@dimen/miuix_divider_padding_end</item>
+        <item name="android:paddingTop">@dimen/miuix_divider_padding_top</item>
+        <item name="android:paddingBottom">@dimen/miuix_divider_padding_bottom</item>
         <item name="android:clickable">false</item>
         <item name="android:focusable">false</item>
         <item name="android:enabled">false</item>
-        <item name="android:scrollbars">none</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/category_tip</item>
-        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/miuix_divider_color</item>
+        <item name="android:textSize">@dimen/miuix_divider_text</item>
+        <item name="android:fontFamily">sans-serif-condensed</item>
     </style>
 
-    <style name="MiuiAlertDialog">
+    <style name="MiuixItemStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">@dimen/miuix_item_min_height</item>
+        <item name="android:background">@color/miuix_basic_background_color</item>
+        <item name="android:paddingStart">@dimen/miuix_item_padding_start_end</item>
+        <item name="android:paddingEnd">@dimen/miuix_item_padding_start_end</item>
+    </style>
+
+    <style name="MiuixItemTextStyle">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textSize">@dimen/miuix_title</item>
+        <item name="android:textColor">@color/miuix_title_color</item>
+        <item name="android:scrollbars">none</item>
+    </style>
+
+    <style name="MiuixDialogWindowStyle">
         <item name="android:fullDark">@android:color/transparent</item>
         <item name="android:topDark">@android:color/transparent</item>
         <item name="android:centerDark">@android:color/transparent</item>
@@ -86,90 +104,82 @@
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowCloseOnTouchOutside">true</item>
-        <item name="android:windowBackground">@drawable/dialog_round_bg_light</item>
+        <item name="android:windowBackground">@drawable/miuix_dialog_window</item>
         <item name="android:windowSoftInputMode">stateVisible|adjustResize</item>
-        <!--如果 dialog 未被舒服发正常顶起，请检查是否设置属性:
+        <item name="android:backgroundDimAmount">0.38</item>
+        <!--如果 dialog 未被输入法正常顶起，请检查是否设置属性:
         <item name="android:fitsSystemWindows">true</item>
         并删除。
         -->
     </style>
 
-    <style name="DialogButton">
+    <style name="MiuixAlertDialogStyle">
+        <item name="android:paddingStart">@dimen/miuix_dialog_padding</item>
+        <item name="android:paddingEnd">@dimen/miuix_dialog_padding</item>
+        <item name="android:paddingTop">@dimen/miuix_dialog_padding</item>
+        <item name="android:paddingBottom">@dimen/miuix_dialog_padding</item>
+    </style>
+
+    <style name="MiuixDialogTitleStyle" parent="MiuixTitleStyle">
+        <item name="android:textSize">@dimen/miuix_dialog_title</item>
+        <item name="android:textColor">@color/miuix_dialog_title</item>
+    </style>
+
+    <style name="MiuixDialogMessageStyle" parent="MiuixSummaryStyle">
+        <item name="android:textSize">@dimen/miuix_dialog_message</item>
+        <item name="android:textColor">@color/miuix_dialog_message</item>
+    </style>
+
+    <style name="MiuixDialogButtonStyle" parent="MiuixSingleLineStyle">
         <item name="android:clickable">true</item>
-        <item name="android:maxLines">1</item>
-        <item name="android:singleLine">true</item>
-        <item name="android:forceDarkAllowed">false</item>
+        <item name="android:focusable">true</item>
+        <item name="android:forceDarkAllowed" tools:targetApi="29">false</item>
         <item name="android:ellipsize">marquee</item>
-        <item name="android:scrollbars">none</item>
         <item name="android:stateListAnimator">@null</item>
         <item name="backgroundTint">@null</item>
-        <item name="android:textSize">17sp</item>
+        <item name="android:textSize">@dimen/miuix_dialog_button_text</item>
         <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:includeFontPadding">false</item>
     </style>
 
-    <style name="Animation" />
-
-    <style name="Animation.PopupWindow" />
-
-    <style name="Animation.Dialog" parent="@style/Animation">
-        <item name="android:windowEnterAnimation">@anim/dialog_anim_slide_in_bottom</item>
-        <item name="android:windowExitAnimation">@anim/dialog_anim_slide_out_bottom</item>
+    <style name="MiuixDialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/miuix_dialog_enter_in_bottom</item>
+        <item name="android:windowExitAnimation">@anim/miuix_dialog_exit_in_bottom</item>
     </style>
 
-    <style name="Animation.Dialog.Center" parent="@style/Animation.Dialog">
-        <item name="android:windowEnterAnimation">@anim/dialog_anim_pop_in_center</item>
-        <item name="android:windowExitAnimation">@anim/dialog_anim_pop_out_center</item>
+    <style name="MiuixDialogAnimation.Center">
+        <item name="android:windowEnterAnimation">@anim/miuix_dialog_enter_in_center</item>
+        <item name="android:windowExitAnimation">@anim/miuix_dialog_exit_in_center</item>
     </style>
 
-    <style name="Animation.Dialog.ExistIme" parent="@style/Animation.Dialog">
-        <item name="android:windowEnterAnimation">@anim/dialog_anim_slide_in_bottom_exist_ime</item>
-        <item name="android:windowExitAnimation">@anim/dialog_anim_slide_out_bottom_exist_ime</item>
+    <style name="MiuixDialogAnimation.ExistIme">
+        <item name="android:windowEnterAnimation">@anim/miuix_dialog_enter_in_bottom_exist_ime
+        </item>
+        <item name="android:windowExitAnimation">@anim/miuix_dialog_exit_in_bottom_exist_ime</item>
     </style>
 
-    <style name="Animation.PopupWindow.DropDown">
-        <item name="android:windowEnterAnimation">@anim/drop_down_popup_enter</item>
-        <item name="android:windowExitAnimation">@anim/drop_down_popup_exit</item>
+    <style name="MiuixDropDownDialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/miuix_drop_down_popup_enter</item>
+        <item name="android:windowExitAnimation">@anim/miuix_drop_down_popup_exit</item>
     </style>
 
-    <style name="Animation.Dialog.NoAnimation" parent="@style/Animation.Dialog">
-        <item name="android:windowEnterAnimation">@anim/dialog_anim_noanim</item>
-        <item name="android:windowExitAnimation">@anim/dialog_anim_noanim</item>
+    <style name="MiuixDropDownDialogAnimation.LeftTop">
+        <item name="android:windowEnterAnimation">@anim/miuix_drop_down_popup_enter_lt</item>
+        <item name="android:windowExitAnimation">@anim/miuix_drop_down_popup_exit_lt</item>
     </style>
 
-    <style name="Animation.PopupWindow.DropDown.LeftTop">
-        <item name="android:windowEnterAnimation">@anim/drop_down_popup_enter_lt</item>
-        <item name="android:windowExitAnimation">@anim/drop_down_popup_exit_lt</item>
+    <style name="MiuixDropDownDialogAnimation.LeftBottom">
+        <item name="android:windowEnterAnimation">@anim/miuix_drop_down_popup_enter_lb</item>
+        <item name="android:windowExitAnimation">@anim/miuix_drop_down_popup_exit_lb</item>
     </style>
 
-    <style name="Animation.PopupWindow.DropDown.LeftBottom">
-        <item name="android:windowEnterAnimation">@anim/drop_down_popup_enter_lb</item>
-        <item name="android:windowExitAnimation">@anim/drop_down_popup_exit_lb</item>
+    <style name="MiuixDropDownDialogAnimation.RightBottom">
+        <item name="android:windowEnterAnimation">@anim/miuix_drop_down_popup_enter_rb</item>
+        <item name="android:windowExitAnimation">@anim/miuix_drop_down_popup_exit_rb</item>
     </style>
 
-    <style name="Animation.PopupWindow.DropDown.RightBottom">
-        <item name="android:windowEnterAnimation">@anim/drop_down_popup_enter_rb</item>
-        <item name="android:windowExitAnimation">@anim/drop_down_popup_exit_rb</item>
-    </style>
-
-    <style name="Animation.PopupWindow.DropDown.RightTop">
-        <item name="android:windowEnterAnimation">@anim/drop_down_popup_enter_rt</item>
-        <item name="android:windowExitAnimation">@anim/drop_down_popup_exit_rt</item>
-    </style>
-
-    <style name="MiuiPreference">
-        <item name="allowDividerAbove">false</item>
-        <item name="allowDividerBelow">false</item>
-    </style>
-
-    <style name="MiuiPreference.Category">
-        <item name="android:shouldDisableView">false</item>
-        <item name="android:selectable">false</item>
-    </style>
-
-    <style name="MiuiSeekBar">
-        <item name="android:indeterminateOnly">false</item>
-        <item name="android:focusable">true</item>
-        <item name="android:paddingStart">25sp</item>
-        <item name="android:paddingEnd">25sp</item>
+    <style name="MiuixDropDownDialogAnimation.RightTop">
+        <item name="android:windowEnterAnimation">@anim/miuix_drop_down_popup_enter_rt</item>
+        <item name="android:windowExitAnimation">@anim/miuix_drop_down_popup_exit_rt</item>
     </style>
 </resources>

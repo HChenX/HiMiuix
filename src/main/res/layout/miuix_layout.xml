@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@id/miuix_basic"
+    style="@style/MiuixBasicStyle"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@id/miuix_icon"
+            style="@style/MiuixIconStyle"
+            android:layout_width="@dimen/miuix_basic_icon"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/miuix_icon_margin_end"
+            android:src="@drawable/ic_default_icon"
+            tools:ignore="ContentDescription" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <com.hchen.himiuix.widget.MiuixTextView
+                android:id="@id/miuix_title"
+                style="@style/MiuixTitleStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Test Title" />
+
+            <TextView
+                android:id="@id/miuix_summary"
+                style="@style/MiuixSummaryStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Test Summary" />
+
+        </LinearLayout>
+
+        <!-- 需要焦点执行滚动，maxWidth 防止过长 -->
+        <com.hchen.himiuix.widget.MiuixTextView
+            android:id="@id/miuix_tip"
+            style="@style/MiuixTipStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/miuix_tip_margin_start"
+            android:maxWidth="@dimen/miuix_tip_max_width"
+            android:text="Test Tip" />
+
+        <!-- 指示器集合 -->
+        <LinearLayout
+            android:id="@+id/miuix_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/miuix_indicator_margin_start"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@id/miuix_custom_indicator"
+                style="@style/MiuixIconStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/miuix_basic_custom_indicator"
+                android:src="@drawable/miuix_indicator_arrow_right"
+                tools:ignore="ContentDescription" />
+
+            <com.hchen.himiuix.widget.MiuixSwitch
+                android:id="@id/miuix_switch_indicator"
+                android:layout_width="@dimen/miuix_switch_width"
+                android:layout_height="@dimen/miuix_switch_height"
+                android:visibility="gone" />
+
+            <com.hchen.himiuix.widget.MiuixCheckBox
+                android:id="@id/miuix_checkbox_indicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+            <com.hchen.himiuix.widget.MiuixRadioButton
+                android:id="@id/miuix_radio_button_indicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+            <com.hchen.himiuix.color.ColorSelectView
+                android:id="@id/miuix_color_indicator"
+                android:layout_width="@dimen/miuix_color_select"
+                android:layout_height="@dimen/miuix_color_select"
+                android:visibility="gone" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@id/miuix_custom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/miuix_module_margin_top"
+        android:orientation="vertical" />
+</LinearLayout>

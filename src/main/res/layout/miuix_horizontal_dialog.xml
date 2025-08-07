@@ -1,63 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/MiuixAlertDialogStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingStart="25dp"
-    android:paddingTop="25dp"
-    android:paddingEnd="25dp"
-    android:paddingBottom="25dp">
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/dialog_text_custom_view"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/dialog_divider"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <include
-            android:id="@+id/dialog_text_view"
-            layout="@layout/miuix_dialog_title_message"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toTopOf="@id/dialog_custom_view"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/dialog_custom_view"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/dialog_text_view" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <View
-        android:id="@+id/dialog_divider"
-        android:layout_width="1.3dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="25sp"
-        android:layout_marginEnd="25sp"
-        android:background="@drawable/dialog_divider"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/dialog_text_custom_view"
-        app:layout_constraintRight_toLeftOf="@id/dialog_button_view"
-        app:layout_constraintTop_toTopOf="parent" />
+    android:orientation="horizontal">
 
     <LinearLayout
-        android:id="@+id/dialog_button_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@id/dialog_divider"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:orientation="vertical">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <ImageView
+            android:id="@id/miuix_dialog_icon"
+            style="@style/MiuixIconStyle"
+            android:layout_width="@dimen/miuix_dialog_icon"
+            android:layout_height="@dimen/miuix_dialog_icon"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_default_icon" />
+
+        <TextView
+            android:id="@id/miuix_dialog_title"
+            style="@style/MiuixDialogTitleStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Test Title" />
+
+        <com.hchen.himiuix.widget.MiuixTextView
+            android:id="@id/miuix_dialog_message"
+            style="@style/MiuixDialogMessageStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Test Message"
+            app:singleLineCenter="true" />
+
+        <LinearLayout
+            android:id="@id/miuix_dialog_custom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="@dimen/miuix_dialog_divider"
+        android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/miuix_dialog_margin"
+        android:layout_marginEnd="@dimen/miuix_dialog_margin"
+        android:background="@color/miuix_dialog_divider" />
+
+    <LinearLayout
+        android:id="@id/miuix_dialog_buttons"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:orientation="vertical" />
+</LinearLayout>

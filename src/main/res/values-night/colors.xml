@@ -1,51 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="pref_card">#242424</color>
-    <color name="dialog_background">#242424</color>
-    <color name="dialog_title">#F4F4F4</color>
-    <color name="dialog_message">#D3D3D3</color>
-    <color name="dialog_button1">#D9D9D9</color>
-    <color name="dialog_button2">#EAF1FE</color>
-    <color name="dialog_na_background">#434343</color>
-    <color name="dialog_po_background">#277AF7</color>
-    <color name="dialog_divider">#2F2F2F</color>
-    <color name="edit_border">#267AF7</color>
-    <color name="edit_border_error">#F72626</color>
-    <color name="edit_background">#262626</color>
-    <color name="edit_text">#EAEAEA</color>
-    <color name="edit_cursor">#3482FF</color>
-    <color name="edit_hint">#676767</color>
-    <color name="pref_background">#000000</color>
-    <color name="summary">#808080</color>
-    <color name="tip">#666666</color>
-    <color name="title">#E6E6E6</color>
-    <color name="switch_d_off">#212121</color>
-    <color name="switch_d_on">#0C264B</color>
-    <color name="thumb_d_on">#566781</color>
-    <color name="thumb_d_off">#595959</color>
-    <color name="switch_on">#267AF7</color>
-    <color name="switch_off">#333333</color>
-    <color name="touch_down">#424242</color>
-    <color name="touch_up">#242424</color>
-    <color name="white_or_black">@color/black</color>
-    <color name="list_text">#EAEAEA</color>
-    <color name="list_choose_text">#267AF7</color>
-    <color name="list_background">#242424</color>
-    <color name="list_state_background">#23334D</color>
-    <color name="selected">#267AF7</color>
-    <color name="seekbar_background">#333333</color>
-    <color name="seekbar_progress">#0073DD</color>
-    <color name="arrow_right">#666666</color>
-    <color name="arrow_up_down">#666666</color>
-    <color name="category_background">#333333</color>
-    <color name="category_tip">#797E94</color>
-    <color name="card_background">#222224</color>
-    <color name="card_background_waring">#4D3214</color>
-    <color name="cancel_background">#666666</color>
-    <color name="cancel_background_waring">#FFB459</color>
-    <color name="card_text_waring">#FFA83F</color>
-    <color name="seekbar_def">#AA555962</color>
-    <color name="checkbox_off">#505050</color>
-    <color name="checkbox_on">#4078EF</color>
-    <color name="radio_on">#277af7</color>
+    <!-- main -->
+    <color name="miuix_theme_color">@android:color/black</color>
+
+    <!-- basic -->
+    <color name="miuix_basic_background_color">#242424</color>
+    <color name="miuix_title_color">#F4F4F4</color>
+    <color name="miuix_summary_color">#929292</color>
+    <color name="miuix_tip_color">#929292</color>
+    <color name="miuix_arrow_right">#666666</color>
+
+    <!-- switch -->
+    <color name="miuix_switch_off">#505050</color>
+    <color name="miuix_switch_on">#4078EF</color>
+    <color name="miuix_thumb">@android:color/white</color>
+
+    <!-- checkbox -->
+    <color name="miuix_checkbox_on">#4078EF</color>
+    <color name="miuix_checkbox_off">#505050</color>
+
+    <!-- radio button -->
+    <color name="miuix_radio_button_checked">#4078EF</color>
+
+    <!-- divider -->
+    <color name="miuix_divider_color">#797E94</color>
+
+    <!-- dialog -->
+    <color name="miuix_dialog_background">#242424</color>
+    <color name="miuix_dialog_title">#F4F4F4</color>
+    <color name="miuix_dialog_message">#D3D3D3</color>
+    <color name="miuix_dialog_divider">#2F2F2F</color>
+    <color name="miuix_dialog_button_1">#434343</color>
+    <color name="miuix_dialog_button_2">#4078EF</color>
+    <color name="miuix_dialog_button_text_1">#D9D9D9</color>
+    <color name="miuix_dialog_button_text_2">#EBF1FD</color>
+
+    <!-- item -->
+    <color name="miuix_item_text">#F4F4F4</color>
+    <color name="miuix_item_background">#2C2C2C</color>
+    <color name="miuix_item_choose_text">#4078EF</color>
+    <color name="miuix_item_choose_background">#2F3B53</color>
+
+    <!-- up down -->
+    <color name="miuix_up_down">#666666</color>
+
+    <!-- edit -->
+    <color name="miuix_edit_background">#434343</color>
+    <color name="miuix_edit_border">#4078EF</color>
+    <color name="miuix_edit_cursor">#4078EF</color>
+    <color name="miuix_edit_hint">#7C7C7C</color>
+
+    <!-- seekbar -->
+    <color name="miuix_seekbar_background">#29354D</color>
+    <color name="miuix_seekbar_progress">#4078EF</color>
+    <color name="miuix_seekbar_def">#AA555962</color>
+
+    <!-- color select -->
+    <color name="miuix_color_select_def">@android:color/black</color>
 </resources>

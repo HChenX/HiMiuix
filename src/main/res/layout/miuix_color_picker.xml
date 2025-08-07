@@ -1,127 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.hchen.himiuix.springback.SpringBackLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:scrollableView="@id/color_scroll_view">
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/color_scroll_view"
-        android:layout_width="match_parent"
+    <TextView
+        style="@style/MiuixSummaryStyle"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:overScrollMode="never"
-        android:scrollbars="none">
+        android:text="色相" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+    <com.hchen.himiuix.color.ColorPickerHue
+        android:id="@id/miuix_color_hue"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/miuix_color_picker_margin_top"
+        android:layout_marginBottom="@dimen/miuix_color_picker_margin_bottom" />
 
-            <TextView
-                android:id="@+id/color_hue_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="色相"
-                android:textColor="@color/summary"
-                android:textSize="13sp"
-                app:layout_constraintBottom_toTopOf="@id/color_hue_view"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        style="@style/MiuixSummaryStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="饱和度" />
 
-            <com.hchen.himiuix.colorpicker.ColorPickerHueView
-                android:id="@+id/color_hue_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:hardwareAccelerated="true"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/color_hue_text" />
+    <com.hchen.himiuix.color.ColorPickerSaturation
+        android:id="@id/miuix_color_saturation"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/miuix_color_picker_margin_top"
+        android:layout_marginBottom="@dimen/miuix_color_picker_margin_bottom" />
 
-            <TextView
-                android:id="@+id/color_saturation_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:text="饱和度"
-                android:textColor="@color/summary"
-                android:textSize="13sp"
-                app:layout_constraintBottom_toTopOf="@id/color_saturation_view"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/color_hue_view" />
+    <TextView
+        style="@style/MiuixSummaryStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="亮度" />
 
-            <com.hchen.himiuix.colorpicker.ColorPickerSaturationView
-                android:id="@+id/color_saturation_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:hardwareAccelerated="true"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/color_saturation_text" />
+    <com.hchen.himiuix.color.ColorPickerLightness
+        android:id="@id/miuix_color_lightness"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/miuix_color_picker_margin_top"
+        android:layout_marginBottom="@dimen/miuix_color_picker_margin_bottom" />
 
-            <TextView
-                android:id="@+id/color_lightness_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:text="亮度"
-                android:textColor="@color/summary"
-                android:textSize="13sp"
-                app:layout_constraintBottom_toTopOf="@id/color_lightness_view"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/color_saturation_view" />
+    <TextView
+        style="@style/MiuixSummaryStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="不透明度" />
 
-            <com.hchen.himiuix.colorpicker.ColorPickerLightnessView
-                android:id="@+id/color_lightness_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:hardwareAccelerated="true"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/color_lightness_text" />
+    <com.hchen.himiuix.color.ColorPickerAlpha
+        android:id="@id/miuix_color_alpha"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/miuix_color_picker_margin_top"
+        android:layout_marginBottom="@dimen/miuix_color_picker_margin_bottom" />
 
-            <TextView
-                android:id="@+id/color_alpha_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:text="不透明度"
-                android:textColor="@color/summary"
-                android:textSize="13sp"
-                app:layout_constraintBottom_toTopOf="@id/color_alpha_view"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/color_lightness_view" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/miuix_color_picker_expand_margin"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
-            <com.hchen.himiuix.colorpicker.ColorPickerAlphaView
-                android:id="@+id/color_alpha_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:hardwareAccelerated="true"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/color_alpha_text" />
+        <View
+            android:id="@id/miuix_color_view"
+            android:layout_width="@dimen/miuix_color_picker_show_width"
+            android:layout_height="@dimen/miuix_color_picker_show_height"
+            android:layout_weight="0" />
 
-            <View
-                android:id="@+id/color_show_view"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_marginTop="20dp"
-                android:background="@drawable/color_picker_show"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/color_alpha_view" />
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="0.66666" />
 
-            <com.hchen.himiuix.widget.MiuiXEditText
-                android:id="@+id/edit_layout"
-                android:layout_width="160dp"
-                android:layout_height="50dp"
-                android:layout_marginTop="35dp"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/color_alpha_view" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </androidx.core.widget.NestedScrollView>
-</com.hchen.himiuix.springback.SpringBackLayout>
+        <com.hchen.himiuix.widget.MiuixEditText
+            android:id="@id/miuix_color_edit"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/miuix_color_picker_edit_height"
+            android:layout_weight="1" />
+    </LinearLayout>
+</LinearLayout>

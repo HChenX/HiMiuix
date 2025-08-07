@@ -1,54 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--d 为禁用状态下颜色-->
-    <color name="pref_card">@color/white</color>
-    <color name="dialog_background">#FFFFFF</color>
-    <color name="dialog_title">#000000</color>
-    <color name="dialog_message">#333333</color>
-    <color name="dialog_button1">#000000</color> <!--dialog 取消或自定义 button 字体颜色-->
-    <color name="dialog_button2">#FFFFFF</color> <!--dialog 确定 button 字体颜色-->
-    <color name="dialog_na_background">#F0F0F0</color> <!--dialog 取消或自定义 button 背景颜色-->
-    <color name="dialog_po_background">#4980F7</color> <!--dialog 确定 button 背景颜色-->
-    <color name="dialog_divider">#D8D8D8</color>
-    <color name="edit_border">#3482FF</color> <!--edit 焦点边框颜色-->
-    <color name="edit_border_error">#FF3434</color> <!--edit 焦点边框 error 颜色-->
-    <color name="edit_background">#F0F0F0</color>
-    <color name="edit_text">#000000</color>
-    <color name="edit_cursor">#3482FF</color> <!--edit 光标颜色-->
-    <color name="edit_hint">#909090</color>
-    <color name="pref_background">#FFFFFF</color>
-    <color name="title">#000000</color>
-    <color name="summary">#666666</color>
-    <color name="tip">#666666</color>
-    <color name="switch_d_off">#F2F2F2</color>
-    <color name="switch_d_on">#C1D9FF</color>
-    <color name="thumb_d_on">#EDF3FF</color>
-    <color name="thumb_d_off">#FCFCFC</color>
-    <color name="switch_on">#3482FF</color>
-    <color name="switch_off">#E6E6E6</color>
-    <color name="black">#000000</color>
-    <color name="white">#FFFFFF</color>
-    <color name="touch_down">#E1E1E1</color> <!--按下时的阴影颜色-->
-    <color name="touch_up">@color/white</color> <!--抬起后恢复的颜色-->
-    <color name="white_or_black">@color/white</color>
-    <color name="list_text">#000000</color>
-    <color name="list_choose_text">#3482FF</color> <!--列表项目被选择时字体颜色-->
-    <color name="list_background">#FFFFFF</color>
-    <color name="list_state_background">#EAF2FF</color> <!--列表项目选中时背景-->
-    <color name="selected">#0D84ff</color> <!--列表勾号颜色-->
-    <color name="seekbar_background">#EEF1F6</color>
-    <color name="seekbar_progress">#0C84FF</color>
-    <color name="arrow_right">#999999</color> <!--preference 右侧箭头颜色-->
-    <color name="arrow_up_down">#949494</color> <!--DropDownPreference 右侧上下箭头颜色-->
-    <color name="category_background">#E5E5E5</color> <!--MiuiPreferenceCategory 分割线背景-->
-    <color name="category_tip">#8D92AF</color> <!--MiuiPreferenceCategory title 字体颜色-->
-    <color name="card_background">#F0F0F0</color> <!--MiuiCardPreference 背景色-->
-    <color name="card_background_waring">#F7EFE4</color> <!--MiuiCardPreference 背景色-->
-    <color name="cancel_background">#999999</color> <!--取消图标背景色-->
-    <color name="cancel_background_waring">#FFB459</color>
-    <color name="card_text_waring">#F4AA51</color>
-    <color name="seekbar_def">#AAD7DDE9</color>
-    <color name="checkbox_off">#F0F0F0</color>
-    <color name="checkbox_on">#4980F7</color>
-    <color name="radio_on">#3482ff</color>
+    <!-- main -->
+    <color name="miuix_theme_color">#F7F7F7</color>
+
+    <!-- basic -->
+    <color name="miuix_basic_background_color">@android:color/white</color>
+    <color name="miuix_title_color">@android:color/black</color>
+    <color name="miuix_summary_color">#666666</color>
+    <color name="miuix_tip_color">#666666</color>
+    <color name="miuix_arrow_right">#B2B2B2</color>
+
+    <!-- switch -->
+    <color name="miuix_switch_off">#E5E5E5</color>
+    <color name="miuix_switch_on">#4980F7</color>
+    <color name="miuix_thumb">@android:color/white</color>
+
+    <!-- checkbox -->
+    <color name="miuix_checkbox_on">#4980F7</color>
+    <color name="miuix_checkbox_off">#F0F0F0</color>
+
+    <!-- radio button -->
+    <color name="miuix_radio_button_checked">#4980F7</color>
+
+    <!-- divider -->
+    <color name="miuix_divider_color">#8D92AF</color>
+
+    <!-- dialog -->
+    <color name="miuix_dialog_background">@android:color/white</color>
+    <color name="miuix_dialog_title">@android:color/black</color>
+    <color name="miuix_dialog_message">#333333</color>
+    <color name="miuix_dialog_divider">#D8D8D8</color>
+    <color name="miuix_dialog_button_1">#F0F0F0</color>
+    <color name="miuix_dialog_button_2">#4980F7</color>
+    <color name="miuix_dialog_button_text_1">@android:color/black</color>
+    <color name="miuix_dialog_button_text_2">@android:color/white</color>
+
+    <!-- item -->
+    <color name="miuix_item_text">@android:color/black</color>
+    <color name="miuix_item_background">@android:color/white</color>
+    <color name="miuix_item_choose_text">#487FF6</color>
+    <color name="miuix_item_choose_background">#EAF0FC</color>
+
+    <!-- up down -->
+    <color name="miuix_up_down">#B2B2B2</color>
+
+    <!-- edit -->
+    <color name="miuix_edit_background">#F0F0F0</color>
+    <color name="miuix_edit_border">#4980F7</color>
+    <color name="miuix_edit_cursor">#4980F7</color>
+    <color name="miuix_edit_hint">#A8A8A8</color>
+
+    <!-- seekbar -->
+    <color name="miuix_seekbar_background">#EBF1FD</color>
+    <color name="miuix_seekbar_progress">#4980F7</color>
+    <color name="miuix_seekbar_def">#AAD7DDE9</color>
+
+    <!-- color select -->
+    <color name="miuix_color_select_def">@android:color/white</color>
 </resources>
