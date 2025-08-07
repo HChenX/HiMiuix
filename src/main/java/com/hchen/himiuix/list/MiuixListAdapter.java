@@ -18,8 +18,12 @@
  */
 package com.hchen.himiuix.list;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,6 +43,7 @@ import com.hchen.himiuix.callback.OnChooseItemListener;
 import com.hchen.himiuix.widget.MiuixCheckBox;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Miuix List Adapter
@@ -54,6 +59,10 @@ public class MiuixListAdapter extends RecyclerView.Adapter<MiuixListAdapter.Miui
     private final RecyclerView recyclerView;
     private final int layoutRes;
     private CharSequence[] items;
+    private Map<CharSequence, Drawable> map;
+    private int itemBackgroundColor;
+    private int itemChooseBackgroundColor;
+    private boolean isChooseBackgroundColorEnabled = true;
     private boolean isMultipleChoiceEnabled = false;
     private SparseBooleanArray booleanArray = new SparseBooleanArray();
     private OnChooseItemListener onChooseItemListener;
@@ -71,6 +80,9 @@ public class MiuixListAdapter extends RecyclerView.Adapter<MiuixListAdapter.Miui
         recyclerView.setHorizontalScrollBarEnabled(false);
         recyclerView.setVerticalScrollBarEnabled(false);
         recyclerView.setAdapter(this);
+
+        itemBackgroundColor = context.getColor(R.color.miuix_item_background);
+        itemChooseBackgroundColor = context.getColor(R.color.miuix_item_choose_background);
     }
 
     @NonNull
@@ -80,6 +92,22 @@ public class MiuixListAdapter extends RecyclerView.Adapter<MiuixListAdapter.Miui
 
     public void setItems(@NonNull CharSequence[] items) {
         this.items = items;
+    }
+
+    public void setIconItemsMap(Map<CharSequence, Drawable> map) {
+        this.map = map;
+    }
+
+    public void setItemBackgroundColor(int color) {
+        itemBackgroundColor = color;
+    }
+
+    public void setItemChooseBackgroundColor(int color) {
+        itemChooseBackgroundColor = color;
+    }
+
+    public void setChooseBackgroundColorEnabled(boolean enabled) {
+        isChooseBackgroundColorEnabled = enabled;
     }
 
     public void setOnChooseItemListener(OnChooseItemListener listener) {
@@ -109,6 +137,11 @@ public class MiuixListAdapter extends RecyclerView.Adapter<MiuixListAdapter.Miui
         holder.layout.setOnTouchListener(null);
         holder.xCheckBox.setOnStateChangeListener(null);
 
+        if (map == null) holder.iconView.setVisibility(GONE);
+        else {
+            holder.iconView.setImageDrawable(map.get(items[position]));
+            holder.iconView.setVisibility(VISIBLE);
+        }
         updateItemBackground(holder);
         holder.textView.setText(items[position]);
         holder.xCheckBox.setChecked(booleanArray.get(position));
@@ -158,10 +191,12 @@ public class MiuixListAdapter extends RecyclerView.Adapter<MiuixListAdapter.Miui
 
     private void updateItemBackground(MiuixListViewHolder holder) {
         if (booleanArray.get(holder.getAbsoluteAdapterPosition())) {
-            holder.layout.setBackgroundColor(context.getColor(R.color.miuix_item_choose_background));
+            if (isChooseBackgroundColorEnabled)
+                holder.layout.setBackgroundColor(itemChooseBackgroundColor);
             holder.textView.setTextColor(context.getColor(R.color.miuix_item_choose_text));
         } else {
-            holder.layout.setBackgroundColor(context.getColor(R.color.miuix_item_background));
+            if (isChooseBackgroundColorEnabled)
+                holder.layout.setBackgroundColor(itemBackgroundColor);
             holder.textView.setTextColor(context.getColor(R.color.miuix_item_text));
         }
     }

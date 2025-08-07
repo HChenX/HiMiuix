@@ -28,6 +28,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.preference.Preference;
 import androidx.preference.PreferenceGroup;
 import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceViewHolder;
@@ -100,23 +101,32 @@ public class MiuixPreferenceCategory extends PreferenceGroup {
      */
     @Override
     protected void notifyHierarchyChanged() {
-        List<MiuixPreference> preferences = InvokeUtils.getField(this, "mPreferences");
+        List<Preference> preferences = InvokeUtils.getField(this, "mPreferences");
         if (preferences.isEmpty())
             super.notifyHierarchyChanged();
-        else if (preferences.size() == 1)
-            preferences.get(0).setCardState(MiuixPreference.CARD_RADIUS);
-        else {
+        else if (preferences.size() == 1) {
+            if (preferences.get(0) instanceof MiuixPreference xPreference)
+                xPreference.setCardState(MiuixPreference.CARD_RADIUS);
+        } else {
             boolean isFirst = true;
-            for (int i = 0; i < preferences.size() - 1; i++) {
+            for (int i = 0; i < preferences.size(); i++) {
+                if (!(preferences.get(i) instanceof MiuixPreference xPreference))
+                    continue;
+
                 if (isFirst) {
-                    preferences.get(i).setCardState(MiuixPreference.CARD_TOP_RADIUS);
+                    xPreference.setCardState(MiuixPreference.CARD_TOP_RADIUS);
                     isFirst = false;
                     continue;
                 }
-                preferences.get(i).setCardState(MiuixPreference.CARD_NON_RADIUS);
+                xPreference.setCardState(MiuixPreference.CARD_NON_RADIUS);
             }
 
-            preferences.get(preferences.size() - 1).setCardState(MiuixPreference.CARD_BOTTOM_RADIUS);
+            for (int i = preferences.size() - 1; i >= 0; i--) {
+                if (preferences.get(i) instanceof MiuixPreference xPreference) {
+                    xPreference.setCardState(MiuixPreference.CARD_BOTTOM_RADIUS);
+                    break;
+                }
+            }
         }
 
         super.notifyHierarchyChanged();

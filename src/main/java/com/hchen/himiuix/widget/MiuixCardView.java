@@ -66,9 +66,9 @@ public class MiuixCardView extends CardView {
 
         setRadius(0f);
         setCardElevation(0f);
-        setCardBackgroundColor(getContext().getColor(android.R.color.transparent));
         setPreventCornerOverlap(false);
         setUseCompatPadding(false);
+        setCardBackgroundColor(getContext().getColor(android.R.color.transparent));
     }
 
     public MiuixCardView setTlRadius(float tlRadius) {

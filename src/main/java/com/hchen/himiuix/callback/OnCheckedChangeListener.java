@@ -21,6 +21,7 @@ package com.hchen.himiuix.callback;
 import androidx.annotation.IdRes;
 
 import com.hchen.himiuix.MiuixRadioGroup;
+import com.hchen.himiuix.preference.MiuixRadioButtonPreference;
 
 /**
  * Group Changed Listener
@@ -28,5 +29,9 @@ import com.hchen.himiuix.MiuixRadioGroup;
  * @author 焕晨HChen
  */
 public interface OnCheckedChangeListener {
-    void onCheckedChanged(MiuixRadioGroup group, @IdRes int checkedId);
+    default void onCheckedChanged(MiuixRadioGroup group, @IdRes int checkedId) {
+    }
+
+    default void onCheckedChanged(MiuixRadioButtonPreference preference) {
+    }
 }

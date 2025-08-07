@@ -111,6 +111,7 @@ abstract class MiuixAlertDialogBase implements MiuixDialogInterface {
     boolean isListModeEnabled = false;
     boolean isMultipleChoiceEnabled = false;
     OnChooseItemListener onChooseItemListener;
+    boolean isCardViewModeEnabled = false;
 
     /**
      * @noinspection DeconstructionCanBeUsed
@@ -187,7 +188,7 @@ abstract class MiuixAlertDialogBase implements MiuixDialogInterface {
 
         loadListViewIfNeed();
         if (customView != null) {
-            addView(customLayout, customView);
+            addView(customLayout, buildCardViewIfNeed(customView));
             if (onBindViewListener != null)
                 onBindViewListener.onBindView(customLayout, customView);
         }
@@ -223,9 +224,9 @@ abstract class MiuixAlertDialogBase implements MiuixDialogInterface {
             messageView.setLayoutParams(params);
         }
         if ((iconView.getDrawable() != null || title != null || message != null) && customView != null) {
-            params = (LinearLayout.LayoutParams) customView.getLayoutParams();
+            params = (LinearLayout.LayoutParams) customLayout.getLayoutParams();
             params.topMargin = resources.getDimensionPixelSize(R.dimen.miuix_dialog_margin);
-            customView.setLayoutParams(params);
+            customLayout.setLayoutParams(params);
         }
         if (!isHorizontalMode()) {
             if ((iconView.getDrawable() != null || title != null || message != null || customView != null) && !buttonArray.isEmpty()) {
@@ -244,12 +245,10 @@ abstract class MiuixAlertDialogBase implements MiuixDialogInterface {
         if (!isListModeEnabled) return;
         booleanArray = new SparseBooleanArray();
 
-        MiuixCardView xCardView = new MiuixCardView(context);
-        xCardView.setRadius(context.getResources().getDimensionPixelSize(R.dimen.miuix_item_radius));
-
+        isCardViewModeEnabled = true;
         xListAdapter = new MiuixListAdapter(context);
-        addView(xCardView, xListAdapter.getRecyclerView());
-        customView = xCardView;
+        xListAdapter.setItemBackgroundColor(context.getColor(android.R.color.transparent));
+        customView = xListAdapter.getRecyclerView();
 
         xListAdapter.setItems(items);
         xListAdapter.setMultipleChoiceEnabled(isMultipleChoiceEnabled);
@@ -262,6 +261,17 @@ abstract class MiuixAlertDialogBase implements MiuixDialogInterface {
             }
             xListAdapter.setBooleanArray(booleanArray);
         }
+    }
+
+    final View buildCardViewIfNeed(View view) {
+        if (!isCardViewModeEnabled) return view;
+
+        MiuixCardView xCardView = new MiuixCardView(context);
+        xCardView.setCardBackgroundColor(context.getColor(R.color.miuix_card_other));
+        xCardView.setRadius(context.getResources().getDimensionPixelSize(R.dimen.miuix_item_radius));
+        addView(xCardView, view);
+
+        return xCardView;
     }
 
     final void addView(@NonNull ViewGroup viewGroup, @NonNull View view) {

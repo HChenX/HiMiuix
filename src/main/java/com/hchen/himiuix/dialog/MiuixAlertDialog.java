@@ -142,6 +142,11 @@ public class MiuixAlertDialog {
         return this;
     }
 
+    public MiuixAlertDialog setCardViewModeEnabled(boolean enabled) {
+        base.isCardViewModeEnabled = enabled;
+        return this;
+    }
+
     /**
      * 设置启用按钮点击震动效果
      */

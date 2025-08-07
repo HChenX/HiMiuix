@@ -9,8 +9,7 @@
         android:layout_width="@dimen/miuix_item_icon"
         android:layout_height="@dimen/miuix_item_icon"
         android:layout_gravity="center"
-        android:layout_marginEnd="@dimen/miuix_item_margin"
-        android:src="@drawable/ic_default_icon" />
+        android:layout_marginEnd="@dimen/miuix_item_margin" />
 
     <com.hchen.himiuix.widget.MiuixTextView
         android:id="@id/miuix_item_text"
@@ -22,8 +21,7 @@
         android:focusable="true"
         android:gravity="left|center_vertical"
         android:maxWidth="@dimen/miuix_item_max_text"
-        android:minWidth="@dimen/miuix_item_min_text"
-        android:text="Test Item" />
+        android:minWidth="@dimen/miuix_item_min_text" />
 
     <com.hchen.himiuix.widget.MiuixCheckBox
         android:id="@id/miuix_item_check_box"

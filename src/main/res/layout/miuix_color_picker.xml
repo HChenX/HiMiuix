@@ -8,7 +8,7 @@
         style="@style/MiuixSummaryStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="色相" />
+        android:text="@string/color_hue" />
 
     <com.hchen.himiuix.color.ColorPickerHue
         android:id="@id/miuix_color_hue"
@@ -21,7 +21,7 @@
         style="@style/MiuixSummaryStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="饱和度" />
+        android:text="@string/color_saturation" />
 
     <com.hchen.himiuix.color.ColorPickerSaturation
         android:id="@id/miuix_color_saturation"
@@ -34,7 +34,7 @@
         style="@style/MiuixSummaryStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="亮度" />
+        android:text="@string/color_lightness" />
 
     <com.hchen.himiuix.color.ColorPickerLightness
         android:id="@id/miuix_color_lightness"
@@ -47,7 +47,7 @@
         style="@style/MiuixSummaryStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="不透明度" />
+        android:text="@string/color_alpha" />
 
     <com.hchen.himiuix.color.ColorPickerAlpha
         android:id="@id/miuix_color_alpha"

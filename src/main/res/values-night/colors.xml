@@ -57,4 +57,7 @@
 
     <!-- color select -->
     <color name="miuix_color_select_def">@android:color/black</color>
+
+    <!-- other -->
+    <color name="miuix_card_other">#505050</color>
 </resources>

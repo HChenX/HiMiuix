@@ -95,9 +95,11 @@ public class MiuixListView extends MiuixBasicView implements OnChooseItemListene
         if (!isDialogModeEnabled) {
             booleanArray = new SparseBooleanArray();
             xCardView = new MiuixCardView(getContext());
+            xCardView.setCardBackgroundColor(getContext().getColor(R.color.miuix_card_other));
             xCardView.setRadius(getContext().getResources().getDimensionPixelSize(R.dimen.miuix_item_radius));
 
             xListAdapter = new MiuixListAdapter(getContext());
+            xListAdapter.setItemBackgroundColor(getContext().getColor(android.R.color.transparent));
             addView(xCardView, xListAdapter.getRecyclerView());
 
             if (maxHeight != LayoutParams.WRAP_CONTENT) {

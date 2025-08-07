@@ -11,23 +11,20 @@
         style="@style/MiuixIconStyle"
         android:layout_width="@dimen/miuix_dialog_icon"
         android:layout_height="@dimen/miuix_dialog_icon"
-        android:layout_gravity="center"
-        android:src="@drawable/ic_default_icon" />
+        android:layout_gravity="center" />
 
     <TextView
         android:id="@id/miuix_dialog_title"
         style="@style/MiuixDialogTitleStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="Test Title" />
+        android:gravity="center" />
 
     <com.hchen.himiuix.widget.MiuixTextView
         android:id="@id/miuix_dialog_message"
         style="@style/MiuixDialogMessageStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Test Message"
         app:singleLineCenter="true" />
 
     <LinearLayout
