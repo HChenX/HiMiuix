@@ -39,10 +39,10 @@ import com.hchen.himiuix.callback.OnStateChangeListener;
  */
 class MiuixStatePreference extends MiuixPreference implements OnStateChangeListener {
     private MiuixStateView xStateView;
-    private String tipOn;
-    private String tipOff;
-    private String summaryOn;
-    private String summaryOff;
+    private CharSequence tipOn;
+    private CharSequence tipOff;
+    private CharSequence summaryOn;
+    private CharSequence summaryOff;
     boolean isChecked;
     private boolean isDisableDependentsState;
     OnStateChangeListener onStateChangeListener;
@@ -66,10 +66,10 @@ class MiuixStatePreference extends MiuixPreference implements OnStateChangeListe
     @Override
     void init(@Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         TypedArray array = getContext().obtainStyledAttributes(attrs, R.styleable.MiuixStatePreference, defStyleAttr, defStyleRes);
-        tipOn = array.getString(R.styleable.MiuixStatePreference_tipOn);
-        tipOff = array.getString(R.styleable.MiuixStatePreference_tipOff);
-        summaryOn = array.getString(R.styleable.MiuixStatePreference_android_summaryOn);
-        summaryOff = array.getString(R.styleable.MiuixStatePreference_android_summaryOff);
+        tipOn = array.getText(R.styleable.MiuixStatePreference_tipOn);
+        tipOff = array.getText(R.styleable.MiuixStatePreference_tipOff);
+        summaryOn = array.getText(R.styleable.MiuixStatePreference_android_summaryOn);
+        summaryOff = array.getText(R.styleable.MiuixStatePreference_android_summaryOff);
         isDisableDependentsState = array.getBoolean(R.styleable.MiuixStatePreference_disableDependentsState, false);
         array.recycle();
 
@@ -104,25 +104,25 @@ class MiuixStatePreference extends MiuixPreference implements OnStateChangeListe
             xStateView.setChecked(checked);
     }
 
-    public void setTipOn(String tipOn) {
+    public void setTipOn(CharSequence tipOn) {
         this.tipOn = tipOn;
         if (xStateView != null)
             xStateView.setTipOn(tipOn);
     }
 
-    public void setTipOff(String tipOff) {
+    public void setTipOff(CharSequence tipOff) {
         this.tipOff = tipOff;
         if (xStateView != null)
             xStateView.setTipOff(tipOff);
     }
 
-    public void setSummaryOn(String summaryOn) {
+    public void setSummaryOn(CharSequence summaryOn) {
         this.summaryOn = summaryOn;
         if (xStateView != null)
             xStateView.setSummaryOn(summaryOn);
     }
 
-    public void setSummaryOff(String summaryOff) {
+    public void setSummaryOff(CharSequence summaryOff) {
         this.summaryOff = summaryOff;
         if (xStateView != null)
             xStateView.setSummaryOff(summaryOff);
@@ -136,19 +136,19 @@ class MiuixStatePreference extends MiuixPreference implements OnStateChangeListe
         isDisableDependentsState = disableDependentsState;
     }
 
-    public String getTipOn() {
+    public CharSequence getTipOn() {
         return xStateView.getTipOn();
     }
 
-    public String getTipOff() {
+    public CharSequence getTipOff() {
         return xStateView.getTipOff();
     }
 
-    public String getSummaryOn() {
+    public CharSequence getSummaryOn() {
         return xStateView.getSummaryOn();
     }
 
-    public String getSummaryOff() {
+    public CharSequence getSummaryOff() {
         return xStateView.getSummaryOff();
     }
 
@@ -190,16 +190,10 @@ class MiuixStatePreference extends MiuixPreference implements OnStateChangeListe
     @Override
     protected Parcelable onSaveInstanceState() {
         Parcelable parcelable = super.onSaveInstanceState();
-        if (isPersistent())
-            return parcelable;
+        if (isPersistent()) return parcelable;
 
         final SavedState savedState = new SavedState(parcelable);
         savedState.isChecked = isChecked();
-        savedState.tipOn = getTipOn();
-        savedState.tipOff = getTipOff();
-        savedState.summaryOn = getSummaryOn();
-        savedState.summaryOff = getSummaryOff();
-        savedState.isDisableDependentsState = isDisableDependentsState();
         return savedState;
     }
 
@@ -213,11 +207,6 @@ class MiuixStatePreference extends MiuixPreference implements OnStateChangeListe
         SavedState savedState = (SavedState) state;
         super.onRestoreInstanceState(savedState.getSuperState());
         setChecked(savedState.isChecked);
-        setTipOn(savedState.tipOn);
-        setTipOff(savedState.tipOff);
-        setSummaryOn(savedState.summaryOn);
-        setSummaryOff(savedState.summaryOff);
-        setDisableDependentsState(savedState.isDisableDependentsState);
     }
 
     private static class SavedState extends BaseSavedState {
@@ -234,20 +223,10 @@ class MiuixStatePreference extends MiuixPreference implements OnStateChangeListe
         };
 
         boolean isChecked;
-        String tipOn;
-        String tipOff;
-        String summaryOn;
-        String summaryOff;
-        boolean isDisableDependentsState;
 
         public SavedState(Parcel source) {
             super(source);
             isChecked = source.readBoolean();
-            tipOn = source.readString();
-            tipOff = source.readString();
-            summaryOn = source.readString();
-            summaryOff = source.readString();
-            isDisableDependentsState = source.readBoolean();
         }
 
         public SavedState(Parcelable superState) {
@@ -258,11 +237,6 @@ class MiuixStatePreference extends MiuixPreference implements OnStateChangeListe
         public void writeToParcel(Parcel dest, int flags) {
             super.writeToParcel(dest, flags);
             dest.writeBoolean(isChecked);
-            dest.writeString(tipOn);
-            dest.writeString(tipOff);
-            dest.writeString(summaryOn);
-            dest.writeString(summaryOff);
-            dest.writeBoolean(isDisableDependentsState);
         }
     }
 }

@@ -33,8 +33,6 @@ import com.hchen.himiuix.MiuixDropDownView;
 import com.hchen.himiuix.R;
 import com.hchen.himiuix.callback.OnChooseItemListener;
 
-import java.util.Arrays;
-
 /**
  * DropDown Preference
  *
@@ -68,7 +66,7 @@ public class MiuixDropDownPreference extends MiuixPreference implements OnChoose
     void init(@Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         final TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.MiuixDropDownPreference, defStyleAttr, defStyleRes);
         entries = typedArray.getTextArray(R.styleable.MiuixDropDownPreference_android_entries);
-        entry = typedArray.getString(R.styleable.MiuixDropDownPreference_entry);
+        entry = typedArray.getText(R.styleable.MiuixDropDownPreference_entry);
         value = typedArray.getString(R.styleable.MiuixDropDownPreference_android_value);
         isShowOnTip = typedArray.getBoolean(R.styleable.MiuixDropDownPreference_showOnTip, true);
         typedArray.recycle();
@@ -177,13 +175,10 @@ public class MiuixDropDownPreference extends MiuixPreference implements OnChoose
     @Override
     protected Parcelable onSaveInstanceState() {
         Parcelable parcelable = super.onSaveInstanceState();
-        if (isPersistent())
-            return parcelable;
+        if (isPersistent()) return parcelable;
 
         final SavedState savedState = new SavedState(parcelable);
         savedState.value = getValue();
-        savedState.isShowOnTip = isShowOnTip();
-        savedState.entries = getEntries();
         return savedState;
     }
 
@@ -197,8 +192,6 @@ public class MiuixDropDownPreference extends MiuixPreference implements OnChoose
         SavedState savedState = (SavedState) state;
         super.onRestoreInstanceState(savedState.getSuperState());
         setValue(savedState.value);
-        setShowOnTip(savedState.isShowOnTip);
-        setEntries(savedState.entries);
     }
 
     private static class SavedState extends BaseSavedState {
@@ -215,19 +208,10 @@ public class MiuixDropDownPreference extends MiuixPreference implements OnChoose
         };
 
         String value;
-        boolean isShowOnTip;
-        CharSequence[] entries;
 
         public SavedState(Parcel source) {
             super(source);
             value = source.readString();
-            isShowOnTip = source.readBoolean();
-            int length = source.readInt();
-            if (length != -1) {
-                String[] strings = new String[length];
-                source.readStringArray(strings);
-                entries = strings;
-            }
         }
 
         public SavedState(Parcelable superState) {
@@ -238,10 +222,6 @@ public class MiuixDropDownPreference extends MiuixPreference implements OnChoose
         public void writeToParcel(Parcel dest, int flags) {
             super.writeToParcel(dest, flags);
             dest.writeString(value);
-            dest.writeBoolean(isShowOnTip);
-            dest.writeStringArray(Arrays.stream(entries)
-                .map(charSequence -> (String) charSequence)
-                .toArray(String[]::new));
         }
     }
 }

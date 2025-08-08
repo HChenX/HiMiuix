@@ -34,7 +34,7 @@ import com.hchen.himiuix.widget.MiuixCheckBox;
  */
 public class MiuixCheckBoxView extends MiuixStateView implements OnStateChangeListener {
     private MiuixCheckBox xCheckBox;
-    private boolean pass = false;
+    private boolean pass;
 
     public MiuixCheckBoxView(@NonNull Context context) {
         super(context);

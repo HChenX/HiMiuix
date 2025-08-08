@@ -153,13 +153,10 @@ public class MiuixColorPickerPreference extends MiuixPreference implements OnCol
     @Override
     protected Parcelable onSaveInstanceState() {
         Parcelable parcelable = super.onSaveInstanceState();
-        if (isPersistent())
-            return parcelable;
+        if (isPersistent()) return parcelable;
 
         final SavedState savedState = new SavedState(parcelable);
         savedState.color = getColor();
-        savedState.isAlwaysHapticFeedback = isAlwaysHapticFeedback();
-        savedState.isShowValueOnTip = isShowValueOnTip();
         return savedState;
     }
 
@@ -173,8 +170,6 @@ public class MiuixColorPickerPreference extends MiuixPreference implements OnCol
         SavedState savedState = (SavedState) state;
         super.onRestoreInstanceState(savedState.getSuperState());
         setColor(savedState.color);
-        setAlwaysHapticFeedback(savedState.isAlwaysHapticFeedback);
-        setShowValueOnTip(savedState.isShowValueOnTip);
     }
 
     private static class SavedState extends BaseSavedState {
@@ -191,14 +186,10 @@ public class MiuixColorPickerPreference extends MiuixPreference implements OnCol
         };
 
         int color;
-        boolean isAlwaysHapticFeedback;
-        boolean isShowValueOnTip;
 
         public SavedState(Parcel source) {
             super(source);
             color = source.readInt();
-            isAlwaysHapticFeedback = source.readBoolean();
-            isShowValueOnTip = source.readBoolean();
         }
 
         public SavedState(Parcelable superState) {
@@ -209,8 +200,6 @@ public class MiuixColorPickerPreference extends MiuixPreference implements OnCol
         public void writeToParcel(Parcel dest, int flags) {
             super.writeToParcel(dest, flags);
             dest.writeInt(color);
-            dest.writeBoolean(isAlwaysHapticFeedback);
-            dest.writeBoolean(isShowValueOnTip);
         }
     }
 }

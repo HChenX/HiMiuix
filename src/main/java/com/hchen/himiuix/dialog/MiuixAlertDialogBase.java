@@ -92,8 +92,8 @@ abstract class MiuixAlertDialogBase implements MiuixDialogInterface {
     ButtonInfo button3;
     MiuixListAdapter xListAdapter;
 
-    String title;
-    String message;
+    CharSequence title;
+    CharSequence message;
     Drawable icon;
     View customView;
     int customViewId = -1;
@@ -116,7 +116,7 @@ abstract class MiuixAlertDialogBase implements MiuixDialogInterface {
     /**
      * @noinspection DeconstructionCanBeUsed
      */
-    public record ButtonInfo(Button button, int key, String text, OnClickListener listener) {
+    public record ButtonInfo(Button button, int key, CharSequence text, OnClickListener listener) {
         @Override
         @NonNull
         public String toString() {

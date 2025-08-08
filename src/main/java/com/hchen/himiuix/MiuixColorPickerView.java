@@ -18,7 +18,6 @@
  */
 package com.hchen.himiuix;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
@@ -84,24 +83,26 @@ public class MiuixColorPickerView extends MiuixBasicView implements OnColorChang
         colorPickerView = new ColorPickerView(getContext());
         colorPickerView.setColorValue(color);
         colorPickerView.setOnColorChangedListener(this);
-        if (isDialogModeEnabled) colorPickerView.setDialogMode(true);
+        if (isDialogModeEnabled) colorPickerView.setDialogModeEnabled(true);
         else setCustomView(colorPickerView);
     }
 
     @Override
     void updateVisibility() {
         super.updateVisibility();
-        colorSelectView.setVisibility(VISIBLE);
+        // 视觉平衡
+        if (getTitle() != null || getSummary() != null) colorSelectView.setVisibility(VISIBLE);
+        else colorSelectView.setVisibility(GONE);
         if (isShowValueOnTip) getTipView().setVisibility(VISIBLE);
     }
 
-    @SuppressLint("SetTextI18n")
     @Override
     void updateViewContent() {
         super.updateViewContent();
         colorSelectView.setColor(color);
-        if (isShowValueOnTip) getTipView().setText("#" + colorPickerView.formatColor(color));
         colorPickerView.setAlwaysHapticFeedback(isAlwaysHapticFeedback);
+        if (isShowValueOnTip)
+            getTipView().setText(getContext().getString(R.string.color_display, colorPickerView.formatColor(color)));
     }
 
     @Override
@@ -120,8 +121,8 @@ public class MiuixColorPickerView extends MiuixBasicView implements OnColorChang
                     .setCanceledOnTouchOutside(false)
                     .setHapticFeedbackEnabled(true)
                     .setCustomView(colorPickerView)
-                    .setNegativeButton(getContext().getString(R.string.dialog_negative), null)
-                    .setPositiveButton(getContext().getString(R.string.dialog_positive),
+                    .setNegativeButton(getContext().getText(R.string.dialog_negative), null)
+                    .setPositiveButton(getContext().getText(R.string.dialog_positive),
                         (dialog, which) -> {
                             setColor(colorPickerView.getColorValue());
                             if (listener != null)
@@ -147,9 +148,6 @@ public class MiuixColorPickerView extends MiuixBasicView implements OnColorChang
         return super.dispatchTouchEvent(ev);
     }
 
-    /**
-     * 设置颜色值
-     */
     public void setColor(@ColorInt int color) {
         this.color = color;
         refreshView();

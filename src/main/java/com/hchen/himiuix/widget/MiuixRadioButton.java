@@ -56,6 +56,7 @@ public class MiuixRadioButton extends AppCompatRadioButton {
 
         setClickable(true);
         setBackground(null);
+        setSaveEnabled(false);
         if (buttonId == 0) setButtonDrawable(R.drawable.miuix_radio_button);
         else setButtonDrawable(buttonId);
     }

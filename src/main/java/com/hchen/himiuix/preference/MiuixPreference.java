@@ -67,7 +67,7 @@ public class MiuixPreference extends Preference implements OnRefreshViewListener
     MiuixBasicView xBasicView;
     private int cardState = CARD_RADIUS;
     private int radius;
-    private String tip;
+    private CharSequence tip;
     private Drawable indicator;
     private boolean isShadowEnabled;
     private boolean isHapticFeedbackEnabled;
@@ -99,7 +99,7 @@ public class MiuixPreference extends Preference implements OnRefreshViewListener
     @CallSuper
     void init(@Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         final TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.MiuixPreference, defStyleAttr, defStyleRes);
-        tip = typedArray.getString(R.styleable.MiuixPreference_tip);
+        tip = typedArray.getText(R.styleable.MiuixPreference_tip);
         indicator = typedArray.getDrawable(R.styleable.MiuixPreference_indicator);
         isShadowEnabled = typedArray.getBoolean(R.styleable.MiuixPreference_shadowEnabled, true);
         isHapticFeedbackEnabled = typedArray.getBoolean(R.styleable.MiuixPreference_android_hapticFeedbackEnabled, true);
@@ -121,8 +121,8 @@ public class MiuixPreference extends Preference implements OnRefreshViewListener
 
         updateCardView(cardState);
         xBasicView.setTip(tip);
-        xBasicView.setTitle((String) getTitle());
-        xBasicView.setSummary((String) getSummary());
+        xBasicView.setTitle(getTitle());
+        xBasicView.setSummary(getSummary());
         xBasicView.setIcon(getIcon());
         xBasicView.setIndicator(indicator);
         // 不要设置 BasicView 的 Intent，可能会执行两次
@@ -152,11 +152,15 @@ public class MiuixPreference extends Preference implements OnRefreshViewListener
         } else xBasicView.getIndicatorView().setVisibility(GONE);
     }
 
-    public void setTip(@StringRes int tip) {
-        setTip(getContext().getString(tip));
+    @Override
+    public void setViewId(int viewId) {
     }
 
-    public void setTip(@Nullable String tip) {
+    public void setTip(@StringRes int tip) {
+        setTip(getContext().getText(tip));
+    }
+
+    public void setTip(@Nullable CharSequence tip) {
         this.tip = tip;
         if (xBasicView != null)
             xBasicView.setTip(tip);
@@ -198,7 +202,7 @@ public class MiuixPreference extends Preference implements OnRefreshViewListener
     }
 
     @Nullable
-    public String getTip() {
+    public CharSequence getTip() {
         return xBasicView.getTip();
     }
 

@@ -191,14 +191,10 @@ public class MiuixListPreference extends MiuixPreference implements OnChooseItem
     @Override
     protected Parcelable onSaveInstanceState() {
         Parcelable parcelable = super.onSaveInstanceState();
-        if (isPersistent())
-            return parcelable;
+        if (isPersistent()) return parcelable;
 
         final SavedState savedState = new SavedState(parcelable);
-        savedState.items = getItems();
         savedState.selectedValues = getSelectedValues();
-        savedState.maxHeight = getMaxHeight();
-        savedState.isMultipleChoiceEnabled = isMultipleChoiceEnabled();
         return savedState;
     }
 
@@ -211,10 +207,7 @@ public class MiuixListPreference extends MiuixPreference implements OnChooseItem
 
         SavedState savedState = (SavedState) state;
         super.onRestoreInstanceState(savedState.getSuperState());
-        setItems(savedState.items);
         setSelectedValues(savedState.selectedValues);
-        setMaxHeight(savedState.maxHeight);
-        setMultipleChoiceEnabled(savedState.isMultipleChoiceEnabled);
     }
 
     private static class SavedState extends BaseSavedState {
@@ -230,27 +223,16 @@ public class MiuixListPreference extends MiuixPreference implements OnChooseItem
             }
         };
 
-        private CharSequence[] items;
         private Integer[] selectedValues;
-        private int maxHeight;
-        private boolean isMultipleChoiceEnabled;
 
         public SavedState(Parcel source) {
             super(source);
             int length = source.readInt();
             if (length != -1) {
-                String[] strings = new String[length];
-                source.readStringArray(strings);
-                items = strings;
-            }
-            length = source.readInt();
-            if (length != -1) {
                 int[] ints = new int[length];
                 source.readIntArray(ints);
                 selectedValues = Arrays.stream(ints).boxed().toArray(Integer[]::new);
             }
-            maxHeight = source.readInt();
-            isMultipleChoiceEnabled = source.readBoolean();
         }
 
         public SavedState(Parcelable superState) {
@@ -260,12 +242,7 @@ public class MiuixListPreference extends MiuixPreference implements OnChooseItem
         @Override
         public void writeToParcel(Parcel dest, int flags) {
             super.writeToParcel(dest, flags);
-            dest.writeStringArray(Arrays.stream(items)
-                .map(charSequence -> (String) charSequence)
-                .toArray(String[]::new));
             dest.writeIntArray(Arrays.stream(selectedValues).mapToInt(value -> value).toArray());
-            dest.writeInt(maxHeight);
-            dest.writeBoolean(isMultipleChoiceEnabled);
         }
     }
 }

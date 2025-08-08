@@ -36,7 +36,7 @@ import androidx.cardview.widget.CardView;
  * @author 焕晨HChen
  */
 public class MiuixViewGroup extends LinearLayout {
-    private String dividerTitle;
+    private CharSequence dividerTitle;
     private boolean isMarginBottomEnabled;
     private LinearLayout innerLayout;
 
@@ -59,7 +59,7 @@ public class MiuixViewGroup extends LinearLayout {
 
     private void init(@Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         final TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.MiuixViewGroup, defStyleAttr, defStyleRes);
-        dividerTitle = typedArray.getString(R.styleable.MiuixViewGroup_dividerTitle);
+        dividerTitle = typedArray.getText(R.styleable.MiuixViewGroup_dividerTitle);
         isMarginBottomEnabled = typedArray.getBoolean(R.styleable.MiuixViewGroup_marginBottomEnabled, false);
         typedArray.recycle();
 
@@ -77,11 +77,11 @@ public class MiuixViewGroup extends LinearLayout {
     }
 
     @Nullable
-    public String getDividerTitle() {
+    public CharSequence getDividerTitle() {
         return dividerTitle;
     }
 
-    public MiuixViewGroup setDividerTitle(@Nullable String dividerTitle) {
+    public MiuixViewGroup setDividerTitle(@Nullable CharSequence dividerTitle) {
         this.dividerTitle = dividerTitle;
         updateDivider();
         return this;

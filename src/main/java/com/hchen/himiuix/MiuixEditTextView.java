@@ -42,9 +42,9 @@ import com.hchen.himiuix.widget.MiuixEditText;
  * @author 焕晨HChen
  */
 public class MiuixEditTextView extends MiuixBasicView {
-    private String tip;
+    private CharSequence tip;
+    private CharSequence hint;
     private Drawable icon;
-    private String hint;
     private boolean isAutoRequestFocus;
     private boolean isFirstLoad;
     private MiuixEditText xEditText;
@@ -68,8 +68,8 @@ public class MiuixEditTextView extends MiuixBasicView {
     @Override
     void init(@Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         final TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.MiuixEditTextView, defStyleAttr, defStyleRes);
-        tip = typedArray.getString(R.styleable.MiuixEditTextView_editTip);
-        hint = typedArray.getString(R.styleable.MiuixEditTextView_android_hint);
+        tip = typedArray.getText(R.styleable.MiuixEditTextView_editTip);
+        hint = typedArray.getText(R.styleable.MiuixEditTextView_android_hint);
         icon = typedArray.getDrawable(R.styleable.MiuixEditTextView_editIcon);
         isAutoRequestFocus = typedArray.getBoolean(R.styleable.MiuixEditTextView_autoRequestFocus, false);
         typedArray.recycle();

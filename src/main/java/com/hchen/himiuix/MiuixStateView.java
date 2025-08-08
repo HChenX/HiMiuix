@@ -34,10 +34,10 @@ import com.hchen.himiuix.callback.OnStateChangeListener;
  */
 public class MiuixStateView extends MiuixBasicView {
     boolean isChecked;
-    private String tipOn;
-    private String tipOff;
-    private String summaryOn;
-    private String summaryOff;
+    private CharSequence tipOn;
+    private CharSequence tipOff;
+    private CharSequence summaryOn;
+    private CharSequence summaryOff;
     OnStateChangeListener listener;
 
     public MiuixStateView(@NonNull Context context) {
@@ -59,10 +59,10 @@ public class MiuixStateView extends MiuixBasicView {
     @Override
     void init(@Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         TypedArray array = getContext().obtainStyledAttributes(attrs, R.styleable.MiuixStateView, defStyleAttr, defStyleRes);
-        tipOn = array.getString(R.styleable.MiuixStateView_tipOn);
-        tipOff = array.getString(R.styleable.MiuixStateView_tipOff);
-        summaryOn = array.getString(R.styleable.MiuixStateView_android_summaryOn);
-        summaryOff = array.getString(R.styleable.MiuixStateView_android_summaryOff);
+        tipOn = array.getText(R.styleable.MiuixStateView_tipOn);
+        tipOff = array.getText(R.styleable.MiuixStateView_tipOff);
+        summaryOn = array.getText(R.styleable.MiuixStateView_android_summaryOn);
+        summaryOff = array.getText(R.styleable.MiuixStateView_android_summaryOff);
         isChecked = array.getBoolean(R.styleable.MiuixStateView_android_checked, false);
         array.recycle();
 
@@ -111,22 +111,22 @@ public class MiuixStateView extends MiuixBasicView {
     public void setChecked(boolean checked) {
     }
 
-    public void setTipOn(String tipOn) {
+    public void setTipOn(CharSequence tipOn) {
         this.tipOn = tipOn;
         refreshView();
     }
 
-    public void setTipOff(String tipOff) {
+    public void setTipOff(CharSequence tipOff) {
         this.tipOff = tipOff;
         refreshView();
     }
 
-    public void setSummaryOn(String summaryOn) {
+    public void setSummaryOn(CharSequence summaryOn) {
         this.summaryOn = summaryOn;
         refreshView();
     }
 
-    public void setSummaryOff(String summaryOff) {
+    public void setSummaryOff(CharSequence summaryOff) {
         this.summaryOff = summaryOff;
         refreshView();
     }
@@ -135,19 +135,19 @@ public class MiuixStateView extends MiuixBasicView {
         this.listener = listener;
     }
 
-    public String getTipOn() {
+    public CharSequence getTipOn() {
         return tipOn;
     }
 
-    public String getTipOff() {
+    public CharSequence getTipOff() {
         return tipOff;
     }
 
-    public String getSummaryOn() {
+    public CharSequence getSummaryOn() {
         return summaryOn;
     }
 
-    public String getSummaryOff() {
+    public CharSequence getSummaryOff() {
         return summaryOff;
     }
 }

@@ -8,6 +8,7 @@
     <string name="color_saturation">饱和度</string>
     <string name="color_lightness">亮度</string>
     <string name="color_alpha">不透明度</string>
+    <string name="color_display">#%1$s</string>
 
     <!-- dialog -->
     <string name="dialog_negative">取消</string>

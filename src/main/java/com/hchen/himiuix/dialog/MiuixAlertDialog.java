@@ -55,7 +55,7 @@ public class MiuixAlertDialog {
     /**
      * 设置标题
      */
-    public MiuixAlertDialog setTitle(String title) {
+    public MiuixAlertDialog setTitle(CharSequence title) {
         base.title = title;
         return this;
     }
@@ -63,7 +63,7 @@ public class MiuixAlertDialog {
     /**
      * 设置消息内容
      */
-    public MiuixAlertDialog setMessage(String message) {
+    public MiuixAlertDialog setMessage(CharSequence message) {
         base.message = message;
         return this;
     }
@@ -83,7 +83,7 @@ public class MiuixAlertDialog {
     /**
      * 设置确认类型按钮
      */
-    public MiuixAlertDialog setPositiveButton(String text, @Nullable MiuixDialogInterface.OnClickListener listener) {
+    public MiuixAlertDialog setPositiveButton(CharSequence text, @Nullable MiuixDialogInterface.OnClickListener listener) {
         base.buttonArray.add(new MiuixAlertDialogBase.ButtonInfo(null, MiuixDialogInterface.BUTTON_POSITIVE, text, listener));
         return this;
     }
@@ -91,7 +91,7 @@ public class MiuixAlertDialog {
     /**
      * 设置拒绝类型按钮
      */
-    public MiuixAlertDialog setNegativeButton(String text, @Nullable MiuixDialogInterface.OnClickListener listener) {
+    public MiuixAlertDialog setNegativeButton(CharSequence text, @Nullable MiuixDialogInterface.OnClickListener listener) {
         base.buttonArray.add(new MiuixAlertDialogBase.ButtonInfo(null, MiuixDialogInterface.BUTTON_NEGATIVE, text, listener));
         return this;
     }
@@ -99,7 +99,7 @@ public class MiuixAlertDialog {
     /**
      * 设置自定义类型按钮
      */
-    public MiuixAlertDialog setNeutralButton(String text, @Nullable MiuixDialogInterface.OnClickListener listener) {
+    public MiuixAlertDialog setNeutralButton(CharSequence text, @Nullable MiuixDialogInterface.OnClickListener listener) {
         base.buttonArray.add(new MiuixAlertDialogBase.ButtonInfo(null, MiuixDialogInterface.BUTTON_NEUTRAL, text, listener));
         return this;
     }
@@ -112,36 +112,57 @@ public class MiuixAlertDialog {
         return this;
     }
 
+    /**
+     * 自定义布局被加载
+     */
     public MiuixAlertDialog setOnBindViewListener(@Nullable MiuixDialogInterface.OnBindViewListener listener) {
         base.onBindViewListener = listener;
         return this;
     }
 
+    /**
+     * 启用 List 模式
+     */
     public MiuixAlertDialog setListModeEnabled(boolean enabled) {
         base.isListModeEnabled = enabled;
         return this;
     }
 
+    /**
+     * 启用 List 多选模式
+     */
     public MiuixAlertDialog setMultipleChoiceEnabled(boolean enabled) {
         base.isMultipleChoiceEnabled = enabled;
         return this;
     }
 
+    /**
+     * 设置 List 可选条目
+     */
     public MiuixAlertDialog setItems(CharSequence[] items) {
         base.items = items;
         return this;
     }
 
+    /**
+     * 设置已选中条目索引值
+     */
     public MiuixAlertDialog setSelectedValues(Integer[] selectedValues) {
         base.selectedValues = selectedValues;
         return this;
     }
 
+    /**
+     * 设置 List 选中监听
+     */
     public MiuixAlertDialog setOnChooseItemListener(OnChooseItemListener listener) {
         base.onChooseItemListener = listener;
         return this;
     }
 
+    /**
+     * 启用 Card 模式
+     */
     public MiuixAlertDialog setCardViewModeEnabled(boolean enabled) {
         base.isCardViewModeEnabled = enabled;
         return this;

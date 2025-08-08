@@ -60,6 +60,7 @@ public class MiuixCheckBox extends AppCompatCheckBox {
 
         setClickable(true);
         setBackground(null);
+        setSaveEnabled(false);
         if (buttonId == 0) setButtonDrawable(R.drawable.miuix_checkbox);
         else setButtonDrawable(buttonId);
     }

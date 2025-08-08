@@ -118,7 +118,8 @@ public class MiuixListView extends MiuixBasicView implements OnChooseItemListene
             booleanArray.clear();
             if (!Arrays.equals(lastItems, items)) {
                 xListAdapter.setItems(items);
-                xListAdapter.notifyDataSetChanged();
+                if (lastItems != null)
+                    xListAdapter.notifyDataSetChanged();
                 lastItems = items;
             }
             xListAdapter.setOnChooseItemListener(this);
@@ -151,7 +152,7 @@ public class MiuixListView extends MiuixBasicView implements OnChooseItemListene
 
     @Override
     boolean forceShowCustomIndicatorView() {
-        return true;
+        return isDialogModeEnabled;
     }
 
     @Override
@@ -176,8 +177,8 @@ public class MiuixListView extends MiuixBasicView implements OnChooseItemListene
                         }
                     })
                     .setOnChooseItemListener(this)
-                    .setNegativeButton(getContext().getString(R.string.dialog_negative), null)
-                    .setPositiveButton(getContext().getString(R.string.dialog_positive),
+                    .setNegativeButton(getContext().getText(R.string.dialog_negative), null)
+                    .setPositiveButton(getContext().getText(R.string.dialog_positive),
                         (dialog, which) -> {
                             selectedItems = cacheSelectedItems;
                             selectedValues = cacheSelectedValues;

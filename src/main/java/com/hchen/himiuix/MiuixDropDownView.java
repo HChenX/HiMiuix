@@ -64,7 +64,7 @@ public class MiuixDropDownView extends MiuixBasicView {
     void init(@Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         final TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.MiuixDropDownView, defStyleAttr, defStyleRes);
         entries = typedArray.getTextArray(R.styleable.MiuixDropDownView_android_entries);
-        entry = typedArray.getString(R.styleable.MiuixDropDownView_entry);
+        entry = typedArray.getText(R.styleable.MiuixDropDownView_entry);
         value = typedArray.getString(R.styleable.MiuixDropDownView_android_value);
         isShowOnTip = typedArray.getBoolean(R.styleable.MiuixDropDownView_showOnTip, true);
         typedArray.recycle();
@@ -149,12 +149,12 @@ public class MiuixDropDownView extends MiuixBasicView {
         return entries;
     }
 
-    public String getValue() {
-        return value;
-    }
-
     public CharSequence getEntry() {
         return entry;
+    }
+
+    public String getValue() {
+        return value;
     }
 
     public boolean isShowOnTip() {
@@ -181,7 +181,7 @@ public class MiuixDropDownView extends MiuixBasicView {
                         if (listener == null || listener.onChooseBefore(item, which)) {
                             entry = item;
                             value = String.valueOf(which);
-                            if (isShowOnTip) setTip((String) entry);
+                            if (isShowOnTip) setTip(entry);
                             HapticFeedbackHelper.performHapticFeedback(
                                 MiuixDropDownView.this,
                                 HapticFeedbackHelper.MIUI_POPUP_NORMAL

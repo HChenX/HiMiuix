@@ -37,8 +37,8 @@ import com.hchen.himiuix.R;
  */
 public class MiuixSeekBar extends AppCompatSeekBar {
     private Paint paint;
-    private int defValue = -1;
-    private int stepCount = -1;
+    private int defValue;
+    private int stepCount;
     private boolean isStep;
     private boolean isShowDefaultPoint;
     private boolean isAlwaysHapticFeedback;

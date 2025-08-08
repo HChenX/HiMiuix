@@ -59,9 +59,9 @@ public class MiuixBasicView extends LinearLayout {
     private TextView tipView;
     private ImageView indicatorView;
     private LinearLayout customLayout;
-    private String title;
-    private String summary;
-    private String tip;
+    private CharSequence title;
+    private CharSequence summary;
+    private CharSequence tip;
     private Intent intent;
     private Drawable icon;
     private Drawable indicator;
@@ -93,9 +93,9 @@ public class MiuixBasicView extends LinearLayout {
     @CallSuper
     void init(@Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         final TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.MiuixBasicView, defStyleAttr, defStyleRes);
-        tip = typedArray.getString(R.styleable.MiuixBasicView_tip);
-        title = typedArray.getString(R.styleable.MiuixBasicView_android_title);
-        summary = typedArray.getString(R.styleable.MiuixBasicView_android_summary);
+        tip = typedArray.getText(R.styleable.MiuixBasicView_tip);
+        title = typedArray.getText(R.styleable.MiuixBasicView_android_title);
+        summary = typedArray.getText(R.styleable.MiuixBasicView_android_summary);
         icon = typedArray.getDrawable(R.styleable.MiuixBasicView_android_icon);
         indicator = typedArray.getDrawable(R.styleable.MiuixBasicView_indicator);
         enabled = typedArray.getBoolean(R.styleable.MiuixBasicView_android_enabled, true);
@@ -125,6 +125,7 @@ public class MiuixBasicView extends LinearLayout {
     @Override
     @CallSuper
     public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
         setEnabledInner(this, enabled);
         super.setEnabled(enabled);
     }
@@ -250,37 +251,28 @@ public class MiuixBasicView extends LinearLayout {
     }
 
     public void setTitle(@StringRes int title) {
-        setTitle(getContext().getString(title));
+        setTitle(getContext().getText(title));
     }
 
-    /**
-     * 设置标题
-     */
-    public void setTitle(String title) {
+    public void setTitle(CharSequence title) {
         this.title = title;
         refreshView();
     }
 
     public void setSummary(@StringRes int summary) {
-        setSummary(getContext().getString(summary));
+        setSummary(getContext().getText(summary));
     }
 
-    /**
-     * 设置摘要
-     */
-    public void setSummary(String summary) {
+    public void setSummary(CharSequence summary) {
         this.summary = summary;
         refreshView();
     }
 
     public void setTip(@StringRes int tip) {
-        setTip(getContext().getString(tip));
+        setTip(getContext().getText(tip));
     }
 
-    /**
-     * 设置 Tip
-     */
-    public void setTip(String tip) {
+    public void setTip(CharSequence tip) {
         this.tip = tip;
         refreshView();
     }
@@ -289,9 +281,6 @@ public class MiuixBasicView extends LinearLayout {
         setIcon(ContextCompat.getDrawable(getContext(), icon));
     }
 
-    /**
-     * 设置图标
-     */
     public void setIcon(Drawable icon) {
         this.icon = icon;
         refreshView();
@@ -301,9 +290,6 @@ public class MiuixBasicView extends LinearLayout {
         setIndicator(ContextCompat.getDrawable(getContext(), indicator));
     }
 
-    /**
-     * 设置指示器
-     */
     public void setIndicator(Drawable indicator) {
         this.indicator = indicator;
         refreshView();
@@ -313,9 +299,6 @@ public class MiuixBasicView extends LinearLayout {
         setCustomView(LayoutInflater.from(getContext()).inflate(customView, null));
     }
 
-    /**
-     * 设置自定义视图
-     */
     public void setCustomView(View customView) {
         if (this.customView != null &&
             (customView == null || !Objects.equals(this.customView, customView))) {
@@ -326,19 +309,12 @@ public class MiuixBasicView extends LinearLayout {
         refreshView();
     }
 
-    /**
-     * 设置意图
-     */
     public void setIntent(@Nullable Intent intent) {
         this.intent = intent;
         refreshView();
     }
 
-    /**
-     * 是否启用震动反馈
-     *
-     * @param enabled whether haptic feedback enabled for this view.
-     */
+    @Override
     public void setHapticFeedbackEnabled(boolean enabled) {
         this.isHapticFeedbackEnabled = enabled;
         setHapticFeedbackEnabledInner(this, enabled);
@@ -376,38 +352,31 @@ public class MiuixBasicView extends LinearLayout {
         return isHapticFeedbackEnabled;
     }
 
-    @Nullable
-    public String getTitle() {
+    public CharSequence getTitle() {
         return title;
     }
 
-    @Nullable
-    public String getSummary() {
+    public CharSequence getSummary() {
         return summary;
     }
 
-    @Nullable
-    public String getTip() {
+    public CharSequence getTip() {
         return tip;
     }
 
-    @Nullable
     public Intent getIntent() {
         return intent;
     }
 
-    @Nullable
     public Drawable getIcon() {
         return icon;
     }
 
-    @Nullable
     public Drawable getIndicator() {
         return indicator;
     }
 
     // ------------------ View ---------------------
-
     @NonNull
     public ImageView getIconView() {
         return iconView;
@@ -434,9 +403,8 @@ public class MiuixBasicView extends LinearLayout {
     }
 
     // ----------------------------------------------
-
     @NonNull
-    public ShadowHelper getShadowHelper() {
+    ShadowHelper getShadowHelper() {
         return shadowHelper;
     }
 

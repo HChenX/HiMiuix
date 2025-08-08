@@ -85,9 +85,6 @@ public class MiuixEditText extends LinearLayout implements OnImeVisibilityChange
     @SuppressLint("AppCompatCustomView")
     private void init() {
         ImeHelper.init((Activity) getContext());
-
-        setVerticalScrollBarEnabled(false);
-        setHorizontalScrollBarEnabled(false);
         setOrientation(LinearLayout.HORIZONTAL);
         setPadding(getResources().getDimensionPixelSize(R.dimen.miuix_edit_margin), 0, 0, 0);
         setBackgroundResource(R.drawable.miuix_edit_non_focused_border);

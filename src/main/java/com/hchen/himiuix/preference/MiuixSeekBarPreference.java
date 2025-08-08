@@ -264,22 +264,10 @@ public class MiuixSeekBarPreference extends MiuixPreference implements SeekBar.O
     @Override
     protected Parcelable onSaveInstanceState() {
         Parcelable parcelable = super.onSaveInstanceState();
-        if (isPersistent())
-            return parcelable;
+        if (isPersistent()) return parcelable;
 
         final SavedState savedState = new SavedState(parcelable);
         savedState.value = value;
-        savedState.defValue = getDefValue();
-        savedState.maxValue = getMaxValue();
-        savedState.minValue = getMinValue();
-        savedState.stepValue = getStepValue();
-        savedState.dividerValue = getDividerValue();
-        savedState.format = getFormat();
-        savedState.isShowValueOnTip = isShowValueOnTip();
-        savedState.isShowDefaultPoint = isShowDefaultPoint();
-        savedState.isDialogModeEnabled = isDialogModeEnabled();
-        savedState.isAlwaysHapticFeedback = isAlwaysHapticFeedback();
-
         return savedState;
     }
 
@@ -293,16 +281,6 @@ public class MiuixSeekBarPreference extends MiuixPreference implements SeekBar.O
         SavedState savedState = (SavedState) state;
         super.onRestoreInstanceState(savedState.getSuperState());
         setValue(savedState.value);
-        setDefValue(savedState.defValue);
-        setMaxValue(savedState.maxValue);
-        setMinValue(savedState.minValue);
-        setStepValue(savedState.stepValue);
-        setDividerValue(savedState.dividerValue);
-        setFormat(savedState.format);
-        setShowValueOnTip(savedState.isShowValueOnTip);
-        setShowDefaultPoint(savedState.isShowDefaultPoint);
-        setDialogModeEnabled(savedState.isDialogModeEnabled);
-        setAlwaysHapticFeedback(savedState.isAlwaysHapticFeedback);
     }
 
     private static class SavedState extends BaseSavedState {
@@ -319,30 +297,10 @@ public class MiuixSeekBarPreference extends MiuixPreference implements SeekBar.O
         };
 
         int value;
-        int defValue;
-        int maxValue;
-        int minValue;
-        int stepValue;
-        int dividerValue;
-        String format;
-        boolean isShowValueOnTip;
-        boolean isShowDefaultPoint;
-        boolean isDialogModeEnabled;
-        boolean isAlwaysHapticFeedback;
 
         public SavedState(Parcel source) {
             super(source);
             value = source.readInt();
-            defValue = source.readInt();
-            maxValue = source.readInt();
-            minValue = source.readInt();
-            stepValue = source.readInt();
-            dividerValue = source.readInt();
-            format = source.readString();
-            isShowValueOnTip = source.readBoolean();
-            isShowDefaultPoint = source.readBoolean();
-            isDialogModeEnabled = source.readBoolean();
-            isAlwaysHapticFeedback = source.readBoolean();
         }
 
         public SavedState(Parcelable superState) {
@@ -353,16 +311,6 @@ public class MiuixSeekBarPreference extends MiuixPreference implements SeekBar.O
         public void writeToParcel(Parcel dest, int flags) {
             super.writeToParcel(dest, flags);
             dest.writeInt(value);
-            dest.writeInt(defValue);
-            dest.writeInt(maxValue);
-            dest.writeInt(minValue);
-            dest.writeInt(stepValue);
-            dest.writeInt(dividerValue);
-            dest.writeString(format);
-            dest.writeBoolean(isShowValueOnTip);
-            dest.writeBoolean(isShowDefaultPoint);
-            dest.writeBoolean(isDialogModeEnabled);
-            dest.writeBoolean(isAlwaysHapticFeedback);
         }
     }
 }

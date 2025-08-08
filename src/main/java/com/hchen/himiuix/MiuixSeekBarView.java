@@ -198,8 +198,8 @@ public class MiuixSeekBarView extends MiuixBasicView {
                     .setCancelable(false)
                     .setCanceledOnTouchOutside(false)
                     .setHapticFeedbackEnabled(true)
-                    .setNegativeButton(getContext().getString(R.string.dialog_negative), null)
-                    .setPositiveButton(getContext().getString(R.string.dialog_positive), new MiuixDialogInterface.OnClickListener() {
+                    .setNegativeButton(getContext().getText(R.string.dialog_negative), null)
+                    .setPositiveButton(getContext().getText(R.string.dialog_positive), new MiuixDialogInterface.OnClickListener() {
                         @Override
                         public void onClick(MiuixDialogInterface dialog, int which) {
                             float f = Float.MIN_VALUE;

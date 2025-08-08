@@ -51,9 +51,9 @@ import com.hchen.himiuix.widget.MiuixEditText;
  */
 public class MiuixEditPreference extends MiuixPreference {
     private MiuixEditText xEditText;
-    private String tip;
+    private CharSequence tip;
+    private CharSequence hint;
     private Drawable icon;
-    private String hint;
     private boolean isAutoRequestFocus;
     private boolean isShowing;
 
@@ -76,8 +76,8 @@ public class MiuixEditPreference extends MiuixPreference {
     @Override
     void init(@Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         final TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.MiuixEditPreference, defStyleAttr, defStyleRes);
-        tip = typedArray.getString(R.styleable.MiuixEditPreference_editTip);
-        hint = typedArray.getString(R.styleable.MiuixEditPreference_android_hint);
+        tip = typedArray.getText(R.styleable.MiuixEditPreference_editTip);
+        hint = typedArray.getText(R.styleable.MiuixEditPreference_android_hint);
         icon = typedArray.getDrawable(R.styleable.MiuixEditPreference_editIcon);
         isAutoRequestFocus = typedArray.getBoolean(R.styleable.MiuixEditPreference_autoRequestFocus, false);
         typedArray.recycle();
@@ -95,11 +95,10 @@ public class MiuixEditPreference extends MiuixPreference {
     @SuppressLint("RestrictedApi")
     protected void performClick(@NonNull View view) {
         if (isShowing) return;
-        xBasicView.getShadowHelper().setKeepShadow();
 
         new MiuixAlertDialog(getContext())
-            .setTitle((String) getTitle())
-            .setMessage((String) getSummary())
+            .setTitle(getTitle())
+            .setMessage(getSummary())
             .setCustomView(xEditText)
             .setOnBindViewListener((root, view1) -> {
                 xEditText.setHint(hint);
@@ -110,8 +109,8 @@ public class MiuixEditPreference extends MiuixPreference {
             .setHapticFeedbackEnabled(true)
             .setCanceledOnTouchOutside(false)
             .setCancelable(false)
-            .setNegativeButton(getContext().getString(R.string.dialog_negative), null)
-            .setPositiveButton(getContext().getString(R.string.dialog_positive), (dialog, which) -> {
+            .setNegativeButton(getContext().getText(R.string.dialog_negative), null)
+            .setPositiveButton(getContext().getText(R.string.dialog_positive), (dialog, which) -> {
                 persistString(xEditText.getText().toString());
                 notifyDependencyChange(getShouldDisableView());
                 notifyChanged();
@@ -119,7 +118,6 @@ public class MiuixEditPreference extends MiuixPreference {
             .setOnShowListener(dialog -> isShowing = true)
             .setOnDismissListener(dialog -> {
                 isShowing = false;
-                xBasicView.getShadowHelper().restoreOriginalColor();
             })
             .show();
     }

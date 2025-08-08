@@ -54,7 +54,7 @@ public class ColorPickerView extends LinearLayout implements OnColorChangedListe
     private View colorView;
     private MiuixEditText xEditText;
     private MiuixEditText xEditTextDialog;
-    private boolean isDialogMode;
+    private boolean isDialogModeEnabled;
     private boolean isShowing;
     private int colorValue;
     private OnColorChangedListener listener;
@@ -136,21 +136,21 @@ public class ColorPickerView extends LinearLayout implements OnColorChangedListe
 
         xEditText.addTextChangedListener(textWatcher);
         xEditText.setOnClickListener(v -> {
-            if (isDialogMode) {
+            if (isDialogModeEnabled) {
                 if (!isShowing) {
                     new MiuixAlertDialog(getContext())
-                        .setTitle(getContext().getString(R.string.dialog_color_title))
-                        .setMessage(getContext().getString(R.string.dialog_color_message))
+                        .setTitle(getContext().getText(R.string.dialog_color_title))
+                        .setMessage(getContext().getText(R.string.dialog_color_message))
                         .setCancelable(false)
+                        .setAutoDismiss(false)
                         .setCanceledOnTouchOutside(false)
                         .setHapticFeedbackEnabled(true)
-                        .setAutoDismiss(false)
                         .setCustomView(xEditTextDialog)
                         .setOnBindViewListener((root, view) -> {
                             ((MiuixEditText) view).setText(getFormatColor());
                         })
-                        .setNegativeButton(getContext().getString(R.string.dialog_negative), (dialog, which) -> dialog.dismiss())
-                        .setPositiveButton(getContext().getString(R.string.dialog_positive), (dialog, which) -> {
+                        .setNegativeButton(getContext().getText(R.string.dialog_negative), (dialog, which) -> dialog.dismiss())
+                        .setPositiveButton(getContext().getText(R.string.dialog_positive), (dialog, which) -> {
                             String s = xEditTextDialog.getText().toString();
 
                             if (s.length() == 8) {
@@ -185,9 +185,9 @@ public class ColorPickerView extends LinearLayout implements OnColorChangedListe
         updateContent(ColorPickerType.FINAL_COLOR, true);
     }
 
-    public void setDialogMode(boolean dialogMode) {
-        this.isDialogMode = dialogMode;
-        xEditText.setIntercept(dialogMode);
+    public void setDialogModeEnabled(boolean enabled) {
+        this.isDialogModeEnabled = enabled;
+        xEditText.setIntercept(enabled);
     }
 
     public void setOnColorChangedListener(OnColorChangedListener listener) {
@@ -213,8 +213,8 @@ public class ColorPickerView extends LinearLayout implements OnColorChangedListe
         return xEditText;
     }
 
-    public boolean isDialogMode() {
-        return isDialogMode;
+    public boolean isDialogModeEnabled() {
+        return isDialogModeEnabled;
     }
 
     @Override
@@ -251,10 +251,6 @@ public class ColorPickerView extends LinearLayout implements OnColorChangedListe
     }
 
     public String formatColor(int argb) {
-        int alpha = Color.alpha(argb);
-        int red = Color.red(argb);
-        int green = Color.green(argb);
-        int blue = Color.blue(argb);
-        return String.format("%02X%02X%02X%02X", alpha, red, green, blue);
+        return String.format("%08X", argb);
     }
 }
