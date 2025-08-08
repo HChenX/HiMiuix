@@ -29,8 +29,6 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.DrawableRes;
@@ -63,12 +61,11 @@ public class MiuixPreference extends Preference implements OnRefreshViewListener
     static final int CARD_TOP_RADIUS = 1;
     static final int CARD_BOTTOM_RADIUS = 2;
     static final int CARD_NON_RADIUS = 3;
-    private MiuixCardView xCardView;
-    MiuixBasicView xBasicView;
     private int cardState = CARD_RADIUS;
     private int radius;
     private CharSequence tip;
     private Drawable indicator;
+    private View customView;
     private boolean isShadowEnabled;
     private boolean isHapticFeedbackEnabled;
     private final View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -116,15 +113,20 @@ public class MiuixPreference extends Preference implements OnRefreshViewListener
 
     @Override
     public void onBindViewHolder(@NonNull PreferenceViewHolder holder) {
-        xCardView = (MiuixCardView) holder.itemView;
-        xBasicView = holder.itemView.findViewById(R.id.miuix_prefs);
+        MiuixCardView xCardView = (MiuixCardView) holder.itemView;
+        MiuixBasicView xBasicView = holder.itemView.findViewById(R.id.miuix_prefs);
 
-        updateCardView(cardState);
+        xBasicView.setOnRefreshViewListener(null);
+        xBasicView.setOnClickListener(null);
+
+        updateCardView(xCardView, cardState);
         xBasicView.setTip(tip);
         xBasicView.setTitle(getTitle());
         xBasicView.setSummary(getSummary());
         xBasicView.setIcon(getIcon());
         xBasicView.setIndicator(indicator);
+        if (customView != null)
+            xBasicView.setCustomView(customView);
         // 不要设置 BasicView 的 Intent，可能会执行两次
         // xBasicView.setIntent(getIntent());
         xBasicView.setShadowEnabled(isShadowEnabled);
@@ -148,8 +150,8 @@ public class MiuixPreference extends Preference implements OnRefreshViewListener
             getOnPreferenceChangeListener() != null ||
             getOnPreferenceClickListener() != null
         ) {
-            xBasicView.getIndicatorView().setVisibility(VISIBLE);
-        } else xBasicView.getIndicatorView().setVisibility(GONE);
+            view.getIndicatorView().setVisibility(VISIBLE);
+        } else view.getIndicatorView().setVisibility(GONE);
     }
 
     @Override
@@ -162,8 +164,7 @@ public class MiuixPreference extends Preference implements OnRefreshViewListener
 
     public void setTip(@Nullable CharSequence tip) {
         this.tip = tip;
-        if (xBasicView != null)
-            xBasicView.setTip(tip);
+        notifyChanged();
     }
 
     public void setIndicator(@DrawableRes int indicator) {
@@ -172,8 +173,7 @@ public class MiuixPreference extends Preference implements OnRefreshViewListener
 
     public void setIndicator(@Nullable Drawable indicator) {
         this.indicator = indicator;
-        if (xBasicView != null)
-            xBasicView.setIndicator(indicator);
+        notifyChanged();
     }
 
     public void setCustomView(@LayoutRes int customView) {
@@ -181,70 +181,44 @@ public class MiuixPreference extends Preference implements OnRefreshViewListener
     }
 
     public void setCustomView(@Nullable View customView) {
-        if (xBasicView != null)
-            xBasicView.setCustomView(customView);
+        this.customView = customView;
+        notifyChanged();
     }
 
     public void setHapticFeedbackEnabled(boolean enabled) {
         this.isHapticFeedbackEnabled = enabled;
-        if (xBasicView != null)
-            xBasicView.setHapticFeedbackEnabled(enabled);
+        notifyChanged();
     }
 
     public void setShadowEnabled(boolean enabled) {
         isShadowEnabled = enabled;
-        if (xBasicView != null)
-            xBasicView.setShadowEnabled(enabled);
-    }
-
-    public boolean isHapticFeedbackEnabled() {
-        return xBasicView.isHapticFeedbackEnabled();
+        notifyChanged();
     }
 
     @Nullable
     public CharSequence getTip() {
-        return xBasicView.getTip();
+        return tip;
+    }
+
+    public boolean isShadowEnabled() {
+        return isShadowEnabled;
     }
 
     @Nullable
     public Drawable getIndicator() {
-        return xBasicView.getIndicator();
+        return indicator;
     }
 
-    // ------------------ View ---------------------
-
-    @NonNull
-    public ImageView getIconView() {
-        return xBasicView.getIconView();
-    }
-
-    @NonNull
-    public TextView getTitleView() {
-        return xBasicView.getTitleView();
-    }
-
-    @NonNull
-    public TextView getSummaryView() {
-        return xBasicView.getSummaryView();
-    }
-
-    @NonNull
-    public TextView getTipView() {
-        return xBasicView.getTipView();
-    }
-
-    @NonNull
-    public ImageView getIndicatorView() {
-        return xBasicView.getIndicatorView();
+    public boolean isHapticFeedbackEnabled() {
+        return isHapticFeedbackEnabled;
     }
 
     // ---------------------------------------------------------------
-
     void setCardState(int cardState) {
         this.cardState = cardState;
     }
 
-    private void updateCardView(int state) {
+    private void updateCardView(MiuixCardView xCardView, int state) {
         switch (state) {
             case CARD_RADIUS ->
                 xCardView.setTrRadius(radius).setTlRadius(radius).setBlRadius(radius).setBrRadius(radius).invalidate();

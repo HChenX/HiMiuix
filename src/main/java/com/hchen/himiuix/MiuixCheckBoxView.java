@@ -34,7 +34,6 @@ import com.hchen.himiuix.widget.MiuixCheckBox;
  */
 public class MiuixCheckBoxView extends MiuixStateView implements OnStateChangeListener {
     private MiuixCheckBox xCheckBox;
-    private boolean pass;
 
     public MiuixCheckBoxView(@NonNull Context context) {
         super(context);
@@ -95,16 +94,15 @@ public class MiuixCheckBoxView extends MiuixStateView implements OnStateChangeLi
     @Override
     public void setChecked(boolean checked) {
         isChecked = checked;
-        refreshView();
+        xCheckBox.setCheckNoAnimation(checked);
+        passRefreshStateView();
     }
 
     @Override
     public boolean onStateChange(boolean newValue) {
         if (listener == null || listener.onStateChange(newValue)) {
             isChecked = newValue;
-            pass = true;
-            refreshView();
-            pass = false;
+            passRefreshStateView();
 
             return true;
         }

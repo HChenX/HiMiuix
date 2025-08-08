@@ -34,6 +34,7 @@ import com.hchen.himiuix.callback.OnStateChangeListener;
  */
 public class MiuixStateView extends MiuixBasicView {
     boolean isChecked;
+    boolean pass;
     private CharSequence tipOn;
     private CharSequence tipOff;
     private CharSequence summaryOn;
@@ -149,5 +150,11 @@ public class MiuixStateView extends MiuixBasicView {
 
     public CharSequence getSummaryOff() {
         return summaryOff;
+    }
+
+    void passRefreshStateView() {
+        pass = true;
+        refreshView();
+        pass = false;
     }
 }

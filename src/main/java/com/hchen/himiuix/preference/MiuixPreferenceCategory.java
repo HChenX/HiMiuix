@@ -44,8 +44,6 @@ import java.util.List;
  * @author 焕晨HChen
  */
 public class MiuixPreferenceCategory extends PreferenceGroup {
-    private TextView dividerTextView;
-    private View dividerView;
 
     public MiuixPreferenceCategory(@NonNull Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
@@ -73,8 +71,8 @@ public class MiuixPreferenceCategory extends PreferenceGroup {
     @Override
     public void onBindViewHolder(@NonNull PreferenceViewHolder holder) {
         super.onBindViewHolder(holder);
-        dividerTextView = holder.itemView.findViewById(R.id.miuix_divider_title);
-        dividerView = holder.itemView.findViewById(R.id.miuix_divider);
+        TextView dividerTextView = holder.itemView.findViewById(R.id.miuix_divider_title);
+        View dividerView = holder.itemView.findViewById(R.id.miuix_divider);
 
         dividerTextView.setVisibility(GONE);
         dividerView.setVisibility(VISIBLE);

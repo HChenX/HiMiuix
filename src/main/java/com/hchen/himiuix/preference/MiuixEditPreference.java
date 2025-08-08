@@ -88,7 +88,7 @@ public class MiuixEditPreference extends MiuixPreference {
 
     @Override
     public void refreshed(MiuixBasicView view) {
-        xBasicView.getIndicatorView().setVisibility(VISIBLE);
+        view.getIndicatorView().setVisibility(VISIBLE);
     }
 
     @Override

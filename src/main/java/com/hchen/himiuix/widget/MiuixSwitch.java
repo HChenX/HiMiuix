@@ -235,12 +235,23 @@ public class MiuixSwitch extends LinearLayout {
         if (changed) {
             if (onStateChangeListener == null || onStateChangeListener.onStateChange(checked)) {
                 isChecked = checked;
-                showThumbAnimation(isChecked);
+                showThumbAnimation(isChecked, true);
                 return true;
             }
             return false;
         }
         return true;
+    }
+
+    /**
+     * 仅供内部使用
+     */
+    public void setCheckedNoAnimation(boolean checked) {
+        final boolean changed = isChecked != checked;
+        if (changed) {
+            isChecked = checked;
+            showThumbAnimation(isChecked, false);
+        }
     }
 
     public void setOnStateChangeListener(OnStateChangeListener listener) {
@@ -252,8 +263,8 @@ public class MiuixSwitch extends LinearLayout {
             HapticFeedbackHelper.performHapticFeedback(this, HapticFeedbackHelper.MIUI_FLICK);
     }
 
-    private void showThumbAnimation(boolean toRight) {
-        if (valueAnimator != null) {
+    private void showThumbAnimation(boolean toRight, boolean showAnimation) {
+        if (valueAnimator != null && showAnimation) {
             if (valueAnimator.isRunning()) valueAnimator.end();
 
             valueAnimator.removeAllUpdateListeners();
@@ -269,11 +280,11 @@ public class MiuixSwitch extends LinearLayout {
                 else thumbView.setTranslationX(0);
             });
         }
-        updateSwitchBackground();
+        updateSwitchBackground(showAnimation);
     }
 
-    private void updateSwitchBackground() {
-        if (valueAnimator != null) {
+    private void updateSwitchBackground(boolean showAnimation) {
+        if (valueAnimator != null && showAnimation) {
             if (isChecked()) {
                 setBackground(offToOnTransition);
                 offToOnTransition.startTransition(ANIMATION_DURATION);

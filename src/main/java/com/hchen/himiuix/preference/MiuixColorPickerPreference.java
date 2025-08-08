@@ -29,6 +29,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.PreferenceViewHolder;
 
+import com.hchen.himiuix.MiuixBasicView;
 import com.hchen.himiuix.MiuixColorPickerView;
 import com.hchen.himiuix.R;
 import com.hchen.himiuix.callback.OnColorChangedListener;
@@ -40,7 +41,6 @@ import com.hchen.himiuix.color.ColorPickerType;
  * @author 焕晨HChen
  */
 public class MiuixColorPickerPreference extends MiuixPreference implements OnColorChangedListener {
-    private MiuixColorPickerView xColorPickerView;
     private OnColorChangedListener listener;
     private boolean isAlwaysHapticFeedback;
     private boolean isShowValueOnTip;
@@ -81,47 +81,51 @@ public class MiuixColorPickerPreference extends MiuixPreference implements OnCol
     @Override
     public void onBindViewHolder(@NonNull PreferenceViewHolder holder) {
         super.onBindViewHolder(holder);
-        xColorPickerView = (MiuixColorPickerView) xBasicView;
+        MiuixColorPickerView xColorPickerView = holder.itemView.findViewById(R.id.miuix_prefs);
+
+        xColorPickerView.setOnColorChangedListener(null);
+        xColorPickerView.setOnColorChangedListener(this);
 
         xColorPickerView.setColor(color);
         xColorPickerView.setShowValueOnTip(isShowValueOnTip);
         xColorPickerView.setAlwaysHapticFeedback(isAlwaysHapticFeedback);
-        xColorPickerView.setOnColorChangedListener(this);
+    }
+
+    @Override
+    public void refreshed(MiuixBasicView view) {
     }
 
     public void setColor(@ColorInt int color) {
         this.color = color;
-        if (xColorPickerView != null)
-            xColorPickerView.setColor(color);
+        notifyChanged();
     }
 
     public void setShowValueOnTip(boolean show) {
         this.isShowValueOnTip = show;
-        if (xColorPickerView != null)
-            xColorPickerView.setShowValueOnTip(show);
+        notifyChanged();
     }
 
     public void setAlwaysHapticFeedback(boolean enabled) {
         this.isAlwaysHapticFeedback = enabled;
-        if (xColorPickerView != null)
-            xColorPickerView.setAlwaysHapticFeedback(enabled);
+        notifyChanged();
     }
 
     public void setOnColorChangedListener(OnColorChangedListener listener) {
         this.listener = listener;
+        notifyChanged();
     }
 
     @ColorInt
     public int getColor() {
-        return xColorPickerView.getColor();
+        return color;
     }
 
     public boolean isAlwaysHapticFeedback() {
-        return xColorPickerView.isAlwaysHapticFeedback();
+        return isAlwaysHapticFeedback;
     }
 
     public boolean isShowValueOnTip() {
-        return xColorPickerView.isShowValueOnTip();
+        return isShowValueOnTip;
     }
 
     @Override

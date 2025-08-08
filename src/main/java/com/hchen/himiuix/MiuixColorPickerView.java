@@ -114,6 +114,8 @@ public class MiuixColorPickerView extends MiuixBasicView implements OnColorChang
     public boolean performClick() {
         if (isDialogModeEnabled) {
             if (!isShowing) {
+                colorPickerView.setColorValue(color);
+
                 new MiuixAlertDialog(getContext())
                     .setTitle(getTitle())
                     .setMessage(getSummary())

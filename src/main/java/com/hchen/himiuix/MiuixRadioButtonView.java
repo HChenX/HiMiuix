@@ -36,7 +36,6 @@ import com.hchen.himiuix.widget.MiuixRadioButton;
 public class MiuixRadioButtonView extends MiuixStateView implements OnStateChangeListener {
     private MiuixRadioButton xRadioButton;
     private OnInnerCheckedListener onInnerCheckedListener;
-    private boolean pass;
 
     public MiuixRadioButtonView(@NonNull Context context) {
         super(context);
@@ -99,9 +98,10 @@ public class MiuixRadioButtonView extends MiuixStateView implements OnStateChang
     @Override
     public void setChecked(boolean checked) {
         isChecked = checked;
+        xRadioButton.setChecked(checked);
         if (isChecked && onInnerCheckedListener != null)
             onInnerCheckedListener.onChecked(getId());
-        refreshView();
+        passRefreshStateView();
     }
 
     MiuixRadioButton getRadioButton() {
@@ -112,9 +112,7 @@ public class MiuixRadioButtonView extends MiuixStateView implements OnStateChang
     public boolean onStateChange(boolean newValue) {
         if (listener == null || listener.onStateChange(newValue)) {
             isChecked = newValue;
-            pass = true;
-            refreshView();
-            pass = false;
+            passRefreshStateView();
 
             if (isChecked && onInnerCheckedListener != null)
                 onInnerCheckedListener.onChecked(getId());

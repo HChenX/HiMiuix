@@ -39,7 +39,6 @@ import com.hchen.himiuix.callback.OnChooseItemListener;
  * @author 焕晨HChen
  */
 public class MiuixDropDownPreference extends MiuixPreference implements OnChooseItemListener {
-    private MiuixDropDownView xDropDownView;
     private CharSequence[] entries;
     private CharSequence entry;
     private String value;
@@ -82,7 +81,10 @@ public class MiuixDropDownPreference extends MiuixPreference implements OnChoose
     @Override
     public void onBindViewHolder(@NonNull PreferenceViewHolder holder) {
         super.onBindViewHolder(holder);
-        xDropDownView = (MiuixDropDownView) xBasicView;
+        MiuixDropDownView xDropDownView = holder.itemView.findViewById(R.id.miuix_prefs);
+
+        xDropDownView.setOnChooseItemListener(null);
+        xDropDownView.setOnChooseItemListener(this);
 
         xDropDownView.setEntries(entries);
         xDropDownView.setEntry(entry);
@@ -97,46 +99,43 @@ public class MiuixDropDownPreference extends MiuixPreference implements OnChoose
 
     public void setEntries(CharSequence[] entries) {
         this.entries = entries;
-        if (xDropDownView != null)
-            xDropDownView.setEntries(entries);
+        notifyChanged();
     }
 
     public void setValue(String value) {
         this.value = value;
-        if (xDropDownView != null)
-            xDropDownView.setValue(value);
+        notifyChanged();
     }
 
     public void setEntry(CharSequence entry) {
         this.entry = entry;
-        if (xDropDownView != null)
-            xDropDownView.setEntry(entry);
+        notifyChanged();
     }
 
     public void setOnChooseItemListener(OnChooseItemListener listener) {
         this.listener = listener;
+        notifyChanged();
     }
 
     public void setShowOnTip(boolean showOnTip) {
         isShowOnTip = showOnTip;
-        if (xDropDownView != null)
-            xDropDownView.setShowOnTip(showOnTip);
+        notifyChanged();
     }
 
     public CharSequence[] getEntries() {
-        return xDropDownView.getEntries();
+        return entries;
     }
 
     public String getValue() {
-        return xDropDownView.getValue();
+        return value;
     }
 
     public CharSequence getEntry() {
-        return xDropDownView.getEntry();
+        return entry;
     }
 
     public boolean isShowOnTip() {
-        return xDropDownView.isShowOnTip();
+        return isShowOnTip;
     }
 
     @Override

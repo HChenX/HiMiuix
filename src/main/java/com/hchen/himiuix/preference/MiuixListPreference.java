@@ -45,7 +45,6 @@ import java.util.stream.Collectors;
  * @author 焕晨HChen
  */
 public class MiuixListPreference extends MiuixPreference implements OnChooseItemListener {
-    private MiuixListView xListView;
     private CharSequence[] items;
     private CharSequence[] selectedItems;
     private Integer[] selectedValues;
@@ -88,14 +87,16 @@ public class MiuixListPreference extends MiuixPreference implements OnChooseItem
     @Override
     public void onBindViewHolder(@NonNull PreferenceViewHolder holder) {
         super.onBindViewHolder(holder);
-        xListView = (MiuixListView) xBasicView;
+        MiuixListView xListView = holder.itemView.findViewById(R.id.miuix_prefs);
+
+        xListView.setOnChooseItemListener(null);
+        xListView.setOnChooseItemListener(this);
 
         xListView.setItems(items);
         xListView.setSelectedItems(selectedItems);
         xListView.setSelectedValues(selectedValues);
         xListView.setMultipleChoiceEnabled(isMultipleChoiceEnabled);
         xListView.setMaxHeight(maxHeight);
-        xListView.setOnChooseItemListener(this);
     }
 
     @Override
@@ -104,36 +105,32 @@ public class MiuixListPreference extends MiuixPreference implements OnChooseItem
 
     public void setItems(CharSequence[] items) {
         this.items = items;
-        if (xListView != null)
-            xListView.setItems(items);
+        notifyChanged();
     }
 
     public void setSelectedItems(CharSequence[] selectedItems) {
         this.selectedItems = selectedItems;
-        if (xListView != null)
-            xListView.setSelectedItems(selectedItems);
+        notifyChanged();
     }
 
     public void setSelectedValues(Integer[] selectedValues) {
         this.selectedValues = selectedValues;
-        if (xListView != null)
-            xListView.setSelectedValues(selectedValues);
+        notifyChanged();
     }
 
     public void setMultipleChoiceEnabled(boolean enabled) {
         isMultipleChoiceEnabled = enabled;
-        if (xListView != null)
-            xListView.setMultipleChoiceEnabled(enabled);
+        notifyChanged();
     }
 
     public void setMaxHeight(int maxHeight) {
         this.maxHeight = maxHeight;
-        if (xListView != null)
-            xListView.setMaxHeight(maxHeight);
+        notifyChanged();
     }
 
     public void setOnChooseItemListener(OnChooseItemListener listener) {
         this.onChooseItemListener = listener;
+        notifyChanged();
     }
 
     public CharSequence[] getItems() {

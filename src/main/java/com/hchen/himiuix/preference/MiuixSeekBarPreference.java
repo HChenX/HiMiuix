@@ -38,7 +38,6 @@ import com.hchen.himiuix.R;
  * @author 焕晨HChen
  */
 public class MiuixSeekBarPreference extends MiuixPreference implements SeekBar.OnSeekBarChangeListener {
-    private MiuixSeekBarView xSeekBarView;
     private int value;
     private int defValue;
     private int maxValue;
@@ -95,7 +94,10 @@ public class MiuixSeekBarPreference extends MiuixPreference implements SeekBar.O
     @Override
     public void onBindViewHolder(@NonNull PreferenceViewHolder holder) {
         super.onBindViewHolder(holder);
-        xSeekBarView = (MiuixSeekBarView) xBasicView;
+        MiuixSeekBarView xSeekBarView = holder.itemView.findViewById(R.id.miuix_prefs);
+
+        xSeekBarView.setOnSeekBarChangeListener(null);
+        xSeekBarView.setOnSeekBarChangeListener(this);
 
         xSeekBarView.setValue(value);
         xSeekBarView.setDefValue(defValue);
@@ -108,121 +110,110 @@ public class MiuixSeekBarPreference extends MiuixPreference implements SeekBar.O
         xSeekBarView.setDialogModeEnabled(isDialogModeEnabled);
         xSeekBarView.setShowDefaultPoint(isShowDefaultPoint);
         xSeekBarView.setAlwaysHapticFeedback(isAlwaysHapticFeedback);
-        xSeekBarView.setOnSeekBarChangeListener(this);
     }
 
     public void setValue(int value) {
         this.value = value;
-        if (xSeekBarView != null)
-            xSeekBarView.setValue(value);
+        notifyChanged();
     }
 
     public void setDefValue(int defValue) {
         this.defValue = defValue;
-        if (xSeekBarView != null)
-            xSeekBarView.setDefValue(defValue);
+        notifyChanged();
     }
 
     public void setMaxValue(int maxValue) {
         this.maxValue = maxValue;
-        if (xSeekBarView != null)
-            xSeekBarView.setMaxValue(maxValue);
+        notifyChanged();
     }
 
     public void setMinValue(int minValue) {
         this.minValue = minValue;
-        if (xSeekBarView != null)
-            xSeekBarView.setMinValue(minValue);
+        notifyChanged();
     }
 
     public void setStepValue(int stepValue) {
         this.stepValue = stepValue;
-        if (xSeekBarView != null)
-            xSeekBarView.setStepValue(stepValue);
+        notifyChanged();
     }
 
     public void setDividerValue(int dividerValue) {
         this.dividerValue = dividerValue;
-        if (xSeekBarView != null)
-            xSeekBarView.setDividerValue(dividerValue);
+        notifyChanged();
     }
 
     public void setFormat(String format) {
         this.format = format;
-        if (xSeekBarView != null)
-            xSeekBarView.setFormat(format);
+        notifyChanged();
     }
 
     public void setShowValueOnTip(boolean show) {
         this.isShowValueOnTip = show;
-        if (xSeekBarView != null)
-            xSeekBarView.setShowValueOnTip(show);
+        notifyChanged();
     }
 
     public void setOnSeekBarChangeListener(SeekBar.OnSeekBarChangeListener listener) {
         this.onSeekBarChangeListener = listener;
+        notifyChanged();
     }
 
     public void setDialogModeEnabled(boolean enabled) {
         this.isDialogModeEnabled = enabled;
-        if (xSeekBarView != null)
-            xSeekBarView.setDialogModeEnabled(enabled);
+        notifyChanged();
     }
 
     public void setShowDefaultPoint(boolean show) {
         this.isShowDefaultPoint = show;
-        if (xSeekBarView != null)
-            xSeekBarView.setShowDefaultPoint(show);
+        notifyChanged();
     }
 
     public void setAlwaysHapticFeedback(boolean enabled) {
         this.isAlwaysHapticFeedback = enabled;
-        if (xSeekBarView != null)
-            xSeekBarView.setAlwaysHapticFeedback(enabled);
+        notifyChanged();
     }
 
     public int getValue() {
-        return xSeekBarView.getValue();
+        return value;
     }
 
     public int getDefValue() {
-        return xSeekBarView.getDefValue();
+        return defValue;
     }
 
     public int getMaxValue() {
-        return xSeekBarView.getMaxValue();
+        return maxValue;
     }
 
     public int getMinValue() {
-        return xSeekBarView.getMinValue();
+        return minValue;
     }
 
     public int getStepValue() {
-        return xSeekBarView.getStepValue();
+        return stepValue;
     }
 
     public int getDividerValue() {
-        return xSeekBarView.getDividerValue();
+        return dividerValue;
     }
 
     public String getFormat() {
-        return xSeekBarView.getFormat();
+        return format;
     }
 
     public boolean isShowValueOnTip() {
-        return xSeekBarView.isShowValueOnTip();
+        return isShowValueOnTip;
     }
 
     public boolean isDialogModeEnabled() {
-        return xSeekBarView.isDialogModeEnabled();
+        return isDialogModeEnabled;
     }
 
     public boolean isShowDefaultPoint() {
-        return xSeekBarView.isShowDefaultPoint();
+        return isShowDefaultPoint;
     }
 
     public boolean isAlwaysHapticFeedback() {
-        return xSeekBarView.isAlwaysHapticFeedback();
+        return isAlwaysHapticFeedback;
     }
 
     @Override

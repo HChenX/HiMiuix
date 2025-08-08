@@ -84,6 +84,14 @@ public class MiuixCheckBox extends AppCompatCheckBox {
         return false;
     }
 
+    /**
+     * 仅供内部使用
+     */
+    public void setCheckNoAnimation(boolean checked) {
+        if (isChecked() == checked) return;
+        super.setChecked(checked);
+    }
+
     public void setOnStateChangeListener(OnStateChangeListener listener) {
         this.onStateChangeListener = listener;
     }

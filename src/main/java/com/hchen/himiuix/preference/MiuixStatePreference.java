@@ -28,6 +28,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.PreferenceViewHolder;
 
+import com.hchen.himiuix.MiuixBasicView;
 import com.hchen.himiuix.MiuixStateView;
 import com.hchen.himiuix.R;
 import com.hchen.himiuix.callback.OnStateChangeListener;
@@ -38,7 +39,6 @@ import com.hchen.himiuix.callback.OnStateChangeListener;
  * @author 焕晨HChen
  */
 class MiuixStatePreference extends MiuixPreference implements OnStateChangeListener {
-    private MiuixStateView xStateView;
     private CharSequence tipOn;
     private CharSequence tipOff;
     private CharSequence summaryOn;
@@ -84,14 +84,20 @@ class MiuixStatePreference extends MiuixPreference implements OnStateChangeListe
     @Override
     public void onBindViewHolder(@NonNull PreferenceViewHolder holder) {
         super.onBindViewHolder(holder);
-        xStateView = (MiuixStateView) xBasicView;
+        MiuixStateView xStateView = holder.itemView.findViewById(R.id.miuix_prefs);
+
+        xStateView.setOnStateChangeListener(null);
+        xStateView.setOnStateChangeListener(this);
 
         xStateView.setChecked(isChecked);
         xStateView.setTipOn(tipOn);
         xStateView.setTipOff(tipOff);
         xStateView.setSummaryOn(summaryOn);
         xStateView.setSummaryOff(summaryOff);
-        xStateView.setOnStateChangeListener(this);
+    }
+
+    @Override
+    public void refreshed(MiuixBasicView view) {
     }
 
     public boolean isChecked() {
@@ -100,56 +106,53 @@ class MiuixStatePreference extends MiuixPreference implements OnStateChangeListe
 
     public void setChecked(boolean checked) {
         isChecked = checked;
-        if (xStateView != null)
-            xStateView.setChecked(checked);
+        notifyChanged();
     }
 
     public void setTipOn(CharSequence tipOn) {
         this.tipOn = tipOn;
-        if (xStateView != null)
-            xStateView.setTipOn(tipOn);
+        notifyChanged();
     }
 
     public void setTipOff(CharSequence tipOff) {
         this.tipOff = tipOff;
-        if (xStateView != null)
-            xStateView.setTipOff(tipOff);
+        notifyChanged();
     }
 
     public void setSummaryOn(CharSequence summaryOn) {
         this.summaryOn = summaryOn;
-        if (xStateView != null)
-            xStateView.setSummaryOn(summaryOn);
+        notifyChanged();
     }
 
     public void setSummaryOff(CharSequence summaryOff) {
         this.summaryOff = summaryOff;
-        if (xStateView != null)
-            xStateView.setSummaryOff(summaryOff);
+        notifyChanged();
     }
 
     public void setOnStateChangeListener(OnStateChangeListener listener) {
         onStateChangeListener = listener;
+        notifyChanged();
     }
 
     public void setDisableDependentsState(boolean disableDependentsState) {
         isDisableDependentsState = disableDependentsState;
+        notifyChanged();
     }
 
     public CharSequence getTipOn() {
-        return xStateView.getTipOn();
+        return tipOn;
     }
 
     public CharSequence getTipOff() {
-        return xStateView.getTipOff();
+        return tipOff;
     }
 
     public CharSequence getSummaryOn() {
-        return xStateView.getSummaryOn();
+        return summaryOn;
     }
 
     public CharSequence getSummaryOff() {
-        return xStateView.getSummaryOff();
+        return summaryOff;
     }
 
     public boolean isDisableDependentsState() {
