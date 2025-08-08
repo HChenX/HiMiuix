@@ -63,7 +63,8 @@ public class MiuixRadioButton extends AppCompatRadioButton {
 
     @Override
     public void setChecked(boolean checked) {
-        setCheckedInner(checked);
+        if (isChecked() == checked) return;
+        super.setChecked(checked);
     }
 
     /**

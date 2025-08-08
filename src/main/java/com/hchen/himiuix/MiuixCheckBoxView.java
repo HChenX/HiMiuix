@@ -94,7 +94,7 @@ public class MiuixCheckBoxView extends MiuixStateView implements OnStateChangeLi
     @Override
     public void setChecked(boolean checked) {
         isChecked = checked;
-        xCheckBox.setCheckNoAnimation(checked);
+        xCheckBox.setChecked(checked);
         passRefreshStateView();
     }
 

@@ -67,7 +67,8 @@ public class MiuixCheckBox extends AppCompatCheckBox {
 
     @Override
     public void setChecked(boolean checked) {
-        setCheckedInner(checked);
+        if (isChecked() == checked) return;
+        super.setChecked(checked);
     }
 
     /**
@@ -82,14 +83,6 @@ public class MiuixCheckBox extends AppCompatCheckBox {
             return true;
         }
         return false;
-    }
-
-    /**
-     * 仅供内部使用
-     */
-    public void setCheckNoAnimation(boolean checked) {
-        if (isChecked() == checked) return;
-        super.setChecked(checked);
     }
 
     public void setOnStateChangeListener(OnStateChangeListener listener) {

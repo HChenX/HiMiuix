@@ -133,13 +133,13 @@ public class MiuixSwitch extends LinearLayout {
                             }
                             thumbViewAnimator.x(finalX);
                             if (change != isChecked()) {
-                                if (!MiuixSwitch.this.setChecked(!isChecked())) {
+                                if (!MiuixSwitch.this.setCheckedInner(!isChecked())) {
                                     if (isChecked()) thumbViewAnimator.x(maxMoveX);
                                     else thumbViewAnimator.x(minMoveX);
                                 }
                             }
                         } else {
-                            MiuixSwitch.this.setChecked(!isChecked());
+                            MiuixSwitch.this.setCheckedInner(!isChecked());
                             MiuixSwitch.this.performHapticFeedback();
                         }
                         return true;
@@ -217,7 +217,7 @@ public class MiuixSwitch extends LinearLayout {
 
     @Override
     public boolean performClick() {
-        setChecked(!isChecked());
+        setCheckedInner(!isChecked());
         performHapticFeedback();
 
         return super.performClick();
@@ -227,10 +227,18 @@ public class MiuixSwitch extends LinearLayout {
         return isChecked;
     }
 
+    public void setChecked(boolean checked) {
+        final boolean changed = isChecked != checked;
+        if (changed) {
+            isChecked = checked;
+            showThumbAnimation(isChecked, false);
+        }
+    }
+
     /**
      * 当且仅当 onStateChange 拦截操作时才会返回 false
      */
-    public boolean setChecked(boolean checked) {
+    public boolean setCheckedInner(boolean checked) {
         final boolean changed = isChecked != checked;
         if (changed) {
             if (onStateChangeListener == null || onStateChangeListener.onStateChange(checked)) {
@@ -241,17 +249,6 @@ public class MiuixSwitch extends LinearLayout {
             return false;
         }
         return true;
-    }
-
-    /**
-     * 仅供内部使用
-     */
-    public void setCheckedNoAnimation(boolean checked) {
-        final boolean changed = isChecked != checked;
-        if (changed) {
-            isChecked = checked;
-            showThumbAnimation(isChecked, false);
-        }
     }
 
     public void setOnStateChangeListener(OnStateChangeListener listener) {
