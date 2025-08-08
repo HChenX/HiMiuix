@@ -86,6 +86,8 @@ class MiuixStatePreference extends MiuixPreference implements OnStateChangeListe
         super.onBindViewHolder(holder);
         MiuixStateView xStateView = holder.itemView.findViewById(R.id.miuix_prefs);
 
+        xStateView.setManuallyRefreshViewMode(true);
+
         xStateView.setOnStateChangeListener(null);
         xStateView.setOnStateChangeListener(this);
 
@@ -94,6 +96,9 @@ class MiuixStatePreference extends MiuixPreference implements OnStateChangeListe
         xStateView.setTipOff(tipOff);
         xStateView.setSummaryOn(summaryOn);
         xStateView.setSummaryOff(summaryOff);
+
+        xStateView.setManuallyRefreshViewMode(false);
+        xStateView.refreshView();
     }
 
     @Override

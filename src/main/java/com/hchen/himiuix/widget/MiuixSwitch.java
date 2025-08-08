@@ -133,13 +133,13 @@ public class MiuixSwitch extends LinearLayout {
                             }
                             thumbViewAnimator.x(finalX);
                             if (change != isChecked()) {
-                                if (!MiuixSwitch.this.setCheckedInner(!isChecked())) {
+                                if (!MiuixSwitch.this.setUserChecked(!isChecked())) {
                                     if (isChecked()) thumbViewAnimator.x(maxMoveX);
                                     else thumbViewAnimator.x(minMoveX);
                                 }
                             }
                         } else {
-                            MiuixSwitch.this.setCheckedInner(!isChecked());
+                            MiuixSwitch.this.setUserChecked(!isChecked());
                             MiuixSwitch.this.performHapticFeedback();
                         }
                         return true;
@@ -217,7 +217,7 @@ public class MiuixSwitch extends LinearLayout {
 
     @Override
     public boolean performClick() {
-        setCheckedInner(!isChecked());
+        setUserChecked(!isChecked());
         performHapticFeedback();
 
         return super.performClick();
@@ -238,7 +238,7 @@ public class MiuixSwitch extends LinearLayout {
     /**
      * 当且仅当 onStateChange 拦截操作时才会返回 false
      */
-    public boolean setCheckedInner(boolean checked) {
+    public boolean setUserChecked(boolean checked) {
         final boolean changed = isChecked != checked;
         if (changed) {
             if (onStateChangeListener == null || onStateChangeListener.onStateChange(checked)) {

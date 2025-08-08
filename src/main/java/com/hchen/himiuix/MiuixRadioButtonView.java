@@ -69,7 +69,7 @@ public class MiuixRadioButtonView extends MiuixStateView implements OnStateChang
     @Override
     void updateViewContent() {
         if (!pass) {
-            if (!xRadioButton.setCheckedInner(isChecked))
+            if (!xRadioButton.setUserChecked(isChecked))
                 isChecked = !isChecked;
         }
         setShadowHelperEnabled(!isChecked);

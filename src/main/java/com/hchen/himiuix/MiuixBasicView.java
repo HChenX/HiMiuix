@@ -70,6 +70,7 @@ public class MiuixBasicView extends LinearLayout {
     private boolean isAdded;
     private boolean isHapticFeedbackEnabled;
     private boolean isShadowEnabled;
+    private boolean isManuallyRefreshView;
     private ShadowHelper shadowHelper;
     private OnRefreshViewListener onRefreshViewListener;
 
@@ -235,11 +236,13 @@ public class MiuixBasicView extends LinearLayout {
     }
 
     public final void refreshView() {
+        if (isManuallyRefreshView)
+            return;
+
         updateViewContent();
         updateVisibility();
         if (onRefreshViewListener != null)
             onRefreshViewListener.refreshed(this);
-
         // invalidate();
     }
 
@@ -422,6 +425,10 @@ public class MiuixBasicView extends LinearLayout {
 
     void removeView(@NonNull ViewGroup group, @NonNull View view) {
         group.removeView(view);
+    }
+
+    public void setManuallyRefreshViewMode(boolean enabled) {
+        isManuallyRefreshView = enabled;
     }
 
     @Override

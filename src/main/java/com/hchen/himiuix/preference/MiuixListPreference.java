@@ -89,6 +89,8 @@ public class MiuixListPreference extends MiuixPreference implements OnChooseItem
         super.onBindViewHolder(holder);
         MiuixListView xListView = holder.itemView.findViewById(R.id.miuix_prefs);
 
+        xListView.setManuallyRefreshViewMode(true);
+
         xListView.setOnChooseItemListener(null);
         xListView.setOnChooseItemListener(this);
 
@@ -97,6 +99,9 @@ public class MiuixListPreference extends MiuixPreference implements OnChooseItem
         xListView.setSelectedValues(selectedValues);
         xListView.setMultipleChoiceEnabled(isMultipleChoiceEnabled);
         xListView.setMaxHeight(maxHeight);
+
+        xListView.setManuallyRefreshViewMode(false);
+        xListView.refreshView();
     }
 
     @Override

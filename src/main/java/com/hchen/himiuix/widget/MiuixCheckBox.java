@@ -66,6 +66,11 @@ public class MiuixCheckBox extends AppCompatCheckBox {
     }
 
     @Override
+    public void toggle() {
+        setUserChecked(!isChecked());
+    }
+
+    @Override
     public void setChecked(boolean checked) {
         if (isChecked() == checked) return;
         super.setChecked(checked);
@@ -74,7 +79,7 @@ public class MiuixCheckBox extends AppCompatCheckBox {
     /**
      * 当且仅当 onStateChange 拦截操作时才会返回 false
      */
-    public boolean setCheckedInner(boolean checked) {
+    public boolean setUserChecked(boolean checked) {
         if (isChecked() == checked) return true;
 
         if (onStateChangeListener == null || onStateChangeListener.onStateChange(checked)) {

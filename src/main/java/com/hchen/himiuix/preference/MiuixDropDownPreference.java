@@ -83,6 +83,8 @@ public class MiuixDropDownPreference extends MiuixPreference implements OnChoose
         super.onBindViewHolder(holder);
         MiuixDropDownView xDropDownView = holder.itemView.findViewById(R.id.miuix_prefs);
 
+        xDropDownView.setManuallyRefreshViewMode(true);
+
         xDropDownView.setOnChooseItemListener(null);
         xDropDownView.setOnChooseItemListener(this);
 
@@ -90,6 +92,9 @@ public class MiuixDropDownPreference extends MiuixPreference implements OnChoose
         xDropDownView.setEntry(entry);
         xDropDownView.setValue(value);
         xDropDownView.setShowOnTip(isShowOnTip);
+
+        xDropDownView.setManuallyRefreshViewMode(false);
+        xDropDownView.refreshView();
     }
 
     @Override

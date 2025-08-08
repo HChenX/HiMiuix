@@ -62,6 +62,12 @@ public class MiuixRadioButton extends AppCompatRadioButton {
     }
 
     @Override
+    public void toggle() {
+        if (!isChecked())
+            setUserChecked(!isChecked());
+    }
+
+    @Override
     public void setChecked(boolean checked) {
         if (isChecked() == checked) return;
         super.setChecked(checked);
@@ -70,7 +76,7 @@ public class MiuixRadioButton extends AppCompatRadioButton {
     /**
      * 当且仅当 onStateChange 拦截操作时才会返回 false
      */
-    public boolean setCheckedInner(boolean checked) {
+    public boolean setUserChecked(boolean checked) {
         if (isChecked() == checked) return true;
 
         if (onStateChangeListener == null || onStateChangeListener.onStateChange(checked)) {

@@ -67,7 +67,7 @@ public class MiuixCheckBoxView extends MiuixStateView implements OnStateChangeLi
     @Override
     void updateViewContent() {
         if (!pass) {
-            if (!xCheckBox.setCheckedInner(isChecked)) {
+            if (!xCheckBox.setUserChecked(isChecked)) {
                 isChecked = !isChecked;
             }
         }

@@ -96,6 +96,8 @@ public class MiuixSeekBarPreference extends MiuixPreference implements SeekBar.O
         super.onBindViewHolder(holder);
         MiuixSeekBarView xSeekBarView = holder.itemView.findViewById(R.id.miuix_prefs);
 
+        xSeekBarView.setManuallyRefreshViewMode(true);
+
         xSeekBarView.setOnSeekBarChangeListener(null);
         xSeekBarView.setOnSeekBarChangeListener(this);
 
@@ -110,6 +112,9 @@ public class MiuixSeekBarPreference extends MiuixPreference implements SeekBar.O
         xSeekBarView.setDialogModeEnabled(isDialogModeEnabled);
         xSeekBarView.setShowDefaultPoint(isShowDefaultPoint);
         xSeekBarView.setAlwaysHapticFeedback(isAlwaysHapticFeedback);
+
+        xSeekBarView.setManuallyRefreshViewMode(false);
+        xSeekBarView.refreshView();
     }
 
     public void setValue(int value) {

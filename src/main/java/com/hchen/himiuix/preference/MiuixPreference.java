@@ -111,10 +111,13 @@ public class MiuixPreference extends Preference implements OnRefreshViewListener
         return R.layout.miuix_preference;
     }
 
+    @CallSuper
     @Override
     public void onBindViewHolder(@NonNull PreferenceViewHolder holder) {
         MiuixCardView xCardView = (MiuixCardView) holder.itemView;
         MiuixBasicView xBasicView = holder.itemView.findViewById(R.id.miuix_prefs);
+
+        xBasicView.setManuallyRefreshViewMode(true);
 
         xBasicView.setOnRefreshViewListener(null);
         xBasicView.setOnClickListener(null);
@@ -134,6 +137,9 @@ public class MiuixPreference extends Preference implements OnRefreshViewListener
         xBasicView.setEnabled(isEnabled());
         xBasicView.setOnRefreshViewListener(this);
         xBasicView.setOnClickListener(onClickListener);
+
+        xBasicView.setManuallyRefreshViewMode(false);
+        xBasicView.refreshView();
     }
 
     @Override

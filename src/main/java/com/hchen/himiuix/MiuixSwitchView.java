@@ -72,7 +72,7 @@ public class MiuixSwitchView extends MiuixStateView implements OnStateChangeList
     @Override
     void updateViewContent() {
         if (!pass) {
-            if (!xSwitch.setCheckedInner(isChecked)) {
+            if (!xSwitch.setUserChecked(isChecked)) {
                 isChecked = !isChecked;
             }
         }

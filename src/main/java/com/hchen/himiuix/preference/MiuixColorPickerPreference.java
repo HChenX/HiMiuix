@@ -83,12 +83,17 @@ public class MiuixColorPickerPreference extends MiuixPreference implements OnCol
         super.onBindViewHolder(holder);
         MiuixColorPickerView xColorPickerView = holder.itemView.findViewById(R.id.miuix_prefs);
 
+        xColorPickerView.setManuallyRefreshViewMode(true);
+
         xColorPickerView.setOnColorChangedListener(null);
         xColorPickerView.setOnColorChangedListener(this);
 
         xColorPickerView.setColor(color);
         xColorPickerView.setShowValueOnTip(isShowValueOnTip);
         xColorPickerView.setAlwaysHapticFeedback(isAlwaysHapticFeedback);
+
+        xColorPickerView.setManuallyRefreshViewMode(false);
+        xColorPickerView.refreshView();
     }
 
     @Override
