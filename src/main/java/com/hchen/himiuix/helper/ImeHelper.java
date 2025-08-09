@@ -18,12 +18,10 @@
  */
 package com.hchen.himiuix.helper;
 
-import android.app.Activity;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.core.view.OnApplyWindowInsetsListener;
-import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.hchen.himiuix.callback.OnImeVisibilityChangedListener;
@@ -35,31 +33,13 @@ import java.util.HashSet;
  *
  * @author 焕晨HChen
  */
-public class ImeHelper {
-    private static boolean isRegistered = false;
+public class ImeHelper implements OnApplyWindowInsetsListener {
+    private static final ImeHelper imeHelper = new ImeHelper();
     private static boolean lastShown = false;
     private static final HashSet<OnImeVisibilityChangedListener> listeners = new HashSet<>();
 
-    public static void init(Activity activity) {
-        if (isRegistered) return;
-        ViewCompat.setOnApplyWindowInsetsListener(activity.getWindow().getDecorView(),
-            new OnApplyWindowInsetsListener() {
-                @NonNull
-                @Override
-                public WindowInsetsCompat onApplyWindowInsets(@NonNull View v, @NonNull WindowInsetsCompat insets) {
-                    checkAndRemoveListenersIfNeed();
-                    if (insets.isVisible(WindowInsetsCompat.Type.ime())) {
-                        listeners.forEach(listener -> listener.visibilityChanged(true));
-                        lastShown = true;
-                    } else if (lastShown) {
-                        listeners.forEach(listener -> listener.visibilityChanged(false));
-                        lastShown = false;
-                    }
-                    return insets;
-                }
-            }
-        );
-        isRegistered = true;
+    public static ImeHelper init() {
+        return imeHelper;
     }
 
     public static void addListeners(OnImeVisibilityChangedListener listener) {
@@ -77,5 +57,18 @@ public class ImeHelper {
             }
             return false;
         });
+    }
+
+    @NonNull @Override
+    public WindowInsetsCompat onApplyWindowInsets(@NonNull View v, @NonNull WindowInsetsCompat insets) {
+        checkAndRemoveListenersIfNeed();
+        if (insets.isVisible(WindowInsetsCompat.Type.ime())) {
+            listeners.forEach(listener -> listener.visibilityChanged(true));
+            lastShown = true;
+        } else if (lastShown) {
+            listeners.forEach(listener -> listener.visibilityChanged(false));
+            lastShown = false;
+        }
+        return insets;
     }
 }
