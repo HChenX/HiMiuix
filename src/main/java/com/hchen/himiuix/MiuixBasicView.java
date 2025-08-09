@@ -34,10 +34,10 @@ import android.widget.TextView;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.DrawableRes;
-import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
+import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -53,6 +53,7 @@ import java.util.Objects;
  */
 public class MiuixBasicView extends LinearLayout {
     static final String TAG = "HiMiuix";
+    private CardView cardView;
     private ImageView iconView;
     private TextView titleView;
     private TextView summaryView;
@@ -66,6 +67,9 @@ public class MiuixBasicView extends LinearLayout {
     private Drawable icon;
     private Drawable indicator;
     private View customView;
+    private int customId;
+    private int background;
+    private int iconRadius;
     private boolean enabled;
     private boolean isAdded;
     private boolean isHapticFeedbackEnabled;
@@ -99,14 +103,17 @@ public class MiuixBasicView extends LinearLayout {
         summary = typedArray.getText(R.styleable.MiuixBasicView_android_summary);
         icon = typedArray.getDrawable(R.styleable.MiuixBasicView_android_icon);
         indicator = typedArray.getDrawable(R.styleable.MiuixBasicView_indicator);
+        iconRadius = typedArray.getDimensionPixelSize(R.styleable.MiuixBasicView_iconRadius, -1);
+        background = typedArray.getResourceId(R.styleable.MiuixBasicView_android_background, 0);
+        customId = typedArray.getResourceId(R.styleable.MiuixBasicView_android_layout, 0);
         enabled = typedArray.getBoolean(R.styleable.MiuixBasicView_android_enabled, true);
         isShadowEnabled = typedArray.getBoolean(R.styleable.MiuixBasicView_shadowEnabled, true);
         isHapticFeedbackEnabled = typedArray.getBoolean(R.styleable.MiuixBasicView_android_hapticFeedbackEnabled, true);
         typedArray.recycle();
 
         createLayout();
-        loadShadowHelper();
         loadViewWhenBuild();
+        loadShadowHelper();
         updateViewContent();
         updateVisibility();
         setEnabled(enabled);
@@ -170,12 +177,17 @@ public class MiuixBasicView extends LinearLayout {
      */
     @CallSuper
     void loadViewWhenBuild() {
+        cardView = findViewById(R.id.miuix_icon_card);
         iconView = findViewById(R.id.miuix_icon);
         titleView = findViewById(R.id.miuix_title);
         summaryView = findViewById(R.id.miuix_summary);
         tipView = findViewById(R.id.miuix_tip);
         indicatorView = findViewById(R.id.miuix_custom_indicator);
         customLayout = findViewById(R.id.miuix_custom);
+
+        if (background != 0) setBackgroundResource(background);
+        else setBackgroundResource(R.color.miuix_basic_background_color);
+        if (customId != 0) customView = LayoutInflater.from(getContext()).inflate(customId, null);
     }
 
     /**
@@ -183,13 +195,23 @@ public class MiuixBasicView extends LinearLayout {
      */
     @CallSuper
     void updateViewContent() {
+        if (iconRadius != -1) cardView.setRadius(iconRadius);
+        if (shadowHelper != null) shadowHelper.setShadowEnabled(isShadowEnabled);
         if (icon != null) iconView.setImageDrawable(icon);
         if (title != null) titleView.setText(title);
         if (summary != null) summaryView.setText(summary);
         if (tip != null) tipView.setText(tip);
         if (indicator != null) indicatorView.setImageDrawable(indicator);
         if (customView != null) {
-            if (!isAdded) addView(customLayout, customView);
+            if (!isAdded) {
+                if (icon != null || title != null || summary != null ||
+                    tip != null || indicator != null || forceShowCustomIndicatorView()) {
+                    LinearLayout.LayoutParams params = (LayoutParams) customLayout.getLayoutParams();
+                    params.topMargin = getContext().getResources().getDimensionPixelSize(R.dimen.miuix_basic_margin);
+                    customLayout.setLayoutParams(params);
+                }
+                addView(customLayout, customView);
+            }
             isAdded = true;
         }
     }
@@ -199,8 +221,13 @@ public class MiuixBasicView extends LinearLayout {
      */
     @CallSuper
     void updateVisibility() {
-        if (icon == null) iconView.setVisibility(GONE);
-        else iconView.setVisibility(VISIBLE);
+        if (icon == null) {
+            cardView.setVisibility(GONE);
+            iconView.setVisibility(GONE);
+        } else {
+            cardView.setVisibility(VISIBLE);
+            iconView.setVisibility(VISIBLE);
+        }
 
         if (title == null) titleView.setVisibility(GONE);
         else titleView.setVisibility(VISIBLE);
@@ -298,16 +325,14 @@ public class MiuixBasicView extends LinearLayout {
         refreshView();
     }
 
-    public void setCustomView(@LayoutRes int customView) {
-        setCustomView(LayoutInflater.from(getContext()).inflate(customView, null));
-    }
-
     public void setCustomView(View customView) {
-        if (this.customView != null &&
-            (customView == null || !Objects.equals(this.customView, customView))) {
+        if (Objects.equals(this.customView, customView))
+            return;
+        if (this.customView != null && !Objects.equals(this.customView, customView)) {
             removeView(customLayout, this.customView);
             isAdded = false;
         }
+
         this.customView = customView;
         refreshView();
     }
@@ -315,6 +340,10 @@ public class MiuixBasicView extends LinearLayout {
     public void setIntent(@Nullable Intent intent) {
         this.intent = intent;
         refreshView();
+    }
+
+    public void setIconRadius(int iconRadius) {
+        this.iconRadius = iconRadius;
     }
 
     @Override
@@ -377,6 +406,19 @@ public class MiuixBasicView extends LinearLayout {
 
     public Drawable getIndicator() {
         return indicator;
+    }
+
+    public View getCustomView() {
+        return customView;
+    }
+
+    public int getIconRadius() {
+        return iconRadius;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
     }
 
     // ------------------ View ---------------------

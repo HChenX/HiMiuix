@@ -75,6 +75,12 @@ public class MiuixListAdapter extends RecyclerView.Adapter<MiuixListAdapter.Miui
         this.context = context;
         layoutRes = res;
         recyclerView = new RecyclerView(context);
+        recyclerView.setLayoutParams(
+            new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+        );
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.setOverScrollMode(View.OVER_SCROLL_ALWAYS);
         recyclerView.setHorizontalScrollBarEnabled(false);

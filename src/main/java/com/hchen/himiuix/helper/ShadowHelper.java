@@ -20,7 +20,10 @@ package com.hchen.himiuix.helper;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Handler;
 import android.os.Looper;
@@ -42,7 +45,7 @@ import com.hchen.himiuix.utils.MiuixUtils;
 public class ShadowHelper {
     private static final String TAG = "HiMiuix";
     private View targetView;
-    private GradientDrawable background;
+    private Drawable background;
     private int originalColor;
     private int shadowColor;
     private float initialX;
@@ -99,7 +102,7 @@ public class ShadowHelper {
             shadowAnimator.setDuration(100);
             shadowAnimator.setInterpolator(new AccelerateInterpolator());
             shadowAnimator.addUpdateListener(animation ->
-                background.setColor((int) animation.getAnimatedValue())
+                setColor(background, (int) animation.getAnimatedValue())
             );
             shadowAnimator.start();
         }
@@ -117,7 +120,7 @@ public class ShadowHelper {
             shadowAnimator.setDuration(200);
             shadowAnimator.setInterpolator(new AccelerateInterpolator());
             shadowAnimator.addUpdateListener(animation ->
-                background.setColor((int) animation.getAnimatedValue())
+                setColor(background, (int) animation.getAnimatedValue())
             );
             shadowAnimator.start();
         }
@@ -138,13 +141,22 @@ public class ShadowHelper {
         this.targetView = targetView;
         targetView.setClickable(true);
 
-        originalColor = targetView.getContext().getColor(R.color.miuix_basic_background_color);
-        background = (GradientDrawable) targetView.findViewById(R.id.miuix_basic).getBackground();
+        background = targetView.getBackground();
+        background = background.mutate();
         touchSlop = ViewConfiguration.get(targetView.getContext()).getScaledTouchSlop();
+        if (background instanceof GradientDrawable drawable) {
+            ColorStateList colorStateList = drawable.getColor();
+            if (colorStateList != null)
+                originalColor = colorStateList.getDefaultColor();
+            else
+                originalColor = targetView.getContext().getColor(R.color.miuix_basic_background_color);
+        } else if (background instanceof ColorDrawable drawable)
+            originalColor = drawable.getColor();
+
 
         // 清理
         shadowAnimator.endAny();
-        background.setColor(originalColor);
+        setColor(background, originalColor);
     }
 
     public void setEnabled(boolean enabled) {
@@ -221,5 +233,12 @@ public class ShadowHelper {
         int g = (int) (Color.green(color) * factor);
         int b = (int) (Color.blue(color) * factor);
         return Color.rgb(r, g, b);
+    }
+
+    private void setColor(Drawable drawable, int color) {
+        if (drawable instanceof GradientDrawable gradientDrawable)
+            gradientDrawable.setColor(color);
+        else if (drawable instanceof ColorDrawable colorDrawable)
+            colorDrawable.setColor(color);
     }
 }

@@ -3,6 +3,7 @@
     <!-- basic -->
     <item name="miuix_basic" type="id" />
     <item name="miuix_icon" type="id" />
+    <item name="miuix_icon_card" type="id" />
     <item name="miuix_content" type="id" />
     <item name="miuix_title" type="id" />
     <item name="miuix_summary" type="id" />

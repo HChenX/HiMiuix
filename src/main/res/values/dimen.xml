@@ -3,9 +3,9 @@
     <!-- basic -->
     <dimen name="miuix_basic_margin">12dp</dimen>
     <dimen name="miuix_basic_padding">16dp</dimen>
-    <dimen name="miuix_basic_min_height">60dp</dimen>
+    <dimen name="miuix_basic_min_height">53dp</dimen>
     <dimen name="miuix_basic_radius">15dp</dimen>
-    <dimen name="miuix_basic_icon">33dp</dimen>
+    <dimen name="miuix_basic_icon_min">53dp</dimen>
     <dimen name="miuix_basic_custom_indicator">27dp</dimen>
 
     <!-- icon -->

@@ -6,6 +6,9 @@
         <attr name="android:title" />
         <attr name="android:summary" />
         <attr name="android:enabled" />
+        <attr name="android:layout" />
+        <attr name="android:background" />
+        <attr name="iconRadius" format="dimension" />
         <attr name="shadowEnabled" format="boolean" />
         <attr name="indicator" format="reference" />
         <attr name="android:hapticFeedbackEnabled" />
@@ -89,6 +92,8 @@
     <declare-styleable name="MiuixPreference">
         <attr name="tip" />
         <attr name="indicator" />
+        <attr name="android:layout" />
+        <attr name="iconRadius" />
         <attr name="shadowEnabled" />
         <attr name="android:hapticFeedbackEnabled" />
     </declare-styleable>

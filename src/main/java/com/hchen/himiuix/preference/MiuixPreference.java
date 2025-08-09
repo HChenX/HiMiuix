@@ -66,6 +66,7 @@ public class MiuixPreference extends Preference implements OnRefreshViewListener
     private CharSequence tip;
     private Drawable indicator;
     private View customView;
+    private int iconRadius;
     private boolean isShadowEnabled;
     private boolean isHapticFeedbackEnabled;
     private final View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -98,12 +99,15 @@ public class MiuixPreference extends Preference implements OnRefreshViewListener
         final TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.MiuixPreference, defStyleAttr, defStyleRes);
         tip = typedArray.getText(R.styleable.MiuixPreference_tip);
         indicator = typedArray.getDrawable(R.styleable.MiuixPreference_indicator);
+        iconRadius = typedArray.getDimensionPixelSize(R.styleable.MiuixPreference_iconRadius, -1);
+        int layoutId = typedArray.getResourceId(R.styleable.MiuixPreference_android_layout, 0);
         isShadowEnabled = typedArray.getBoolean(R.styleable.MiuixPreference_shadowEnabled, true);
         isHapticFeedbackEnabled = typedArray.getBoolean(R.styleable.MiuixPreference_android_hapticFeedbackEnabled, true);
         typedArray.recycle();
 
-        radius = getContext().getResources().getDimensionPixelSize(R.dimen.miuix_prefs_card_radius);
         setLayoutResource(loadLayoutResource());
+        radius = getContext().getResources().getDimensionPixelSize(R.dimen.miuix_prefs_card_radius);
+        if (layoutId != 0) customView = LayoutInflater.from(getContext()).inflate(layoutId, null);
     }
 
     @LayoutRes
@@ -127,9 +131,9 @@ public class MiuixPreference extends Preference implements OnRefreshViewListener
         xBasicView.setTitle(getTitle());
         xBasicView.setSummary(getSummary());
         xBasicView.setIcon(getIcon());
+        xBasicView.setIconRadius(iconRadius);
         xBasicView.setIndicator(indicator);
-        if (customView != null)
-            xBasicView.setCustomView(customView);
+        xBasicView.setCustomView(customView);
         // 不要设置 BasicView 的 Intent，可能会执行两次
         // xBasicView.setIntent(getIntent());
         xBasicView.setShadowEnabled(isShadowEnabled);
@@ -201,6 +205,11 @@ public class MiuixPreference extends Preference implements OnRefreshViewListener
         notifyChanged();
     }
 
+    public void setIconRadius(int iconRadius) {
+        this.iconRadius = iconRadius;
+        notifyChanged();
+    }
+
     @Nullable
     public CharSequence getTip() {
         return tip;
@@ -213,6 +222,14 @@ public class MiuixPreference extends Preference implements OnRefreshViewListener
     @Nullable
     public Drawable getIndicator() {
         return indicator;
+    }
+
+    public View getCustomView() {
+        return customView;
+    }
+
+    public int getIconRadius() {
+        return iconRadius;
     }
 
     public boolean isHapticFeedbackEnabled() {
