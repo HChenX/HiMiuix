@@ -133,7 +133,8 @@ public class MiuixPreference extends Preference implements OnRefreshViewListener
         xBasicView.setIcon(getIcon());
         xBasicView.setIconRadius(iconRadius);
         xBasicView.setIndicator(indicator);
-        xBasicView.setCustomView(customView);
+        if (!skipSetCustomView())
+            xBasicView.setCustomView(customView);
         // 不要设置 BasicView 的 Intent，可能会执行两次
         // xBasicView.setIntent(getIntent());
         xBasicView.setShadowEnabled(isShadowEnabled);
@@ -162,6 +163,10 @@ public class MiuixPreference extends Preference implements OnRefreshViewListener
         ) {
             view.getIndicatorView().setVisibility(VISIBLE);
         } else view.getIndicatorView().setVisibility(GONE);
+    }
+
+    boolean skipSetCustomView() {
+        return false;
     }
 
     @Override

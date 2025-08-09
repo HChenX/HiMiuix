@@ -29,6 +29,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.PreferenceViewHolder;
 
+import com.hchen.himiuix.MiuixBasicView;
 import com.hchen.himiuix.MiuixSeekBarView;
 import com.hchen.himiuix.R;
 
@@ -101,7 +102,7 @@ public class MiuixSeekBarPreference extends MiuixPreference implements SeekBar.O
         xSeekBarView.setOnSeekBarChangeListener(null);
         xSeekBarView.setOnSeekBarChangeListener(this);
 
-        xSeekBarView.setValue(value);
+        xSeekBarView.setValueInner(value);
         xSeekBarView.setDefValue(defValue);
         xSeekBarView.setMaxValue(maxValue);
         xSeekBarView.setMinValue(minValue);
@@ -115,6 +116,15 @@ public class MiuixSeekBarPreference extends MiuixPreference implements SeekBar.O
 
         xSeekBarView.setManuallyRefreshViewMode(false);
         xSeekBarView.refreshView();
+    }
+
+    @Override
+    public void refreshed(MiuixBasicView view) {
+    }
+
+    @Override
+    boolean skipSetCustomView() {
+        return true;
     }
 
     public void setValue(int value) {

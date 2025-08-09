@@ -114,23 +114,20 @@ public class MiuixSeekBarView extends MiuixBasicView {
                 if (fromUser) {
                     if (isAlwaysHapticFeedback)
                         HapticFeedbackHelper.performHapticFeedback(xSeekBar, HapticFeedbackHelper.MIUI_TAP_NORMAL);
-                    MiuixSeekBarView.this.value = progress;
+                    value = isStep ? calculateOriginalValue(progress) : progress;
                 }
-                if (listener != null)
-                    listener.onProgressChanged(seekBar, progress, fromUser);
+                if (listener != null) listener.onProgressChanged(seekBar, progress, fromUser);
                 updateTipIfNeed();
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-                if (listener != null)
-                    listener.onStartTrackingTouch(seekBar);
+                if (listener != null) listener.onStartTrackingTouch(seekBar);
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                if (listener != null)
-                    listener.onStopTrackingTouch(seekBar);
+                if (listener != null) listener.onStopTrackingTouch(seekBar);
             }
         });
         setCustomView(xSeekBar);
@@ -151,7 +148,8 @@ public class MiuixSeekBarView extends MiuixBasicView {
         initStepData();
         if (maxValue != Integer.MIN_VALUE) xSeekBar.setMax(isStep ? stepCount : maxValue);
         if (minValue != Integer.MIN_VALUE) xSeekBar.setMin(isStep ? 0 : minValue);
-        if (value != Integer.MIN_VALUE) xSeekBar.setProgress(value);
+        if (value != Integer.MIN_VALUE)
+            xSeekBar.setProgress(isStep ? calculateStepCount(value) : value);
         if (defValue != Integer.MIN_VALUE) {
             if (isStep) xSeekBar.setDefStepCount(calculateStepCount(defValue));
             else xSeekBar.setDefValue(defValue);
@@ -159,7 +157,7 @@ public class MiuixSeekBarView extends MiuixBasicView {
             xSeekBar.setShowDefaultPoint(
                 isShowDefaultPoint && (
                     isStep ?
-                        value != calculateStepCount(defValue) :
+                        calculateStepCount(value) != calculateStepCount(defValue) :
                         value != defValue
                 )
             );
@@ -171,6 +169,11 @@ public class MiuixSeekBarView extends MiuixBasicView {
     void updateVisibility() {
         super.updateVisibility();
         if (isShowValueOnTip) getTipView().setVisibility(VISIBLE);
+    }
+
+    @Override
+    boolean canShowCustomIndicatorView() {
+        return false;
     }
 
     private void updateTipIfNeed() {
@@ -203,16 +206,17 @@ public class MiuixSeekBarView extends MiuixBasicView {
                         @Override
                         public void onClick(MiuixDialogInterface dialog, int which) {
                             float f = Float.MIN_VALUE;
-                            String value = Optional.ofNullable(xEditText.getText()).orElse("").toString();
-                            if (value.isEmpty()) value = String.valueOf(defValue);
+                            String tmpValue = Optional.ofNullable(xEditText.getText()).orElse("").toString();
+                            if (tmpValue.isEmpty()) tmpValue = String.valueOf(defValue);
 
                             if (dividerValue != Integer.MIN_VALUE)
-                                f = Float.parseFloat(value) * dividerValue;
-                            int finalValue = Integer.parseInt(f != Float.MIN_VALUE ? String.valueOf((int) f) : value);
-                            xSeekBar.setShowDefaultPoint(isShowDefaultPoint && (isStep ?
-                                MiuixSeekBarView.this.value != calculateStepCount(defValue) :
-                                MiuixSeekBarView.this.value != defValue));
-                            setValue(isStep ? calculateStepCount(finalValue) : finalValue);
+                                f = Float.parseFloat(tmpValue) * dividerValue;
+                            int finalValue = Integer.parseInt(f != Float.MIN_VALUE ? String.valueOf((int) f) : tmpValue);
+                            xSeekBar.setShowDefaultPoint(isShowDefaultPoint &&
+                                (isStep ?
+                                    calculateStepCount(value) != calculateStepCount(defValue) :
+                                    value != defValue));
+                            setValue(finalValue);
                         }
                     })
                     .setOnShowListener(dialog -> isShowing = true)
@@ -236,8 +240,9 @@ public class MiuixSeekBarView extends MiuixBasicView {
 
     public void setValue(int value) {
         if (isStep) {
-            if (value < 0) value = 0;
-            if (value > stepCount) value = stepCount;
+            int step = calculateStepCount(value);
+            if (step > stepCount) step = stepCount;
+            value = calculateOriginalValue(step);
         } else {
             if (minValue != Integer.MIN_VALUE && value < minValue) value = minValue;
             if (maxValue != Integer.MIN_VALUE && value > maxValue) value = maxValue;
@@ -245,6 +250,14 @@ public class MiuixSeekBarView extends MiuixBasicView {
 
         this.value = value;
         refreshView();
+    }
+
+    public void setValueInner(int value) {
+        if (isStep) {
+            if (value > stepCount) value = stepCount;
+            value = calculateOriginalValue(value);
+        }
+        setValue(value);
     }
 
     public void setDefValue(int defValue) {
@@ -306,7 +319,7 @@ public class MiuixSeekBarView extends MiuixBasicView {
     }
 
     public int getValue() {
-        return isStep ? calculateOriginalValue(value) : value;
+        return value;
     }
 
     public int getDefValue() {
@@ -364,7 +377,6 @@ public class MiuixSeekBarView extends MiuixBasicView {
             if (stepCount * stepValue != maxValue - minValue) {
                 maxValue = minValue + (stepCount * stepValue);
             }
-            value = (value - minValue) / stepCount;
             isStep = true;
         }
     }

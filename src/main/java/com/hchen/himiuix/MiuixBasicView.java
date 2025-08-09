@@ -72,6 +72,7 @@ public class MiuixBasicView extends LinearLayout {
     private int iconRadius;
     private boolean enabled;
     private boolean isAdded;
+    private boolean isMargined;
     private boolean isHapticFeedbackEnabled;
     private boolean isShadowEnabled;
     private boolean isManuallyRefreshView;
@@ -203,16 +204,19 @@ public class MiuixBasicView extends LinearLayout {
         if (tip != null) tipView.setText(tip);
         if (indicator != null) indicatorView.setImageDrawable(indicator);
         if (customView != null) {
-            if (!isAdded) {
+            if (!isMargined) {
                 if (icon != null || title != null || summary != null ||
                     tip != null || indicator != null || forceShowCustomIndicatorView()) {
                     LinearLayout.LayoutParams params = (LayoutParams) customLayout.getLayoutParams();
                     params.topMargin = getContext().getResources().getDimensionPixelSize(R.dimen.miuix_basic_margin);
                     customLayout.setLayoutParams(params);
+                    isMargined = true;
                 }
-                addView(customLayout, customView);
             }
-            isAdded = true;
+            if (!isAdded) {
+                addView(customLayout, customView);
+                isAdded = true;
+            }
         }
     }
 
