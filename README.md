@@ -20,7 +20,7 @@
 #### 展示:
 
 - Miuix About
-  ![MiuixAbout](https://raw.githubusercontent.com/HChenX/HiMiuiX/master/image/miuix.jpg)
+  ![MiuixAbout](https://raw.githubusercontent.com/HChenX/HiMiuix/master/image/miuix.jpg)
 
 ### 使用
 
