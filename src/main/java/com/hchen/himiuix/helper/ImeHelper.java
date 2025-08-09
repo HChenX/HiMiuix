@@ -42,7 +42,7 @@ public class ImeHelper {
 
     public static void init(Activity activity) {
         if (isRegistered) return;
-        ViewCompat.setOnApplyWindowInsetsListener(activity.findViewById(android.R.id.content),
+        ViewCompat.setOnApplyWindowInsetsListener(activity.getWindow().getDecorView(),
             new OnApplyWindowInsetsListener() {
                 @NonNull
                 @Override
