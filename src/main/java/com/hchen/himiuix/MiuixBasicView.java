@@ -70,7 +70,7 @@ public class MiuixBasicView extends LinearLayout {
     private int customId;
     private int background;
     private int iconRadius;
-    private boolean enabled;
+    private boolean isEnabled;
     private boolean isAdded;
     private boolean isMargined;
     private boolean isHapticFeedbackEnabled;
@@ -107,7 +107,7 @@ public class MiuixBasicView extends LinearLayout {
         iconRadius = typedArray.getDimensionPixelSize(R.styleable.MiuixBasicView_iconRadius, -1);
         background = typedArray.getResourceId(R.styleable.MiuixBasicView_android_background, 0);
         customId = typedArray.getResourceId(R.styleable.MiuixBasicView_android_layout, 0);
-        enabled = typedArray.getBoolean(R.styleable.MiuixBasicView_android_enabled, true);
+        isEnabled = typedArray.getBoolean(R.styleable.MiuixBasicView_android_enabled, true);
         isShadowEnabled = typedArray.getBoolean(R.styleable.MiuixBasicView_shadowEnabled, true);
         isHapticFeedbackEnabled = typedArray.getBoolean(R.styleable.MiuixBasicView_android_hapticFeedbackEnabled, true);
         typedArray.recycle();
@@ -117,7 +117,7 @@ public class MiuixBasicView extends LinearLayout {
         loadShadowHelper();
         updateViewContent();
         updateVisibility();
-        setEnabled(enabled);
+        setEnabled(isEnabled);
         setHapticFeedbackEnabled(isHapticFeedbackEnabled);
     }
 
@@ -134,9 +134,9 @@ public class MiuixBasicView extends LinearLayout {
     @Override
     @CallSuper
     public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-        setEnabledInner(this, enabled);
+        this.isEnabled = enabled;
         super.setEnabled(enabled);
+        setEnabledInner(this, enabled);
     }
 
     private void setEnabledInner(ViewGroup group, boolean enabled) {
@@ -418,11 +418,6 @@ public class MiuixBasicView extends LinearLayout {
 
     public int getIconRadius() {
         return iconRadius;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
     }
 
     // ------------------ View ---------------------
