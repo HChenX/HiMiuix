@@ -1,9 +1,9 @@
 <div align="center">
 <h1>HiMiuix</h1>
 
-![stars](https://img.shields.io/github/stars/HChenX/HiMiuiX?style=flat)
-![Github repo size](https://img.shields.io/github/repo-size/HChenX/HiMiuiX)
-![last commit](https://img.shields.io/github/last-commit/HChenX/HiMiuiX?style=flat)
+![stars](https://img.shields.io/github/stars/HChenX/HiMiuix?style=flat)
+![Github repo size](https://img.shields.io/github/repo-size/HChenX/HiMiuix)
+![last commit](https://img.shields.io/github/last-commit/HChenX/HiMiuix?style=flat)
 ![language](https://img.shields.io/badge/language-java-purple)
 
 [//]: # (<p><b><a href="README-en.md">English</a> | <a href="README.md">简体中文</a></b></p>)
