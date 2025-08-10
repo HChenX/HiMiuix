@@ -81,8 +81,10 @@ public class MiuixColorPickerView extends MiuixBasicView implements OnColorChang
         super.loadViewWhenBuild();
         colorSelectView = findViewById(R.id.miuix_color_indicator);
         colorPickerView = new ColorPickerView(getContext());
-        colorPickerView.setColorValue(color);
+        colorPickerView.setColorValue(color); // 初始化 Color
         colorPickerView.setOnColorChangedListener(this);
+
+        // 设置是否启用 Dialog 模式
         if (isDialogModeEnabled) colorPickerView.setDialogModeEnabled(true);
         else setCustomView(colorPickerView);
     }
@@ -90,7 +92,7 @@ public class MiuixColorPickerView extends MiuixBasicView implements OnColorChang
     @Override
     void updateVisibility() {
         super.updateVisibility();
-        // 视觉平衡
+        // 必要时隐藏颜色指示器，视觉平衡
         if (getTitle() != null || getSummary() != null) colorSelectView.setVisibility(VISIBLE);
         else colorSelectView.setVisibility(GONE);
         if (isShowValueOnTip) getTipView().setVisibility(VISIBLE);
@@ -105,6 +107,7 @@ public class MiuixColorPickerView extends MiuixBasicView implements OnColorChang
             getTipView().setText(getContext().getString(R.string.color_display, colorPickerView.formatColor(color)));
     }
 
+    // 不允许显示其他指示器
     @Override
     boolean canShowCustomIndicatorView() {
         return false;
@@ -134,6 +137,7 @@ public class MiuixColorPickerView extends MiuixBasicView implements OnColorChang
                     .setOnShowListener(dialog -> isShowing = true)
                     .setOnDismissListener(dialog -> {
                         isShowing = false;
+                        // 解除保持阴影状态
                         getShadowHelper().restoreOriginalColor();
                     })
                     .show();
@@ -145,6 +149,7 @@ public class MiuixColorPickerView extends MiuixBasicView implements OnColorChang
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (isEnabled() && isDialogModeEnabled && ev.getAction() == MotionEvent.ACTION_UP) {
+            // 保持阴影状态
             getShadowHelper().setKeepShadow();
         }
         return super.dispatchTouchEvent(ev);
@@ -189,6 +194,7 @@ public class MiuixColorPickerView extends MiuixBasicView implements OnColorChang
 
     @Override
     public void onColorValueChanged(ColorPickerType type, int value) {
+        // 仅在非 Dialog 模式持续刷新状态，保证性能
         if ((!isDialogModeEnabled && type == ColorPickerType.COLOR_VALUE) || type == ColorPickerType.FINAL_COLOR) {
             setColor(value);
             if (listener != null)

@@ -16,15 +16,13 @@
  *
  * Copyright (C) 2023–2025 HChenX
  */
-package com.hchen.himiuix.callback;
+package com.hchen.himiuix.springback;
 
-import com.hchen.himiuix.color.ColorPickerType;
+public interface ScrollStateDispatcher {
+    int SCROLL_STATE_IDLE = 0;
+    int SCROLL_STATE_DRAGGING = 1;
+    int SCROLL_STATE_SETTLING = 2;
 
-/**
- * Color Changed Listener
- *
- * @author 焕晨HChen
- */
-public interface OnColorChangedListener {
-    void onColorValueChanged(ColorPickerType type, int value);
+    void addOnScrollChangeListener(ViewCompatOnScrollChangeListener listener);
+    void removeOnScrollChangeListener(ViewCompatOnScrollChangeListener listener);
 }

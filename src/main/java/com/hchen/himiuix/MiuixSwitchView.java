@@ -71,6 +71,7 @@ public class MiuixSwitchView extends MiuixStateView implements OnStateChangeList
 
     @Override
     void updateViewContent() {
+        // 跳过非用户的 Check 动作
         if (!pass) {
             if (!xSwitch.setUserChecked(isChecked)) {
                 isChecked = !isChecked;

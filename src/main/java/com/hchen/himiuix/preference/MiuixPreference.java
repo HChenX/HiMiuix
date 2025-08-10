@@ -133,13 +133,13 @@ public class MiuixPreference extends Preference implements OnRefreshViewListener
         xBasicView.setIcon(getIcon());
         xBasicView.setIconRadius(iconRadius);
         xBasicView.setIndicator(indicator);
-        if (!skipSetCustomView())
+        if (!skipSetCustomView()) // 是否跳过设置自定义布局
             xBasicView.setCustomView(customView);
         // 不要设置 BasicView 的 Intent，可能会执行两次
         // xBasicView.setIntent(getIntent());
+        xBasicView.setEnabled(isEnabled());
         xBasicView.setShadowEnabled(isShadowEnabled);
         xBasicView.setHapticFeedbackEnabled(isHapticFeedbackEnabled);
-        xBasicView.setEnabled(isEnabled());
         xBasicView.setOnRefreshViewListener(this);
         xBasicView.setOnClickListener(onClickListener);
 

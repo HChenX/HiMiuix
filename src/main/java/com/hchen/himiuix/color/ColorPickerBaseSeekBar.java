@@ -132,5 +132,7 @@ class ColorPickerBaseSeekBar extends MiuixSeekBar implements SeekBar.OnSeekBarCh
 
     @Override
     public final void onStopTrackingTouch(SeekBar seekBar) {
+        // 可计算最终值，-1 无任何含义
+        if (listener != null) listener.onColorValueChanged(ColorPickerType.FINAL_COLOR, -1);
     }
 }

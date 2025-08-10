@@ -24,7 +24,9 @@ package com.hchen.himiuix.color;
  * @author 焕晨HChen
  */
 public enum ColorPickerType {
+    // 最终值
     FINAL_COLOR,
+    // 实时变化值
     COLOR_VALUE,
     HUE,
     LIGHTNESS,

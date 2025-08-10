@@ -19,7 +19,7 @@
 package com.hchen.himiuix.callback;
 
 /**
- * 色相更改回调
+ * Hue Changed Listener
  * <p>
  * 内部使用
  *

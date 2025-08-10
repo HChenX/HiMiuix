@@ -102,7 +102,7 @@ public class MiuixSeekBarPreference extends MiuixPreference implements SeekBar.O
         xSeekBarView.setOnSeekBarChangeListener(null);
         xSeekBarView.setOnSeekBarChangeListener(this);
 
-        xSeekBarView.setValueInner(value);
+        xSeekBarView.setValue(value);
         xSeekBarView.setDefValue(defValue);
         xSeekBarView.setMaxValue(maxValue);
         xSeekBarView.setMinValue(minValue);
@@ -120,6 +120,7 @@ public class MiuixSeekBarPreference extends MiuixPreference implements SeekBar.O
 
     @Override
     public void refreshed(MiuixBasicView view) {
+        // 阻止显示指示器
     }
 
     @Override

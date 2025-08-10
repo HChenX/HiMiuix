@@ -106,6 +106,7 @@ public class MiuixListPreference extends MiuixPreference implements OnChooseItem
 
     @Override
     public void refreshed(MiuixBasicView view) {
+        // 阻止显示指示器
     }
 
     public void setItems(CharSequence[] items) {

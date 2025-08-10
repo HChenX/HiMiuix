@@ -42,7 +42,7 @@ import com.hchen.himiuix.widget.MiuixEditText;
  * @author 焕晨HChen
  */
 public class MiuixEditTextView extends MiuixBasicView {
-    private CharSequence tip;
+    private CharSequence editTip;
     private CharSequence hint;
     private Drawable icon;
     private boolean isAutoRequestFocus;
@@ -68,7 +68,7 @@ public class MiuixEditTextView extends MiuixBasicView {
     @Override
     void init(@Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         final TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.MiuixEditTextView, defStyleAttr, defStyleRes);
-        tip = typedArray.getText(R.styleable.MiuixEditTextView_editTip);
+        editTip = typedArray.getText(R.styleable.MiuixEditTextView_editTip);
         hint = typedArray.getText(R.styleable.MiuixEditTextView_android_hint);
         icon = typedArray.getDrawable(R.styleable.MiuixEditTextView_editIcon);
         isAutoRequestFocus = typedArray.getBoolean(R.styleable.MiuixEditTextView_autoRequestFocus, false);
@@ -80,6 +80,7 @@ public class MiuixEditTextView extends MiuixBasicView {
     @Override
     void loadShadowHelper() {
         super.loadShadowHelper();
+        // 禁用点击效果，Edit 不需要外部点击动画
         setShadowHelperEnabled(false);
     }
 
@@ -89,6 +90,7 @@ public class MiuixEditTextView extends MiuixBasicView {
         xEditText = new MiuixEditText(getContext());
         setCustomView(xEditText);
 
+        // 更新 Tip 位置
         LayoutParams params = (LayoutParams) getTipView().getLayoutParams();
         params.gravity = Gravity.BOTTOM;
         getTipView().setLayoutParams(params);
@@ -101,12 +103,17 @@ public class MiuixEditTextView extends MiuixBasicView {
         super.updateViewContent();
 
         if (isFirstLoad) {
-            if (tip != null) setTipText(tip);
+            if (editTip != null) setTipText(editTip);
             if (hint != null) setHint(hint);
             if (icon != null) setImageDrawable(icon);
             setAutoRequestFocus(isAutoRequestFocus);
             isFirstLoad = false;
         }
+    }
+
+    @Override
+    boolean canShowCustomIndicatorView() {
+        return false;
     }
 
     // -------------------- Inner EditText --------------------

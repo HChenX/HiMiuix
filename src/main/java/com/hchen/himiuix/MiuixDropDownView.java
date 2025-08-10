@@ -75,6 +75,7 @@ public class MiuixDropDownView extends MiuixBasicView {
     @Override
     void loadShadowHelper() {
         super.loadShadowHelper();
+        // 切换震动模式
         getShadowHelper().setHapticFeedbackFlag(HapticFeedbackHelper.MIUI_POPUP_NORMAL);
     }
 
@@ -100,46 +101,37 @@ public class MiuixDropDownView extends MiuixBasicView {
         if (isShowOnTip) getTipView().setVisibility(VISIBLE);
     }
 
+    // 强制显示指示器
     @Override
     boolean forceShowCustomIndicatorView() {
         return true;
     }
 
-    /**
-     * 设置可选条目列表
-     */
+    // 设置备选项目
     public void setEntries(CharSequence[] entries) {
         this.entries = entries;
         refreshView();
     }
 
-    /**
-     * 设置当前选中的条目索引值
-     */
+    // 设置当前选中项目的索引值
     public void setValue(String value) {
         this.value = value;
         refreshView();
     }
 
-    /**
-     * 设置当前选中的条目值
-     */
+    // 设置当前选中的条目
+    // 请注意，存在相同的条目时可能造成混乱
     public void setEntry(CharSequence entry) {
         this.entry = entry;
         refreshView();
     }
 
-    /**
-     * 设置监听选中条目更改事件
-     */
+
     public void setOnChooseItemListener(OnChooseItemListener listener) {
         this.listener = listener;
         refreshView();
     }
 
-    /**
-     * 选中的条目是否在 Tip 上展示
-     */
     public void setShowOnTip(boolean showOnTip) {
         isShowOnTip = showOnTip;
         refreshView();
@@ -170,6 +162,7 @@ public class MiuixDropDownView extends MiuixBasicView {
             getShadowHelper().setKeepShadow();
 
             new MiuixDropDownDialog(getContext())
+                // 设置点击的位置信息，将会直接影响 Dialog 弹出的位置
                 .setXY(ev.getX(), ev.getY())
                 .setTargetView(this)
                 .setEntries(entries)

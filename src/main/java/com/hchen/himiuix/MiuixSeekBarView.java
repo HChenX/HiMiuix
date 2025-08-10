@@ -105,18 +105,20 @@ public class MiuixSeekBarView extends MiuixBasicView {
         xSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                // 是否显示默认值点
                 if (isShowDefaultPoint) {
                     if (progress == defValue || (isStep && progress == calculateStepCount(defValue))) {
                         xSeekBar.setShowDefaultPoint(false);
                         HapticFeedbackHelper.performHapticFeedback(xSeekBar, HapticFeedbackHelper.MIUI_HOLD);
                     } else xSeekBar.setShowDefaultPoint(true);
                 }
+                // 仅响应用户动作
                 if (fromUser) {
                     if (isAlwaysHapticFeedback)
                         HapticFeedbackHelper.performHapticFeedback(xSeekBar, HapticFeedbackHelper.MIUI_TAP_NORMAL);
                     value = isStep ? calculateOriginalValue(progress) : progress;
                 }
-                if (listener != null) listener.onProgressChanged(seekBar, progress, fromUser);
+                if (listener != null) listener.onProgressChanged(seekBar, value, fromUser);
                 updateTipIfNeed();
             }
 
@@ -134,6 +136,7 @@ public class MiuixSeekBarView extends MiuixBasicView {
 
         xEditText = new MiuixEditText(getContext());
         xEditText.setAutoRequestFocus(true);
+        // 仅接收阿拉伯数字和“.”
         xEditText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_CLASS_NUMBER);
 
         LayoutParams params = (LayoutParams) getTipView().getLayoutParams();
@@ -178,7 +181,7 @@ public class MiuixSeekBarView extends MiuixBasicView {
 
     private void updateTipIfNeed() {
         if (isShowValueOnTip) {
-            String tip = calculateTipValue();
+            String tip = formatValue();
             tip = tip + (format != null ? format : "");
             getTipView().setText(tip);
         }
@@ -195,7 +198,7 @@ public class MiuixSeekBarView extends MiuixBasicView {
                     .setOnBindViewListener(new MiuixDialogInterface.OnBindViewListener() {
                         @Override
                         public void onBindView(@NonNull ViewGroup root, @NonNull View view) {
-                            xEditText.setText(calculateTipValue());
+                            xEditText.setText(formatValue());
                         }
                     })
                     .setCancelable(false)
@@ -250,14 +253,6 @@ public class MiuixSeekBarView extends MiuixBasicView {
 
         this.value = value;
         refreshView();
-    }
-
-    public void setValueInner(int value) {
-        if (isStep) {
-            if (value > stepCount) value = stepCount;
-            value = calculateOriginalValue(value);
-        }
-        setValue(value);
     }
 
     public void setDefValue(int defValue) {
@@ -393,7 +388,8 @@ public class MiuixSeekBarView extends MiuixBasicView {
         return minValue + (stepValue * stepCount);
     }
 
-    private String calculateTipValue() {
+    // int -> String
+    private String formatValue() {
         return dividerValue != Integer.MIN_VALUE ?
             (
                 getValue() == Integer.MIN_VALUE ?

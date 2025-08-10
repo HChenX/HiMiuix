@@ -1,5 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <declare-styleable name="SpringBackLayout">
+        <attr name="scrollableView" format="reference" />
+        <attr name="scrollOrientation" format="integer|flags">
+            <flag name="angle" value="0x4" />
+            <flag name="horizontal" value="0x1" />
+            <flag name="vertical" value="0x2" />
+        </attr>
+        <attr name="springBackMode" format="integer|flags">
+            <flag name="top" value="0x1" />
+            <flag name="bottom" value="0x2" />
+        </attr>
+    </declare-styleable>
+
     <declare-styleable name="MiuixBasicView">
         <attr name="tip" format="string" />
         <attr name="android:icon" />

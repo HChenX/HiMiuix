@@ -137,8 +137,11 @@ public class MiuixListView extends MiuixBasicView implements OnChooseItemListene
 
                 HashSet<Integer> hashSet = new HashSet<>(Arrays.asList(selectedValues));
                 for (int i = 0; i < items.length; i++) {
-                    if (hashSet.contains(i))
+                    if (hashSet.contains(i)) {
                         booleanArray.put(i, true);
+                        if (!isMultipleChoiceEnabled)
+                            break;
+                    }
                 }
                 xListAdapter.setBooleanArray(booleanArray);
             }

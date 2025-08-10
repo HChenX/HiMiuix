@@ -19,7 +19,7 @@
 package com.hchen.himiuix.callback;
 
 /**
- * 开关状态更改回调
+ * State Changed Listener
  *
  * @author 焕晨HChen
  */

@@ -98,6 +98,7 @@ public class MiuixColorPickerPreference extends MiuixPreference implements OnCol
 
     @Override
     public void refreshed(MiuixBasicView view) {
+        // 阻止显示指示器
     }
 
     public void setColor(@ColorInt int color) {
@@ -135,6 +136,7 @@ public class MiuixColorPickerPreference extends MiuixPreference implements OnCol
 
     @Override
     public void onColorValueChanged(ColorPickerType type, int value) {
+        // 只响应最终值
         if (type == ColorPickerType.FINAL_COLOR) {
             color = value;
             if (listener != null)

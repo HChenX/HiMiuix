@@ -99,7 +99,7 @@ public class MiuixDropDownPreference extends MiuixPreference implements OnChoose
 
     @Override
     public void refreshed(MiuixBasicView view) {
-        // Do Nothing
+        // 阻止显示指示器
     }
 
     public void setEntries(CharSequence[] entries) {

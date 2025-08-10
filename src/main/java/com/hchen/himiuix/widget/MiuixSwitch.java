@@ -235,9 +235,7 @@ public class MiuixSwitch extends LinearLayout {
         }
     }
 
-    /**
-     * 当且仅当 onStateChange 拦截操作时才会返回 false
-     */
+    // 当且仅当 onStateChange 拦截操作时才会返回 false
     public boolean setUserChecked(boolean checked) {
         final boolean changed = isChecked != checked;
         if (changed) {

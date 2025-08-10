@@ -114,26 +114,27 @@ public class MiuixStateView extends MiuixBasicView {
 
     public void setTipOn(CharSequence tipOn) {
         this.tipOn = tipOn;
-        refreshView();
+        passRefreshStateView();
     }
 
     public void setTipOff(CharSequence tipOff) {
         this.tipOff = tipOff;
-        refreshView();
+        passRefreshStateView();
     }
 
     public void setSummaryOn(CharSequence summaryOn) {
         this.summaryOn = summaryOn;
-        refreshView();
+        passRefreshStateView();
     }
 
     public void setSummaryOff(CharSequence summaryOff) {
         this.summaryOff = summaryOff;
-        refreshView();
+        passRefreshStateView();
     }
 
     public void setOnStateChangeListener(OnStateChangeListener listener) {
         this.listener = listener;
+        passRefreshStateView();
     }
 
     public CharSequence getTipOn() {

@@ -37,7 +37,6 @@ import androidx.cardview.widget.CardView;
  */
 public class MiuixViewGroup extends LinearLayout {
     private CharSequence dividerTitle;
-    private boolean isMarginBottomEnabled;
     private LinearLayout innerLayout;
 
     public MiuixViewGroup(Context context) {
@@ -60,7 +59,7 @@ public class MiuixViewGroup extends LinearLayout {
     private void init(@Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         final TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.MiuixViewGroup, defStyleAttr, defStyleRes);
         dividerTitle = typedArray.getText(R.styleable.MiuixViewGroup_dividerTitle);
-        isMarginBottomEnabled = typedArray.getBoolean(R.styleable.MiuixViewGroup_marginBottomEnabled, false);
+        boolean isMarginBottomEnabled = typedArray.getBoolean(R.styleable.MiuixViewGroup_marginBottomEnabled, false);
         typedArray.recycle();
 
         LayoutInflater.from(getContext()).inflate(R.layout.miuix_group_layout, this, true);
@@ -69,6 +68,9 @@ public class MiuixViewGroup extends LinearLayout {
 
         innerLayout = findViewById(R.id.miuix_group);
         CardView cardView = findViewById(R.id.miuix_card);
+
+        // 是否启用底部 margin
+        // 这在项目处于底部时有奇效
         if (isMarginBottomEnabled) {
             LinearLayout.LayoutParams params = (LayoutParams) cardView.getLayoutParams();
             params.bottomMargin = getContext().getResources().getDimensionPixelSize(R.dimen.miuix_basic_margin);

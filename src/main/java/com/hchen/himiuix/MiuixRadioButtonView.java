@@ -68,6 +68,7 @@ public class MiuixRadioButtonView extends MiuixStateView implements OnStateChang
 
     @Override
     void updateViewContent() {
+        // 跳过非用户的 Check 动作
         if (!pass) {
             if (!xRadioButton.setUserChecked(isChecked))
                 isChecked = !isChecked;
@@ -114,6 +115,7 @@ public class MiuixRadioButtonView extends MiuixStateView implements OnStateChang
             isChecked = newValue;
             passRefreshStateView();
 
+            // RadioGroup 回调
             if (isChecked && onInnerCheckedListener != null)
                 onInnerCheckedListener.onChecked(getId());
             return true;

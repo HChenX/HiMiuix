@@ -121,10 +121,14 @@ public class MiuixBasicView extends LinearLayout {
         setHapticFeedbackEnabled(isHapticFeedbackEnabled);
     }
 
+    // 加载基本布局
+    // 这是本组件的核心布局
     void createLayout() {
         LayoutInflater.from(getContext()).inflate(R.layout.miuix_layout, this, true);
     }
 
+    // 加载阴影动画帮助程序
+    // 此程序提供点击阴影效果
     @CallSuper
     void loadShadowHelper() {
         shadowHelper = ShadowHelper.init(this);
@@ -139,11 +143,13 @@ public class MiuixBasicView extends LinearLayout {
         setEnabledInner(this, enabled);
     }
 
+    // 设置布局内所有组件 Enabled 状态
     private void setEnabledInner(ViewGroup group, boolean enabled) {
         for (int i = 0; i < group.getChildCount(); i++) {
             View view = group.getChildAt(i);
             if (view instanceof ViewGroup viewGroup) {
                 viewGroup.setEnabled(enabled);
+                // 对 RecyclerView 特殊处理
                 if (viewGroup instanceof RecyclerView recyclerView) {
                     recyclerView.setLayoutFrozen(!enabled);
                     recyclerView.setOnTouchListener((v, event) -> !enabled);
@@ -171,11 +177,8 @@ public class MiuixBasicView extends LinearLayout {
         return super.onTouchEvent(event);
     }
 
-    /**
-     * 加载基本布局
-     * <p>
-     * 仅在构建布局时调用一次
-     */
+    // 加载布局
+    // 仅在构建时调用一次
     @CallSuper
     void loadViewWhenBuild() {
         cardView = findViewById(R.id.miuix_icon_card);
@@ -188,12 +191,15 @@ public class MiuixBasicView extends LinearLayout {
 
         if (background != 0) setBackgroundResource(background);
         else setBackgroundResource(R.color.miuix_basic_background_color);
+
+        // 加载自定义布局
+        // customId 仅在这里被实例一次
         if (customId != 0) customView = LayoutInflater.from(getContext()).inflate(customId, null);
     }
 
-    /**
-     * 更新布局内容
-     */
+    // 更新布局内容
+    // 将在调用 refreshView 后被执行
+    // 请不要在这里调用会触发 refreshView 的操作，会导致死循环
     @CallSuper
     void updateViewContent() {
         if (iconRadius != -1) cardView.setRadius(iconRadius);
@@ -204,15 +210,7 @@ public class MiuixBasicView extends LinearLayout {
         if (tip != null) tipView.setText(tip);
         if (indicator != null) indicatorView.setImageDrawable(indicator);
         if (customView != null) {
-            if (!isMargined) {
-                if (icon != null || title != null || summary != null ||
-                    tip != null || indicator != null || forceShowCustomIndicatorView()) {
-                    LinearLayout.LayoutParams params = (LayoutParams) customLayout.getLayoutParams();
-                    params.topMargin = getContext().getResources().getDimensionPixelSize(R.dimen.miuix_basic_margin);
-                    customLayout.setLayoutParams(params);
-                    isMargined = true;
-                }
-            }
+            updateMargin(getResources().getDimensionPixelSize(R.dimen.miuix_basic_margin));
             if (!isAdded) {
                 addView(customLayout, customView);
                 isAdded = true;
@@ -220,18 +218,13 @@ public class MiuixBasicView extends LinearLayout {
         }
     }
 
-    /**
-     * 更新组件可见性
-     */
+    // 更新布局可见性
+    // 将在调用 refreshView 后被执行
+    // 请不要在这里调用会触发 refreshView 的操作，会导致死循环
     @CallSuper
     void updateVisibility() {
-        if (icon == null) {
-            cardView.setVisibility(GONE);
-            iconView.setVisibility(GONE);
-        } else {
-            cardView.setVisibility(VISIBLE);
-            iconView.setVisibility(VISIBLE);
-        }
+        if (icon == null) cardView.setVisibility(GONE);
+        else cardView.setVisibility(VISIBLE);
 
         if (title == null) titleView.setVisibility(GONE);
         else titleView.setVisibility(VISIBLE);
@@ -242,6 +235,7 @@ public class MiuixBasicView extends LinearLayout {
         if (tip == null) tipView.setVisibility(GONE);
         else tipView.setVisibility(VISIBLE);
 
+        // 判断是否要显示指示器
         if (canShowCustomIndicatorView() || forceShowCustomIndicatorView()) {
             if ((intent == null && !hasOnClickListeners()) && !forceShowCustomIndicatorView())
                 indicatorView.setVisibility(GONE);
@@ -252,20 +246,17 @@ public class MiuixBasicView extends LinearLayout {
         else customLayout.setVisibility(VISIBLE);
     }
 
-    /**
-     * 是否展示自定义指示器
-     */
+    // 是否允许展示指示器
     boolean canShowCustomIndicatorView() {
         return true;
     }
 
-    /**
-     * 是否强制展示自定义指示器
-     */
+    // 是否无视判断强制显示指示器
     boolean forceShowCustomIndicatorView() {
         return false;
     }
 
+    // 刷新布局
     public final void refreshView() {
         if (isManuallyRefreshView)
             return;
@@ -333,6 +324,10 @@ public class MiuixBasicView extends LinearLayout {
         if (Objects.equals(this.customView, customView))
             return;
         if (this.customView != null && !Objects.equals(this.customView, customView)) {
+            if (customView == null) {
+                isMargined = false;
+                updateMargin(0);
+            }
             removeView(customLayout, this.customView);
             isAdded = false;
         }
@@ -348,15 +343,17 @@ public class MiuixBasicView extends LinearLayout {
 
     public void setIconRadius(int iconRadius) {
         this.iconRadius = iconRadius;
+        refreshView();
     }
 
     @Override
     public void setHapticFeedbackEnabled(boolean enabled) {
         this.isHapticFeedbackEnabled = enabled;
-        setHapticFeedbackEnabledInner(this, enabled);
         super.setHapticFeedbackEnabled(enabled);
+        setHapticFeedbackEnabledInner(this, enabled);
     }
 
+    // 设置布局内组件 HapticFeedback 状态
     private void setHapticFeedbackEnabledInner(ViewGroup group, boolean enabled) {
         for (int i = 0; i < group.getChildCount(); i++) {
             View view = group.getChildAt(i);
@@ -374,6 +371,7 @@ public class MiuixBasicView extends LinearLayout {
         refreshView();
     }
 
+    // 是否启用阴影动画
     public void setShadowEnabled(boolean shadowEnabled) {
         isShadowEnabled = shadowEnabled;
         refreshView();
@@ -381,11 +379,6 @@ public class MiuixBasicView extends LinearLayout {
 
     public boolean isShadowEnabled() {
         return isShadowEnabled;
-    }
-
-    @Override
-    public boolean isHapticFeedbackEnabled() {
-        return isHapticFeedbackEnabled;
     }
 
     public CharSequence getTitle() {
@@ -468,6 +461,7 @@ public class MiuixBasicView extends LinearLayout {
         group.removeView(view);
     }
 
+    // 跳过自动执行 refreshView，需要你手动调用 refreshView
     public void setManuallyRefreshViewMode(boolean enabled) {
         isManuallyRefreshView = enabled;
     }
@@ -476,5 +470,18 @@ public class MiuixBasicView extends LinearLayout {
     public void setOnClickListener(@Nullable OnClickListener l) {
         super.setOnClickListener(l);
         refreshView();
+    }
+
+    private void updateMargin(int margin) {
+        if (!isMargined) {
+            // 必要时加上或删去 Margin，平衡视觉效果
+            if (icon != null || title != null || summary != null ||
+                tip != null || indicator != null || forceShowCustomIndicatorView()) {
+                LinearLayout.LayoutParams params = (LayoutParams) customLayout.getLayoutParams();
+                params.topMargin = margin;
+                customLayout.setLayoutParams(params);
+                isMargined = true;
+            }
+        }
     }
 }

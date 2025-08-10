@@ -227,7 +227,8 @@ public class ColorPickerView extends LinearLayout implements OnColorChangedListe
         }
 
         colorValue = data.HSVToColor();
-        updateContent(ColorPickerType.COLOR_VALUE, false);
+        if (type == ColorPickerType.FINAL_COLOR) updateContent(ColorPickerType.FINAL_COLOR, false);
+        else updateContent(ColorPickerType.COLOR_VALUE, false);
     }
 
     private void updateContent(ColorPickerType type, boolean updateValue) {

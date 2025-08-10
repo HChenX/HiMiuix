@@ -73,9 +73,7 @@ public class MiuixRadioButton extends AppCompatRadioButton {
         super.setChecked(checked);
     }
 
-    /**
-     * 当且仅当 onStateChange 拦截操作时才会返回 false
-     */
+    // 当且仅当 onStateChange 拦截操作时才会返回 false
     public boolean setUserChecked(boolean checked) {
         if (isChecked() == checked) return true;
 

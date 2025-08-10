@@ -88,6 +88,7 @@ public class MiuixEditPreference extends MiuixPreference {
 
     @Override
     public void refreshed(MiuixBasicView view) {
+        // 始终显示指示器
         view.getIndicatorView().setVisibility(VISIBLE);
     }
 

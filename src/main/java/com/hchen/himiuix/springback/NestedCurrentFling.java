@@ -16,15 +16,8 @@
  *
  * Copyright (C) 2023–2025 HChenX
  */
-package com.hchen.himiuix.callback;
+package com.hchen.himiuix.springback;
 
-import com.hchen.himiuix.color.ColorPickerType;
-
-/**
- * Color Changed Listener
- *
- * @author 焕晨HChen
- */
-public interface OnColorChangedListener {
-    void onColorValueChanged(ColorPickerType type, int value);
+public interface NestedCurrentFling {
+    boolean onNestedCurrentFling(float velocityX, float velocityY);
 }

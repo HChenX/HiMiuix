@@ -66,6 +66,7 @@ public class MiuixCheckBoxView extends MiuixStateView implements OnStateChangeLi
 
     @Override
     void updateViewContent() {
+        // 跳过执行非用户的 Check 动作
         if (!pass) {
             if (!xCheckBox.setUserChecked(isChecked)) {
                 isChecked = !isChecked;

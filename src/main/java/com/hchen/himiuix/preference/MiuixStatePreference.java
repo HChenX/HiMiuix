@@ -103,6 +103,7 @@ class MiuixStatePreference extends MiuixPreference implements OnStateChangeListe
 
     @Override
     public void refreshed(MiuixBasicView view) {
+        // 阻止显示指示器
     }
 
     public boolean isChecked() {

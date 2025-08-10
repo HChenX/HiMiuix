@@ -16,15 +16,12 @@
  *
  * Copyright (C) 2023–2025 HChenX
  */
-package com.hchen.himiuix.callback;
+package com.hchen.himiuix.springback;
 
-import com.hchen.himiuix.color.ColorPickerType;
+import android.view.View;
 
-/**
- * Color Changed Listener
- *
- * @author 焕晨HChen
- */
-public interface OnColorChangedListener {
-    void onColorValueChanged(ColorPickerType type, int value);
+public interface ViewCompatOnScrollChangeListener {
+    void onStateChanged(int oldState, int state, boolean finished);
+
+    void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY);
 }
