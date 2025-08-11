@@ -60,14 +60,16 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
     private static final String TAG = "SpringBackLayout";
     private static final int INVALID_ID = -1;
     private static final int INVALID_POINTER = -1;
-    private static final int MAX_FLING_CONSUME_COUNTER = 4;
-    public static final int SPRING_BACK_BOTTOM = 2;
-    public static final int SPRING_BACK_TOP = 1;
-    public static final int UNCHECK_ORIENTATION = 0;
     private static final int VELOCITY_THRESHOLD = 2000;
-    public static final int HORIZONTAL = 1;
-    public static final int VERTICAL = 2;
-    public static final int ANGLE = 4;
+    private static final int MAX_FLING_CONSUME_COUNTER = 4;
+    private static final int SPRING_BACK_START = 1;
+    private static final int SPRING_BACK_END = 2;
+    private static final int SPRING_BACK_START_END = 3;
+    private static final int UNCHECK_ORIENTATION = 0;
+    private static final int HORIZONTAL = 1;
+    private static final int VERTICAL = 2;
+    // Wrong Value
+    // public static final int ANGLE = 4;
     private int mConsumeNestFlingCounter;
     private int mActivePointerId;
     private int mFakeScrollX;
@@ -127,20 +129,20 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
         mNestedScrollingChildHelper = new NestedScrollingChildHelper(this);
         mTouchSlop = ViewConfiguration.get(context).getScaledTouchSlop();
 
-        TypedArray obtainStyledAttributes = context.obtainStyledAttributes(attributeSet, R.styleable.SpringBackLayout);
-        mTargetId = obtainStyledAttributes.getResourceId(R.styleable.SpringBackLayout_scrollableView, -1);
-        mOriginScrollOrientation = obtainStyledAttributes.getInt(R.styleable.SpringBackLayout_scrollOrientation, 2);
-        mSpringBackMode = obtainStyledAttributes.getInt(R.styleable.SpringBackLayout_springBackMode, 3);
-        obtainStyledAttributes.recycle();
+        TypedArray typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.SpringBackLayout);
+        isSpringBackEnabled = typedArray.getBoolean(R.styleable.SpringBackLayout_springBackEnabled, true);
+        mTargetId = typedArray.getResourceId(R.styleable.SpringBackLayout_scrollableView, -1);
+        mOriginScrollOrientation = typedArray.getInt(R.styleable.SpringBackLayout_scrollOrientation, VERTICAL);
+        mSpringBackMode = typedArray.getInt(R.styleable.SpringBackLayout_springBackMode, SPRING_BACK_START_END);
+        typedArray.recycle();
 
         mSpringScroller = new SpringScroller();
-        mHelper = new SpringBackLayoutHelper(this, mOriginScrollOrientation);
+        mHelper = new SpringBackLayoutHelper(this);
         setNestedScrollingEnabled(true);
 
         Point screenSize = MiuixUtils.getScreenSize(context);
         mScreenWidth = screenSize.x;
         mScreenHeight = screenSize.y;
-        isSpringBackEnabled = true;
     }
 
     public void setSpringBackEnable(boolean enabled) {
@@ -153,7 +155,6 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
 
     public void setScrollOrientation(int orientation) {
         mOriginScrollOrientation = orientation;
-        mHelper.mTargetScrollOrientation = orientation;
     }
 
     public void setSpringBackMode(int mode) {
@@ -194,21 +195,19 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
         }
     }
 
-    private boolean isTopSpringBackModeSupported() {
-        return (mSpringBackMode & SPRING_BACK_TOP) != 0;
+    private boolean isSpringBackStartModeSupported() {
+        return (mSpringBackMode & SPRING_BACK_START) != 0;
     }
 
-    private boolean isBottomSpringBackModeSupport() {
-        return (mSpringBackMode & SPRING_BACK_BOTTOM) != 0;
+    private boolean isSpringBackEndModeSupport() {
+        return (mSpringBackMode & SPRING_BACK_END) != 0;
     }
 
     public void setTarget(@NonNull View target) {
-        if (!isSpringBackEnabled) return;
-
         mTarget = target;
         if ((mTarget instanceof NestedScrollingChild3) && !mTarget.isNestedScrollingEnabled())
             mTarget.setNestedScrollingEnabled(true);
-        if (mTarget.getOverScrollMode() != OVER_SCROLL_NEVER)
+        if (mTarget.getOverScrollMode() != OVER_SCROLL_NEVER && isSpringBackEnabled)
             mTarget.setOverScrollMode(OVER_SCROLL_NEVER);
     }
 
@@ -221,13 +220,11 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
         if (mTarget == null)
             throw new IllegalArgumentException("Failed to get target view!!");
 
-        if (isEnabled()) {
+        if (isEnabled())
             if (mTarget instanceof NestedScrollingChild3 && !mTarget.isNestedScrollingEnabled())
                 mTarget.setNestedScrollingEnabled(true);
-
-            if (mTarget.getOverScrollMode() != OVER_SCROLL_NEVER)
-                mTarget.setOverScrollMode(OVER_SCROLL_NEVER);
-        }
+        if (mTarget.getOverScrollMode() != OVER_SCROLL_NEVER && isSpringBackEnabled)
+            mTarget.setOverScrollMode(OVER_SCROLL_NEVER);
     }
 
     public View getTarget() {
@@ -260,7 +257,7 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
         // 父容器指定了精确尺寸
         if (widthMode == EXACTLY) measuredWidth = widthSize;
         else if (widthMode == AT_MOST)
-            // 父容器指定了最大尺寸，SpringbackLayout 不能超过
+            // 父容器指定了最大尺寸，子视图不能超过
             measuredWidth = Math.min(widthSize, mTarget.getMeasuredWidth() + getPaddingLeft() + getPaddingRight());
         else // 父容器未指定尺寸，包裹子视图
             measuredWidth = mTarget.getMeasuredWidth() + getPaddingLeft() + getPaddingRight();
@@ -327,13 +324,17 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
         }
     }
 
-    // 判断当前 SpringBackLayout 的滚动方向是否为指定方向
+    // 判断目标视图的滚动方向是否为指定方向
     private boolean isTargetScrollOrientation(int orientation) {
         return mScrollOrientation == orientation;
     }
 
-    // 判断目标 View 是否滚动到顶部
-    private boolean isTargetScrollToTop(int orientation) {
+    private boolean isOriginScrollOrientation(int orientation) {
+        return (mOriginScrollOrientation & orientation) != 0;
+    }
+
+    // 判断目标 View 是否滚动到顶部/左边
+    private boolean isTargetScrollToStart(int orientation) {
         if (orientation == VERTICAL) {
             if (mTarget instanceof ListView listView) {
                 return !listView.canScrollList(-1);
@@ -343,8 +344,8 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
         return !mTarget.canScrollHorizontally(-1);
     }
 
-    // 判断目标 View 是否滚动到底部
-    private boolean isTargetScrollToBottom(int orientation) {
+    // 判断目标 View 是否滚动到底部/右边
+    private boolean isTargetScrollToEnd(int orientation) {
         if (orientation == VERTICAL) {
             if (mTarget instanceof ListView listView) {
                 return !listView.canScrollList(1);
@@ -354,6 +355,11 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
         return !mTarget.canScrollHorizontally(1);
     }
 
+    /*
+     * 代码中关于 Touch 方法的实现
+     * 基本是为了不支持嵌套滚动的视图准备的，虽然可以使用但是兼容性较差
+     * 这里不建议包裹使用非嵌套滚动视图，可能存在未知 BUG！！
+     * */
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
         // 当手指按下 (ACTION_DOWN) 并且当前正处于回弹动画中 (SCROLL_STATE_SETTLING)
@@ -369,7 +375,8 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
         // 当手指抬起 (ACTION_UP) 或事件取消 (ACTION_CANCEL)
         // 并且当前滚动状态不是回弹动画中 (SCROLL_STATE_SETTLING)
         // 这意味着拖动或点击结束，此时应该将滚动状态设置为空闲 (SCROLL_STATE_IDLE)
-        if (event.getActionMasked() == ACTION_UP && mScrollState != SCROLL_STATE_SETTLING) {
+        if ((event.getActionMasked() == ACTION_UP || event.getActionMasked() == ACTION_CANCEL) &&
+            mScrollState != SCROLL_STATE_SETTLING) {
             dispatchScrollState(SCROLL_STATE_IDLE);
         }
         return dispatchTouchEvent;
@@ -380,52 +387,27 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
         // 如果回弹效果未启用、SpringBackLayout 本身未启用
         // 或者当前有嵌套 Fling 或嵌套 Scroll 正在进行中
         // 或者目标 View 已启用嵌套滚动 (由目标 View 自己处理)，则不拦截事件
-        if (!isSpringBackEnabled || !isEnabled() ||
-            mNestedFlingInProgress || mNestedScrollInProgress || mTarget.isNestedScrollingEnabled())
+        if (!isSpringBackEnabled || !isEnabled() || mNestedFlingInProgress ||
+            mNestedScrollInProgress || mTarget.isNestedScrollingEnabled())
             return false;
 
-        int actionMasked = event.getActionMasked();
+        int action = event.getActionMasked();
         // 如果手指按下 (ACTION_DOWN) 时，回弹动画 (mSpringScroller) 尚未结束
         // 则强制停止当前的回弹动画，以便响应新的触摸操作
-        if (!mSpringScroller.isFinished() && actionMasked == ACTION_DOWN) {
+        if (!mSpringScroller.isFinished() && action == ACTION_DOWN) {
             mSpringScroller.forceStop();
             dispatchScrollState(SCROLL_STATE_IDLE);
         }
 
-        if (isTopSpringBackModeSupported() || isBottomSpringBackModeSupport()) {
-            int scrollOrientation = mOriginScrollOrientation;
-
-            if ((scrollOrientation & ANGLE) != 0) {
-                checkOrientation(event);
-
-                // 如果当前实际滚动方向是垂直，但配置中也允许水平滚动，并且当前水平方向没有滚动偏移
-                // 那么可能不应该拦截，让子 View 处理水平滑动
-                if (isTargetScrollOrientation(VERTICAL) &&
-                    (mOriginScrollOrientation & HORIZONTAL) != 0 &&
-                    getScrollX() == 0.0f) {
-                    return false;
-                }
-
-                // 同上
-                if (isTargetScrollOrientation(HORIZONTAL) &&
-                    (mOriginScrollOrientation & VERTICAL) != 0 &&
-                    getScrollY() == 0.0f) {
-                    return false;
-                }
-
-                // 如果当前滚动方向已确定为垂直或水平，则请求父 View 不要拦截触摸事件
-                // 因为 SpringBackLayout 可能要处理这个方向的滚动。
-                if (isTargetScrollOrientation(VERTICAL) || isTargetScrollOrientation(HORIZONTAL)) {
-                    disallowParentInterceptTouchEvent(true);
-                }
-            }
+        if (isSpringBackStartModeSupported() || isSpringBackEndModeSupport()) {
+            checkOrientation(event);
 
             // 拦截垂直触摸事件
-            if (isTargetScrollOrientation(VERTICAL))
+            if (isTargetScrollOrientation(VERTICAL) && isOriginScrollOrientation(VERTICAL))
                 return shouldInterceptTouchEventInternal(event, VERTICAL);
 
             // 拦截水平触摸事件
-            if (isTargetScrollOrientation(HORIZONTAL))
+            if (isTargetScrollOrientation(HORIZONTAL) && isOriginScrollOrientation(HORIZONTAL))
                 return shouldInterceptTouchEventInternal(event, HORIZONTAL);
 
             return false;
@@ -433,18 +415,11 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
         return false;
     }
 
-    private void disallowParentInterceptTouchEvent(boolean disallowIntercept) {
-        ViewParent parent = getParent();
-        if (parent != null) {
-            parent.requestDisallowInterceptTouchEvent(disallowIntercept);
-        }
-    }
-
     // 检查触摸的方向
     private void checkOrientation(MotionEvent event) {
         mHelper.checkOrientation(event);
-        int actionMasked = event.getActionMasked();
-        switch (actionMasked) {
+        int action = event.getActionMasked();
+        switch (action) {
             case ACTION_DOWN -> {
                 mInitialDownY = mHelper.mInitialDownY;
                 mInitialDownX = mHelper.mInitialDownX;
@@ -462,8 +437,9 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
                 }
 
                 // 根据预设的原始滚动方向，进行滚动开始的检查
-                if ((mOriginScrollOrientation & VERTICAL) != 0) checkScrollStart(VERTICAL);
-                else checkScrollStart(HORIZONTAL);
+                if (isOriginScrollOrientation(VERTICAL)) calculateInitialMotionDistance(VERTICAL);
+                if (isOriginScrollOrientation(HORIZONTAL))
+                    calculateInitialMotionDistance(HORIZONTAL);
             }
             case ACTION_MOVE -> {
                 // 仅当自身方向未定，且辅助类已确定方向时，才更新方向
@@ -474,25 +450,25 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
                 onSecondaryPointerUp(event);
             }
             case ACTION_UP, ACTION_CANCEL -> {
-                disallowParentInterceptTouchEvent(false);
                 // 根据预设的原始滚动方向执行回弹
-                if ((mOriginScrollOrientation & VERTICAL) != 0) springBack(VERTICAL);
-                else springBack(HORIZONTAL);
+                if (isOriginScrollOrientation(VERTICAL)) springBack(VERTICAL);
+                if (isOriginScrollOrientation(HORIZONTAL)) springBack(HORIZONTAL);
+                requestDisallowParentInterceptTouchEvent(false);
             }
         }
     }
 
     private boolean shouldInterceptTouchEventInternal(MotionEvent event, int orientation) {
         // 检查基本条件：目标 View 是否滚动到顶或底
-        boolean isScrollToTop = isTargetScrollToTop(orientation);
-        boolean isScrollToBottom = isTargetScrollToBottom(orientation);
+        boolean isScrollToStart = isTargetScrollToStart(orientation);
+        boolean isScrollToEnd = isTargetScrollToEnd(orientation);
 
         // 如果目标 View 没有滚动到顶或底，则不拦截
-        if (!isScrollToTop && !isScrollToBottom) return false;
+        if (!isScrollToStart && !isScrollToEnd) return false;
         // 如果目标滚动到顶部，但我们不支持回弹，则不拦截
-        if (isScrollToTop && !isTopSpringBackModeSupported()) return false;
+        if (isScrollToStart && !isSpringBackStartModeSupported()) return false;
         // 如果目标滚动到底部，但我们不支持回弹，则不拦截
-        if (isScrollToBottom && !isBottomSpringBackModeSupport()) return false;
+        if (isScrollToEnd && !isSpringBackEndModeSupport()) return false;
 
         final int action = event.getActionMasked();
         switch (action) {
@@ -524,6 +500,7 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
                     if (orientation == VERTICAL)
                         mInitialMotionY = initialCoordinate;
                     else mInitialMotionX = initialCoordinate;
+                    return true;
                 } else mIsBeingDragged = false;
 
                 return false;
@@ -554,8 +531,6 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
                     initialDownCoordinate = mInitialDownX;
                 }
 
-                // 如果已经开始拖拽，则继续认为是拖拽 (除非被其他逻辑取消)
-                if (mIsBeingDragged) return true;
                 // 计算滑动距离
                 final float delta = currentCoordinate - initialDownCoordinate;
 
@@ -564,11 +539,11 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
                     // delta > 0: 垂直方向是向下滑动，水平方向是向右滑动
                     // delta < 0: 垂直方向是向上滑动，水平方向是向左滑动
                     if (delta > 0) {
-                        if (isScrollToTop && isTopSpringBackModeSupported()) {
+                        if (isScrollToStart && isSpringBackStartModeSupported()) {
                             mIsBeingDragged = true;
                         }
                     } else {
-                        if (isScrollToBottom && isBottomSpringBackModeSupport()) {
+                        if (isScrollToEnd && isSpringBackEndModeSupport()) {
                             mIsBeingDragged = true;
                         }
                     }
@@ -621,8 +596,8 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
 
     private enum ScrollMode {
         SCROLL_NORMAL,
-        SCROLL_UP,
-        SCROLL_DOWN
+        SCROLL_START,
+        SCROLL_END
     }
 
     @Override
@@ -642,17 +617,17 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
 
         if (isTargetScrollOrientation(VERTICAL)) {
             orientation = VERTICAL;
-            if (!isTargetScrollToTop(orientation) && !isTargetScrollToBottom(orientation))
+            if (!isTargetScrollToStart(orientation) && !isTargetScrollToEnd(orientation))
                 scrollMode = ScrollMode.SCROLL_NORMAL;
                 // 滚动到底部，接下来应该向上回弹滚动
-            else if (isTargetScrollToBottom(orientation)) scrollMode = ScrollMode.SCROLL_UP;
-            else scrollMode = ScrollMode.SCROLL_DOWN;
+            else if (isTargetScrollToStart(orientation)) scrollMode = ScrollMode.SCROLL_START;
+            else scrollMode = ScrollMode.SCROLL_END;
         } else if (isTargetScrollOrientation(HORIZONTAL)) {
             orientation = HORIZONTAL;
-            if (!isTargetScrollToTop(orientation) && !isTargetScrollToBottom(orientation))
+            if (!isTargetScrollToStart(orientation) && !isTargetScrollToEnd(orientation))
                 scrollMode = ScrollMode.SCROLL_NORMAL;
-            else if (isTargetScrollToBottom(orientation)) scrollMode = ScrollMode.SCROLL_UP;
-            else scrollMode = ScrollMode.SCROLL_DOWN;
+            else if (isTargetScrollToStart(orientation)) scrollMode = ScrollMode.SCROLL_START;
+            else scrollMode = ScrollMode.SCROLL_END;
         } else return false;
 
 
@@ -662,7 +637,7 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
                 final int pointerIndex = event.findPointerIndex(mActivePointerId);
                 if (pointerIndex < 0) return false; // 无效指针
 
-                checkScrollStart(orientation);
+                calculateInitialMotionDistance(orientation);
                 return true; // 消耗事件
             }
             case ACTION_MOVE -> {
@@ -683,29 +658,29 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
                         initialMotionCoordinate = mInitialMotionX;
                     }
                     float delta = currentCoordinate - initialMotionCoordinate;
-                    if (scrollMode == ScrollMode.SCROLL_UP) // 对于 SCROLL_UP 我们关心的是 initial - current
+                    if (scrollMode == ScrollMode.SCROLL_END) // 对于 SCROLL_END 我们关心的是 initial - current
                         delta = initialMotionCoordinate - currentCoordinate;
 
                     float dampedDistance = obtainSpringBackDistance(delta, orientation);
-                    float signedDampedDistance = Math.signum(delta) * dampedDistance;
+                    float signedDampedDistance = Math.signum(delta) * dampedDistance; // 带符号的距离
 
                     if (scrollMode == ScrollMode.SCROLL_NORMAL) {
                         requestDisallowParentInterceptTouchEvent(true);
                         moveTarget(signedDampedDistance, orientation);
-                    } else if (scrollMode == ScrollMode.SCROLL_UP) {
-                        if (signedDampedDistance > 0.0f) { // 确定回弹
-                            requestDisallowParentInterceptTouchEvent(true);
-                            moveTarget(-signedDampedDistance, orientation);
-                        } else {
-                            moveTarget(0.0f, orientation);
-                            return false;
-                        }
-                    } else { // SCROLL_DOWN
-                        if (signedDampedDistance > 0.0f) { // 确定回弹
+                    } else if (scrollMode == ScrollMode.SCROLL_START) {
+                        if (signedDampedDistance > 0.0f) { // 移动布局
                             requestDisallowParentInterceptTouchEvent(true);
                             moveTarget(signedDampedDistance, orientation);
                         } else {
-                            moveTarget(0.0f, orientation);
+                            moveTarget(orientation == VERTICAL ? 0.0f : signedDampedDistance, orientation);
+                            return false;
+                        }
+                    } else { // SCROLL_DOWN
+                        if (signedDampedDistance > 0.0f) { // 移动布局
+                            requestDisallowParentInterceptTouchEvent(true);
+                            moveTarget(-signedDampedDistance, orientation);
+                        } else {
+                            moveTarget(orientation == VERTICAL ? 0.0f : -signedDampedDistance, orientation);
                             return false;
                         }
                     }
@@ -717,7 +692,9 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
                     mIsBeingDragged = false;
                     springBack(orientation);
                 }
+                mScrollOrientation = UNCHECK_ORIENTATION;
                 mActivePointerId = INVALID_POINTER;
+                requestDisallowParentInterceptTouchEvent(false);
                 return true;
             }
             case ACTION_POINTER_DOWN -> {
@@ -758,12 +735,13 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
         return false;
     }
 
-    private void checkScrollStart(int orientation) {
+    // 计算初始的运动距离
+    private void calculateInitialMotionDistance(int orientation) {
         final int scrollCoordinate = orientation == VERTICAL ? getScrollY() : getScrollX();
 
         if (scrollCoordinate != 0) {
             mIsBeingDragged = true;
-            float touchDistance = obtainTouchDistance(Math.abs(scrollCoordinate), Math.abs(obtainMaxSpringBackDistance(orientation)), 2);
+            float touchDistance = obtainTouchDistance(Math.abs(scrollCoordinate), Math.abs(obtainMaxSpringBackDistance(orientation)), orientation);
             if (scrollCoordinate < 0) {
                 if (orientation == VERTICAL) mInitialDownY -= touchDistance;
                 else mInitialDownX -= touchDistance;
@@ -841,6 +819,7 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
         return orientation == VERTICAL ? mScreenHeight : mScreenWidth;
     }
 
+    // 获取折算阻尼后的回弹距离
     private float obtainSpringBackDistance(float touchAmount, int orientation) {
         int range = getSpringBackRange(orientation);
         return obtainDampingDistance(Math.min(Math.abs(touchAmount) / range, 1.0f), range);
@@ -858,31 +837,23 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
         return (float) (dampedFactor * range);
     }
 
+    // 获取折算阻尼后的实际可移动距离
     private float obtainTouchDistance(float currentPixelOffset, float maxAchievablePixelOffset, int orientation) {
         int range = getSpringBackRange(orientation);
         float absPixelOffset = Math.abs(currentPixelOffset);
         float absMaxPixelOffset = Math.abs(maxAchievablePixelOffset);
 
         // 确保 currentPixelOffset 不超过 maxAchievablePixelOffset
-        // 并且由于 maxAchievablePixelOffset 是 range * (1/3)，所以 currentPixelOffset <= range / 3
-        if (absPixelOffset >= absMaxPixelOffset) {
-            // 如果已达到或超过最大回弹，对应的 touchAmount 应该是 range (即归一化为 1 时)
-            return range;
-        }
-        if (absPixelOffset <= 0) {
-            return 0;
-        }
+        if (absPixelOffset >= absMaxPixelOffset) return maxAchievablePixelOffset;
+        if (absPixelOffset <= 0) return 0;
 
         // 原始公式: range - (range^(2/3)) * (range - 3 * currentPixelOffset)^(1/3)
-        // 这里 currentPixelOffset 是实际的回弹距离
         // 注意: (range - 3 * currentPixelOffset) 必须为正，即 currentPixelOffset < range / 3
-        // 这与 dampedFactor * range < range / 3 (当 dampedFactor < 1/3) 一致
         double termToCubeRoot = range - (3.0 * absPixelOffset);
         if (termToCubeRoot < 0) {
-            // 这不应该发生，如果 currentPixelOffset < maxAchievablePixelOffset (即 range/3)
-            // 但作为保护，如果发生，可能意味着 absPixelOffset 接近或等于 range/3
-            // 此时，等效的 touchAmount 接近 range
-            return range; // 或者抛出异常，或返回一个基于比例的值
+            // currentPixelOffset < range / 3
+            // 但这本不应该发生
+            return maxAchievablePixelOffset;
         }
 
         double part2 = Math.pow(range, 2.0 / 3.0) * Math.pow(termToCubeRoot, 1.0 / 3.0);
@@ -909,9 +880,9 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
         final int orientation = isVertical ? VERTICAL : HORIZONTAL;
 
         // 如果 netUnconsumed < 0：认为是到顶部方向的越界；如果 > 0：认为是到底部方向的越界
-        if (netUnconsumed < 0 && isTargetScrollToTop(orientation) && isTopSpringBackModeSupported()) {
+        if (netUnconsumed < 0 && isTargetScrollToStart(orientation) && isSpringBackStartModeSupported()) {
             handleEdgeSpringBack(netUnconsumed, orientation, axisIndex, primaryConsumed, type, consumed, /* isTop */ true);
-        } else if (netUnconsumed > 0 && isTargetScrollToBottom(orientation) && isBottomSpringBackModeSupport()) {
+        } else if (netUnconsumed > 0 && isTargetScrollToEnd(orientation) && isSpringBackEndModeSupport()) {
             handleEdgeSpringBack(netUnconsumed, orientation, axisIndex, primaryConsumed, type, consumed, /* isTop */ false);
         }
     }
@@ -939,7 +910,7 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
 
             // 逐步把 fling 的未消费部分转成越界位移，受 mTotalFlingUnconsumed 和 maxSpring 的约束
             float remainingCapacity = maxSpring - mTotalFlingUnconsumed;
-            if (mConsumeNestFlingCounter >= 4 || remainingCapacity <= 0.0f) {
+            if (mConsumeNestFlingCounter >= MAX_FLING_CONSUME_COUNTER || remainingCapacity <= 0.0f) {
                 return; // 超过允许的处理次数或无剩余容量，直接返回
             }
 
@@ -967,11 +938,11 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
 
         if (isTop) {
             mTotalScrollTopUnconsumed += absUnconsumed;
-            dispatchScrollState(1);
+            dispatchScrollState(SCROLL_STATE_DRAGGING);
             moveTarget(obtainSpringBackDistance(mTotalScrollTopUnconsumed, orientation), orientation);
         } else {
             mTotalScrollBottomUnconsumed += absUnconsumed;
-            dispatchScrollState(1);
+            dispatchScrollState(SCROLL_STATE_DRAGGING);
             moveTarget(-obtainSpringBackDistance(mTotalScrollBottomUnconsumed, orientation), orientation);
         }
         // 把本次未消费量写回 consumed (减少父容器后续需要处理的量)
@@ -992,18 +963,18 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
     public boolean onStartNestedScroll(@NonNull View child, @NonNull View target, int axes, int type) {
         mNestedScrollAxes = axes;
 
-        final boolean containsVertical = (axes & SCROLL_AXIS_VERTICAL) != 0;
-        final int orientation = containsVertical ? VERTICAL : HORIZONTAL;
+        final boolean vertical = (axes & SCROLL_AXIS_VERTICAL) != 0;
+        final int orientation = vertical ? VERTICAL : HORIZONTAL;
 
         // 如果当前组件不支持该方向就直接拒绝
-        if ((orientation & mOriginScrollOrientation) == 0)
+        if (!isOriginScrollOrientation(orientation))
             return false;
 
         if (isSpringBackEnabled) {
             if (!onStartNestedScroll(child, child, axes))
                 return false;
 
-            final float currentScroll = containsVertical ? getScrollY() : getScrollX();
+            final float currentScroll = vertical ? getScrollY() : getScrollX();
 
             // 如果是 fling (非触摸)，且已经存在滚动位置，并且 target 是 NestedScrollView 则为了避免冲突直接拒绝
             if (type != TYPE_TOUCH && currentScroll != 0.0f && (mTarget instanceof NestedScrollView)) {

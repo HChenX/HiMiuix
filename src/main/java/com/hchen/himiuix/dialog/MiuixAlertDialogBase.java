@@ -47,6 +47,7 @@ import com.hchen.himiuix.callback.MiuixDialogInterface;
 import com.hchen.himiuix.callback.OnChooseItemListener;
 import com.hchen.himiuix.helper.HapticFeedbackHelper;
 import com.hchen.himiuix.list.MiuixListAdapter;
+import com.hchen.himiuix.springback.SpringBackLayout;
 import com.hchen.himiuix.utils.MiuixUtils;
 import com.hchen.himiuix.widget.MiuixCardView;
 import com.hchen.himiuix.widget.MiuixEditText;
@@ -248,7 +249,10 @@ abstract class MiuixAlertDialogBase implements MiuixDialogInterface {
         isCardViewModeEnabled = true;
         xListAdapter = new MiuixListAdapter(context);
         xListAdapter.setItemBackgroundColor(context.getColor(android.R.color.transparent));
-        customView = xListAdapter.getRecyclerView();
+        SpringBackLayout springBackLayout = new SpringBackLayout(context);
+        springBackLayout.setTarget(xListAdapter.getRecyclerView());
+        addView(springBackLayout, xListAdapter.getRecyclerView());
+        customView = springBackLayout;
 
         xListAdapter.setItems(items);
         xListAdapter.setMultipleChoiceEnabled(isMultipleChoiceEnabled);

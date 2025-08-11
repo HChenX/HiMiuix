@@ -34,6 +34,7 @@ import com.hchen.himiuix.callback.OnChooseItemListener;
 import com.hchen.himiuix.dialog.MiuixAlertDialog;
 import com.hchen.himiuix.helper.HapticFeedbackHelper;
 import com.hchen.himiuix.list.MiuixListAdapter;
+import com.hchen.himiuix.springback.SpringBackLayout;
 import com.hchen.himiuix.widget.MiuixCardView;
 
 import java.util.ArrayList;
@@ -100,7 +101,14 @@ public class MiuixListView extends MiuixBasicView implements OnChooseItemListene
 
             xListAdapter = new MiuixListAdapter(getContext());
             xListAdapter.setItemBackgroundColor(getContext().getColor(android.R.color.transparent));
-            addView(xCardView, xListAdapter.getRecyclerView());
+            SpringBackLayout springBackLayout = new SpringBackLayout(getContext()) {
+                @Override
+                public void dispatchNestedScroll(int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int[] offsetInWindow, int type, @NonNull int[] consumed) {
+                }
+            };
+            springBackLayout.setTarget(xListAdapter.getRecyclerView());
+            addView(springBackLayout, xListAdapter.getRecyclerView());
+            addView(xCardView, springBackLayout);
 
             if (maxHeight != LayoutParams.WRAP_CONTENT) {
                 ViewGroup.LayoutParams params = xListAdapter.getRecyclerView().getLayoutParams();

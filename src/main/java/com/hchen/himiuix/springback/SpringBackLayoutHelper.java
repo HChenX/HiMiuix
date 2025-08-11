@@ -28,16 +28,14 @@ public class SpringBackLayoutHelper {
     float mInitialDownY; // 手指初次按下时的 Y 坐标
     int mScrollOrientation; // 检测到的滚动方向 (0: 未确定, 1: 水平, 2: 垂直)
     int mActivePointerId = -1; // 当前活动的手指 ID
-    int mTargetScrollOrientation; // 宿主 View 期望处理的滚动方向 (由构造函数传入)
     private final int mTouchSlop; // 系统定义的最小滑动距离阈值
     private final ViewGroup mTarget; // 宿主 ViewGroup
     private static final int ORIENTATION_NONE = 0;
     private static final int ORIENTATION_HORIZONTAL = 1;
     private static final int ORIENTATION_VERTICAL = 2;
 
-    public SpringBackLayoutHelper(ViewGroup target, int orientation) {
+    public SpringBackLayoutHelper(ViewGroup target) {
         mTarget = target;
-        mTargetScrollOrientation = orientation;
         mTouchSlop = ViewConfiguration.get(target.getContext()).getScaledTouchSlop();
     }
 

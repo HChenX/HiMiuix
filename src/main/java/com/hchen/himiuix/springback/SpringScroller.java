@@ -145,7 +145,7 @@ public class SpringScroller {
         return (int) mCurrY;
     }
 
-    public boolean isAtEquilibrium(double currentPosition, double initialStartPosition, double targetEquilibriumPosition) {
+    private boolean isAtEquilibrium(double currentPosition, double initialStartPosition, double targetEquilibriumPosition) {
         double currentVelocity = mVelocity; // 获取当前速度
         double initialVelocity = mOriginVelocity; // 获取初始速度
         // 是否非常接近目标位置
