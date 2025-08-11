@@ -101,11 +101,8 @@ public class MiuixListView extends MiuixBasicView implements OnChooseItemListene
 
             xListAdapter = new MiuixListAdapter(getContext());
             xListAdapter.setItemBackgroundColor(getContext().getColor(android.R.color.transparent));
-            SpringBackLayout springBackLayout = new SpringBackLayout(getContext()) {
-                @Override
-                public void dispatchNestedScroll(int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int[] offsetInWindow, int type, @NonNull int[] consumed) {
-                }
-            };
+            SpringBackLayout springBackLayout = new SpringBackLayout(getContext());
+            springBackLayout.setGluttonEnabled(true);
             springBackLayout.setTarget(xListAdapter.getRecyclerView());
             addView(springBackLayout, xListAdapter.getRecyclerView());
             addView(xCardView, springBackLayout);

@@ -96,6 +96,7 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
     private boolean mScrollByFling;
     private int mScrollOrientation;
     private int mScrollState;
+    private boolean isGluttonEnabled;
     private boolean isSpringBackEnabled;
     private int mSpringBackMode;
     private final SpringScroller mSpringScroller;
@@ -131,6 +132,7 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
 
         TypedArray typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.SpringBackLayout);
         isSpringBackEnabled = typedArray.getBoolean(R.styleable.SpringBackLayout_springBackEnabled, true);
+        isGluttonEnabled = typedArray.getBoolean(R.styleable.SpringBackLayout_gluttonEnabled, false);
         mTargetId = typedArray.getResourceId(R.styleable.SpringBackLayout_scrollableView, -1);
         mOriginScrollOrientation = typedArray.getInt(R.styleable.SpringBackLayout_scrollOrientation, VERTICAL);
         mSpringBackMode = typedArray.getInt(R.styleable.SpringBackLayout_springBackMode, SPRING_BACK_START_END);
@@ -149,8 +151,16 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
         isSpringBackEnabled = enabled;
     }
 
-    public boolean springBackEnable() {
+    public boolean isSpringBackEnable() {
         return isSpringBackEnabled;
+    }
+
+    public void setGluttonEnabled(boolean gluttonEnabled) {
+        isGluttonEnabled = gluttonEnabled;
+    }
+
+    public boolean isGluttonEnabled() {
+        return isGluttonEnabled;
     }
 
     public void setScrollOrientation(int orientation) {
@@ -868,7 +878,8 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
         final int beforeParentConsumed = consumed[axisIndex]; // dispatch 前父容器已消费量
 
         // 先把未消费量让父容器处理
-        dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, mParentOffsetInWindow, type, consumed);
+        if (!isGluttonEnabled) // 不是贪吃鬼就交给父布局先处理
+            dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, mParentOffsetInWindow, type, consumed);
 
         // 未启用则不再继续处理
         if (!isSpringBackEnabled) return;
