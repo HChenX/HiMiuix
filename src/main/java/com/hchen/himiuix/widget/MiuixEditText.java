@@ -315,14 +315,12 @@ public class MiuixEditText extends LinearLayout implements OnImeVisibilityChange
     // 是否自动请求焦点并弹出键盘
     public void setAutoRequestFocus(boolean auto) {
         isAutoRequestFocus = auto;
-        invalidate();
     }
 
     // 拦截 Edit 点击动作
     // 但你依然可以收到 Edit 点击事件
     public void setIntercept(boolean intercept) {
         isIntercept = intercept;
-        invalidate();
     }
 
     public void updateBackground(boolean hasBorder) {

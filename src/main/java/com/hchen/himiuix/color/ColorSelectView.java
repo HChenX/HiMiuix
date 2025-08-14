@@ -76,7 +76,6 @@ public class ColorSelectView extends View {
         width = -1.0F;
         post(() -> {
             update(getWidth());
-            invalidate();
         });
     }
 
@@ -90,7 +89,6 @@ public class ColorSelectView extends View {
     public void setColor(int color) {
         if (this.color == color) return;
         this.color = color;
-        invalidate();
     }
 
     private void update(float width) {

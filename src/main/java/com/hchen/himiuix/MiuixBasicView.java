@@ -265,7 +265,6 @@ public class MiuixBasicView extends LinearLayout {
         updateVisibility();
         if (listener != null)
             listener.refreshed(this);
-        // invalidate();
     }
 
     public void setTitle(@StringRes int id) {

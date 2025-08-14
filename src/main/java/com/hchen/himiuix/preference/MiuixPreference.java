@@ -226,13 +226,13 @@ public class MiuixPreference extends Preference implements OnRefreshViewListener
     private void updateCardView(MiuixCardView xCardView, int state) {
         switch (state) {
             case CARD_RADIUS ->
-                xCardView.setTrRadius(radius).setTlRadius(radius).setBlRadius(radius).setBrRadius(radius).invalidate();
+                xCardView.setTrRadius(radius).setTlRadius(radius).setBlRadius(radius).setBrRadius(radius);
             case CARD_TOP_RADIUS ->
-                xCardView.setTlRadius(radius).setTrRadius(radius).setBlRadius(0).setBrRadius(0).invalidate();
+                xCardView.setTlRadius(radius).setTrRadius(radius).setBlRadius(0).setBrRadius(0);
             case CARD_BOTTOM_RADIUS ->
-                xCardView.setBlRadius(radius).setBrRadius(radius).setTlRadius(0).setTrRadius(0).invalidate();
+                xCardView.setBlRadius(radius).setBrRadius(radius).setTlRadius(0).setTrRadius(0);
             case CARD_NON_RADIUS ->
-                xCardView.setTlRadius(0).setTrRadius(0).setBrRadius(0).setBlRadius(0).invalidate();
+                xCardView.setTlRadius(0).setTrRadius(0).setBrRadius(0).setBlRadius(0);
         }
     }
 

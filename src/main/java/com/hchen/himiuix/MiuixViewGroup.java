@@ -102,8 +102,6 @@ public class MiuixViewGroup extends LinearLayout {
             textView.setVisibility(VISIBLE);
             view.setVisibility(GONE);
         }
-
-        invalidate();
     }
 
     @Override
