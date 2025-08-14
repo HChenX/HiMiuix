@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-
+    <!-- basic style -->
     <style name="MiuixBasicStyle">
         <!--<item name="android:layout_marginStart">@dimen/miuix_basic_margin_start</item>-->
         <!--<item name="android:layout_marginEnd">@dimen/miuix_basic_margin_end</item>-->
@@ -13,11 +13,13 @@
         <item name="android:minHeight">@dimen/miuix_basic_min_height</item>
     </style>
 
+    <!-- icon style -->
     <style name="MiuixIconStyle">
         <item name="android:adjustViewBounds">true</item>
         <item name="android:scaleType">centerInside</item>
     </style>
 
+    <!-- text style -->
     <style name="MiuixTextBasicStyle">
         <!--
         <item name="android:textAlignment">textStart</item>
@@ -54,6 +56,7 @@
         <item name="android:focusable">true</item>
     </style>
 
+    <!-- divider style -->
     <style name="MiuixDividerStyle" parent="MiuixSingleLineStyle">
         <item name="android:paddingStart">@dimen/miuix_divider_padding_start</item>
         <item name="android:paddingEnd">@dimen/miuix_divider_padding_end</item>
@@ -68,6 +71,7 @@
         <item name="android:fontFamily">sans-serif-condensed</item>
     </style>
 
+    <!-- item style -->
     <style name="MiuixItemStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
@@ -84,6 +88,7 @@
         <item name="android:scrollbars">none</item>
     </style>
 
+    <!-- dialog style -->
     <style name="MiuixDialogWindowStyle">
         <item name="android:fullDark">@android:color/transparent</item>
         <item name="android:topDark">@android:color/transparent</item>

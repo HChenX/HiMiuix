@@ -205,6 +205,12 @@ public class MiuixPreference extends Preference implements OnRefreshViewListener
         notifyChanged();
     }
 
+    public void setCustomView(View customView) {
+        if (Objects.equals(this.customView, customView)) return;
+        this.customView = customView;
+        notifyChanged();
+    }
+
     @Nullable
     public CharSequence getTip() {
         return tip;
@@ -217,6 +223,10 @@ public class MiuixPreference extends Preference implements OnRefreshViewListener
 
     public int getIconRadius() {
         return iconRadius;
+    }
+
+    public View getCustomView() {
+        return customView;
     }
 
     public boolean isShadowEnabled() {
