@@ -53,13 +53,6 @@
         <attr name="showOnTip" format="boolean" />
     </declare-styleable>
 
-    <declare-styleable name="MiuixEditTextView">
-        <attr name="editTip" format="string" />
-        <attr name="editIcon" format="reference" />
-        <attr name="autoRequestFocus" format="boolean" />
-        <attr name="android:hint" />
-    </declare-styleable>
-
     <declare-styleable name="MiuixSeekBarView">
         <attr name="android:value" />
         <attr name="android:format" />
@@ -106,7 +99,6 @@
     <declare-styleable name="MiuixPreference">
         <attr name="tip" />
         <attr name="indicator" />
-        <attr name="android:layout" />
         <attr name="iconRadius" />
         <attr name="shadowEnabled" />
         <attr name="android:hapticFeedbackEnabled" />
@@ -138,13 +130,6 @@
         <attr name="showDefaultPoint" />
         <attr name="enableDialogMode" />
         <attr name="alwaysHapticFeedback" />
-    </declare-styleable>
-
-    <declare-styleable name="MiuixEditPreference">
-        <attr name="editTip" />
-        <attr name="editIcon" />
-        <attr name="android:hint" />
-        <attr name="autoRequestFocus" />
     </declare-styleable>
 
     <declare-styleable name="MiuixDropDownPreference">

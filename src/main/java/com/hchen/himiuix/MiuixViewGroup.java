@@ -30,6 +30,8 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 
+import java.util.Objects;
+
 /**
  * Miuix 视图组
  *
@@ -63,7 +65,7 @@ public class MiuixViewGroup extends LinearLayout {
         typedArray.recycle();
 
         LayoutInflater.from(getContext()).inflate(R.layout.miuix_group_layout, this, true);
-        setOrientation(LinearLayout.VERTICAL);
+        setOrientation(VERTICAL);
         updateDivider();
 
         innerLayout = findViewById(R.id.miuix_group);
@@ -83,10 +85,10 @@ public class MiuixViewGroup extends LinearLayout {
         return dividerTitle;
     }
 
-    public MiuixViewGroup setDividerTitle(@Nullable CharSequence dividerTitle) {
+    public void setDividerTitle(@Nullable CharSequence dividerTitle) {
+        if (Objects.equals(this.dividerTitle, dividerTitle)) return;
         this.dividerTitle = dividerTitle;
         updateDivider();
-        return this;
     }
 
     private void updateDivider() {

@@ -54,8 +54,13 @@ public class MiuixCheckBoxView extends MiuixStateView implements OnStateChangeLi
     @Override
     void loadViewWhenBuild() {
         super.loadViewWhenBuild();
-        xCheckBox = findViewById(R.id.miuix_checkbox_indicator);
+        xCheckBox = (MiuixCheckBox) getIndicatorView();
         xCheckBox.setOnStateChangeListener(this);
+    }
+
+    @Override
+    DynamicIndicator loadDynamicIndicator() {
+        return DynamicIndicator.INDICATOR_CHECKBOX;
     }
 
     @Override
@@ -69,15 +74,10 @@ public class MiuixCheckBoxView extends MiuixStateView implements OnStateChangeLi
         // 跳过执行非用户的 Check 动作
         if (!pass) {
             if (!xCheckBox.setUserChecked(isChecked)) {
-                isChecked = !isChecked;
+                isChecked = !isChecked; // 被拦截，还原
             }
         }
         super.updateViewContent();
-    }
-
-    @Override
-    boolean canShowCustomIndicatorView() {
-        return false;
     }
 
     @Override
@@ -94,6 +94,7 @@ public class MiuixCheckBoxView extends MiuixStateView implements OnStateChangeLi
 
     @Override
     public void setChecked(boolean checked) {
+        if (isChecked == checked) return;
         isChecked = checked;
         xCheckBox.setChecked(checked);
         passRefreshStateView();

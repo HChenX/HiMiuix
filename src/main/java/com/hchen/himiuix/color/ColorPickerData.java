@@ -27,8 +27,8 @@ import android.graphics.Color;
  * @author 焕晨HChen
  */
 class ColorPickerData {
-    int hue = 0;
-    int saturation = 0;
+    int hue;
+    int saturation;
     int lightness = 10000;
     int alpha = 255;
 

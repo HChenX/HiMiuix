@@ -42,10 +42,10 @@ import com.hchen.himiuix.helper.HapticFeedbackHelper;
  * @author 焕晨HChen
  */
 public class MiuixSwitch extends LinearLayout {
-    static final String TAG = "HiMiuix";
+    static final String TAG = "HiMiuix:Switch";
     private View thumbView;
     private int THUMB_MARGINS;
-    private int movableDistance = 0;
+    private int movableDistance;
     private final int ANIMATION_DURATION = 280;
     private final float ANIMATION_TENSION = 1.2f;
     private ViewPropertyAnimator thumbViewAnimator;
@@ -74,8 +74,8 @@ public class MiuixSwitch extends LinearLayout {
 
     private void init() {
         setClickable(true);
+        setOrientation(HORIZONTAL);
         setHapticFeedbackEnabled(true);
-        setOrientation(LinearLayout.HORIZONTAL);
         LayoutParams params = new LayoutParams(
             getContext().getResources().getDimensionPixelSize(R.dimen.miuix_switch_width),
             getContext().getResources().getDimensionPixelSize(R.dimen.miuix_switch_height)
@@ -133,13 +133,13 @@ public class MiuixSwitch extends LinearLayout {
                             }
                             thumbViewAnimator.x(finalX);
                             if (change != isChecked()) {
-                                if (!MiuixSwitch.this.setUserChecked(!isChecked())) {
+                                if (!setUserChecked(!isChecked())) {
                                     if (isChecked()) thumbViewAnimator.x(maxMoveX);
                                     else thumbViewAnimator.x(minMoveX);
                                 }
                             }
                         } else {
-                            MiuixSwitch.this.setUserChecked(!isChecked());
+                            setUserChecked(!isChecked());
                             MiuixSwitch.this.performHapticFeedback();
                         }
                         return true;
@@ -175,7 +175,7 @@ public class MiuixSwitch extends LinearLayout {
             }
 
             private void revertAnimation() {
-                thumbViewAnimator.scaleX(1f).scaleY(1f);
+                thumbViewAnimator.scaleX(1.0f).scaleY(1.0f);
             }
         };
         THUMB_MARGINS = getContext().getResources().getDimensionPixelSize(R.dimen.miuix_switch_thumb_margin);

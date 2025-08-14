@@ -35,7 +35,7 @@ import java.util.HashSet;
  */
 public class ImeHelper implements OnApplyWindowInsetsListener {
     private static final ImeHelper imeHelper = new ImeHelper();
-    private static boolean lastShown = false;
+    private static boolean lastShown;
     private static final HashSet<OnImeVisibilityChangedListener> listeners = new HashSet<>();
 
     public static ImeHelper init() {

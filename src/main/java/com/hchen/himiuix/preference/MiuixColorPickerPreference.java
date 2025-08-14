@@ -35,6 +35,8 @@ import com.hchen.himiuix.R;
 import com.hchen.himiuix.callback.OnColorChangedListener;
 import com.hchen.himiuix.color.ColorPickerType;
 
+import java.util.Objects;
+
 /**
  * ColorPicker Preference
  *
@@ -102,21 +104,25 @@ public class MiuixColorPickerPreference extends MiuixPreference implements OnCol
     }
 
     public void setColor(@ColorInt int color) {
+        if (this.color == color) return;
         this.color = color;
         notifyChanged();
     }
 
     public void setShowValueOnTip(boolean show) {
-        this.isShowValueOnTip = show;
+        if (isShowValueOnTip == show) return;
+        isShowValueOnTip = show;
         notifyChanged();
     }
 
     public void setAlwaysHapticFeedback(boolean enabled) {
-        this.isAlwaysHapticFeedback = enabled;
+        if (isAlwaysHapticFeedback == enabled) return;
+        isAlwaysHapticFeedback = enabled;
         notifyChanged();
     }
 
     public void setOnColorChangedListener(OnColorChangedListener listener) {
+        if (Objects.equals(this.listener, listener)) return;
         this.listener = listener;
         notifyChanged();
     }
@@ -136,7 +142,7 @@ public class MiuixColorPickerPreference extends MiuixPreference implements OnCol
 
     @Override
     public void onColorValueChanged(ColorPickerType type, int value) {
-        // 只响应最终值
+        // 只响应最终值，保证性能
         if (type == ColorPickerType.FINAL_COLOR) {
             color = value;
             if (listener != null)
@@ -157,7 +163,7 @@ public class MiuixColorPickerPreference extends MiuixPreference implements OnCol
     protected void onSetInitialValue(@Nullable Object defaultValue) {
         super.onSetInitialValue(defaultValue);
         if (defaultValue == null) defaultValue = -1;
-        setColor(getPersistedInt((Integer) defaultValue));
+        color = getPersistedInt((Integer) defaultValue);
     }
 
     @Nullable

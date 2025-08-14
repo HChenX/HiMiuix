@@ -92,11 +92,11 @@ public class MiuixSeekBar extends AppCompatSeekBar {
     }
 
     public void setShowDefaultPoint(boolean show) {
-        this.isShowDefaultPoint = show;
+        isShowDefaultPoint = show;
     }
 
     public void setAlwaysHapticFeedback(boolean enabled) {
-        this.isAlwaysHapticFeedback = enabled;
+        isAlwaysHapticFeedback = enabled;
     }
 
     public boolean isAlwaysHapticFeedback() {

@@ -4,18 +4,17 @@
     <item name="miuix_basic" type="id" />
     <item name="miuix_icon" type="id" />
     <item name="miuix_icon_card" type="id" />
-    <item name="miuix_content" type="id" />
     <item name="miuix_title" type="id" />
     <item name="miuix_summary" type="id" />
     <item name="miuix_tip" type="id" />
-    <item name="miuix_indicator" type="id" />
     <item name="miuix_custom_indicator" type="id" />
     <item name="miuix_switch_indicator" type="id" />
     <item name="miuix_checkbox_indicator" type="id" />
     <item name="miuix_radio_button_indicator" type="id" />
     <item name="miuix_color_indicator" type="id" />
-    <item name="miuix_custom" type="id" />
-    <item name="miuix_" type="id" />
+    <item name="miuix_custom_view" type="id" />
+    <item name="miuix_dynamic_indicator_stub" type="id" />
+    <item name="miuix_margin_view" type="id" />
 
     <!-- group -->
     <item name="miuix_divider" type="id" />

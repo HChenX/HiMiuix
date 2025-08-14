@@ -36,7 +36,7 @@ import java.util.HashSet;
  */
 public class MiuixRadioGroupPreference extends MiuixPreferenceCategory implements MiuixRadioButtonPreference.OnInnerCheckedListener {
     private final HashSet<MiuixRadioButtonPreference> hashSet = new HashSet<>();
-    private OnCheckedChangeListener onCheckedChangeListener;
+    private OnCheckedChangeListener listener;
 
     public MiuixRadioGroupPreference(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -67,12 +67,12 @@ public class MiuixRadioGroupPreference extends MiuixPreferenceCategory implement
     }
 
     public void setOnCheckedChangeListener(OnCheckedChangeListener listener) {
-        this.onCheckedChangeListener = listener;
+        this.listener = listener;
     }
 
     private void updateCheckedState(MiuixRadioButtonPreference preference) {
-        if (onCheckedChangeListener != null)
-            onCheckedChangeListener.onCheckedChanged(preference);
+        if (listener != null)
+            listener.onCheckedChanged(preference);
 
         hashSet.forEach(x -> {
             if (!x.equals(preference))

@@ -56,8 +56,13 @@ public class MiuixRadioButtonView extends MiuixStateView implements OnStateChang
     @Override
     void loadViewWhenBuild() {
         super.loadViewWhenBuild();
-        xRadioButton = findViewById(R.id.miuix_radio_button_indicator);
+        xRadioButton = (MiuixRadioButton) getIndicatorView();
         xRadioButton.setOnStateChangeListener(this);
+    }
+
+    @Override
+    DynamicIndicator loadDynamicIndicator() {
+        return DynamicIndicator.INDICATOR_RADIO_BUTTON;
     }
 
     @Override
@@ -71,15 +76,10 @@ public class MiuixRadioButtonView extends MiuixStateView implements OnStateChang
         // 跳过非用户的 Check 动作
         if (!pass) {
             if (!xRadioButton.setUserChecked(isChecked))
-                isChecked = !isChecked;
+                isChecked = !isChecked; // 被拦截，还原
         }
         setShadowHelperEnabled(!isChecked);
         super.updateViewContent();
-    }
-
-    @Override
-    boolean canShowCustomIndicatorView() {
-        return false;
     }
 
     @Override
@@ -98,6 +98,7 @@ public class MiuixRadioButtonView extends MiuixStateView implements OnStateChang
 
     @Override
     public void setChecked(boolean checked) {
+        if (isChecked == checked) return;
         isChecked = checked;
         xRadioButton.setChecked(checked);
         if (isChecked && onInnerCheckedListener != null)

@@ -89,12 +89,12 @@ public class MiuixCheckBox extends AppCompatCheckBox {
     }
 
     public void setOnStateChangeListener(OnStateChangeListener listener) {
-        this.onStateChangeListener = listener;
+        onStateChangeListener = listener;
     }
 
     private void playScaleAnimation(boolean checked) {
         ScaleAnimation anim = new ScaleAnimation(
-            1f, checked ? 1.05f : 0.95f, checked ? 1.05f : 0.95f, checked ? 1.05f : 0.95f,
+            1.0f, checked ? 1.05f : 0.95f, checked ? 1.05f : 0.95f, checked ? 1.05f : 0.95f,
             Animation.RELATIVE_TO_SELF, 0.5f,
             Animation.RELATIVE_TO_SELF, 0.5f
         );

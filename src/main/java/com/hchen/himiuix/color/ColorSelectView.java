@@ -45,7 +45,7 @@ public class ColorSelectView extends View {
     private final Paint paint = new Paint();
     private final PaintFlagsDrawFilter filter = new PaintFlagsDrawFilter(0, 3);
     private SweepGradient sweepGradient;
-    private final int[] colors = new int[]{
+    private final int[] colors = {
         Color.parseColor("#FF6565"),
         Color.parseColor("#FFBB55"),
         Color.parseColor("#FFF175"),
@@ -56,18 +56,15 @@ public class ColorSelectView extends View {
     };
 
     public ColorSelectView(Context context) {
-        super(context);
-        init();
+        this(context, null);
     }
 
     public ColorSelectView(Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
-        init();
+        this(context, attrs,0);
     }
 
     public ColorSelectView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init();
+        this(context, attrs, defStyleAttr,0);
     }
 
     public ColorSelectView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
@@ -76,7 +73,7 @@ public class ColorSelectView extends View {
     }
 
     private void init() {
-        width = -1F;
+        width = -1.0F;
         post(() -> {
             update(getWidth());
             invalidate();
@@ -91,6 +88,7 @@ public class ColorSelectView extends View {
     }
 
     public void setColor(int color) {
+        if (this.color == color) return;
         this.color = color;
         invalidate();
     }
@@ -107,7 +105,7 @@ public class ColorSelectView extends View {
 
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
-        if (width != -1F) {
+        if (width != -1.0F) {
             canvas.setDrawFilter(filter);
             paint.reset();
             paint.setColor(getContext().getColor(android.R.color.transparent));

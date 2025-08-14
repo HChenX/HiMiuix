@@ -20,6 +20,7 @@ package com.hchen.himiuix.preference;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.AttributeSet;
@@ -36,6 +37,7 @@ import com.hchen.himiuix.callback.OnChooseItemListener;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -48,9 +50,10 @@ public class MiuixListPreference extends MiuixPreference implements OnChooseItem
     private CharSequence[] items;
     private CharSequence[] selectedItems;
     private Integer[] selectedValues;
+    private Drawable[] icons;
     private int maxHeight;
     private boolean isMultipleChoiceEnabled;
-    private OnChooseItemListener onChooseItemListener;
+    private OnChooseItemListener listener;
 
     public MiuixListPreference(@NonNull Context context) {
         super(context);
@@ -110,32 +113,44 @@ public class MiuixListPreference extends MiuixPreference implements OnChooseItem
     }
 
     public void setItems(CharSequence[] items) {
+        if (Arrays.equals(this.items, items)) return;
         this.items = items;
         notifyChanged();
     }
 
     public void setSelectedItems(CharSequence[] selectedItems) {
+        if (Arrays.equals(this.selectedItems, selectedItems)) return;
         this.selectedItems = selectedItems;
         notifyChanged();
     }
 
     public void setSelectedValues(Integer[] selectedValues) {
+        if (Arrays.equals(this.selectedValues, selectedValues)) return;
         this.selectedValues = selectedValues;
         notifyChanged();
     }
 
+    public void setIcons(Drawable[] icons) {
+        if (Arrays.equals(this.icons, icons)) return;
+        this.icons = icons;
+        notifyChanged();
+    }
+
     public void setMultipleChoiceEnabled(boolean enabled) {
+        if (isMultipleChoiceEnabled == enabled) return;
         isMultipleChoiceEnabled = enabled;
         notifyChanged();
     }
 
     public void setMaxHeight(int maxHeight) {
+        if (this.maxHeight == maxHeight) return;
         this.maxHeight = maxHeight;
         notifyChanged();
     }
 
     public void setOnChooseItemListener(OnChooseItemListener listener) {
-        this.onChooseItemListener = listener;
+        if (Objects.equals(this.listener, listener)) return;
+        this.listener = listener;
         notifyChanged();
     }
 
@@ -151,6 +166,10 @@ public class MiuixListPreference extends MiuixPreference implements OnChooseItem
         return selectedValues;
     }
 
+    public Drawable[] getIcons() {
+        return icons;
+    }
+
     public boolean isMultipleChoiceEnabled() {
         return isMultipleChoiceEnabled;
     }
@@ -161,7 +180,7 @@ public class MiuixListPreference extends MiuixPreference implements OnChooseItem
 
     @Override
     public boolean onChooseBefore(CharSequence item, int which) {
-        return onChooseItemListener == null || onChooseItemListener.onChooseBefore(item, which);
+        return listener == null || listener.onChooseBefore(item, which);
     }
 
     @Override
@@ -172,8 +191,8 @@ public class MiuixListPreference extends MiuixPreference implements OnChooseItem
         notifyDependencyChange(shouldDisableDependents());
         notifyChanged();
 
-        if (onChooseItemListener != null)
-            onChooseItemListener.onChooseAfter(items, selectedItems, selectedValues);
+        if (listener != null)
+            listener.onChooseAfter(items, selectedItems, selectedValues);
     }
 
     @Nullable
@@ -187,7 +206,7 @@ public class MiuixListPreference extends MiuixPreference implements OnChooseItem
         super.onSetInitialValue(defaultValue);
         if (defaultValue == null) defaultValue = new HashSet<>();
         Set<String> set = getPersistedStringSet((Set<String>) defaultValue);
-        setSelectedValues(set.stream().map(Integer::parseInt).toArray(Integer[]::new));
+        selectedValues = set.stream().map(Integer::parseInt).toArray(Integer[]::new);
     }
 
     @Nullable

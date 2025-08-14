@@ -61,7 +61,7 @@ public class MiuixDropDownDialog {
     @NonNull
     private final Point windowPoint;
     private View targetView;
-    private boolean isCreated = false;
+    private boolean isCreated;
     private final boolean isVerticalScreen;
 
     private String value;
@@ -81,11 +81,11 @@ public class MiuixDropDownDialog {
 
     public MiuixDropDownDialog(@UiContext @NonNull Context context, @StyleRes int themeResId) {
         this.context = context;
-        this.dialog = new Dialog(context, themeResId);
-        this.window = Objects.requireNonNull(dialog.getWindow());
-        this.screenPoint = MiuixUtils.getScreenSize(context);
-        this.windowPoint = MiuixUtils.getWindowSize(context);
-        this.isVerticalScreen = MiuixUtils.isVerticalScreen(context);
+        dialog = new Dialog(context, themeResId);
+        window = Objects.requireNonNull(dialog.getWindow());
+        screenPoint = MiuixUtils.getScreenSize(context);
+        windowPoint = MiuixUtils.getWindowSize(context);
+        isVerticalScreen = MiuixUtils.isVerticalScreen(context);
     }
 
     /**
@@ -147,7 +147,7 @@ public class MiuixDropDownDialog {
      * Show listener
      */
     public MiuixDropDownDialog setOnShowListener(MiuixDialogInterface.OnShowListener listener) {
-        this.onShowListener = listener;
+        onShowListener = listener;
         return this;
     }
 
@@ -155,7 +155,7 @@ public class MiuixDropDownDialog {
      * Dismiss listener
      */
     public MiuixDropDownDialog setOnDismissListener(MiuixDialogInterface.OnDismissListener listener) {
-        this.onDismissListener = listener;
+        onDismissListener = listener;
         return this;
     }
 

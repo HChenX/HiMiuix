@@ -85,6 +85,6 @@ public class MiuixRadioButton extends AppCompatRadioButton {
     }
 
     public void setOnStateChangeListener(OnStateChangeListener listener) {
-        this.onStateChangeListener = listener;
+        onStateChangeListener = listener;
     }
 }

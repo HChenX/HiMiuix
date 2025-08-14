@@ -27,6 +27,8 @@ import androidx.annotation.Nullable;
 
 import com.hchen.himiuix.callback.OnStateChangeListener;
 
+import java.util.Objects;
+
 /**
  * Miuix 状态视图
  *
@@ -113,26 +115,31 @@ public class MiuixStateView extends MiuixBasicView {
     }
 
     public void setTipOn(CharSequence tipOn) {
+        if (Objects.equals(this.tipOn, tipOn)) return;
         this.tipOn = tipOn;
         passRefreshStateView();
     }
 
     public void setTipOff(CharSequence tipOff) {
+        if (Objects.equals(this.tipOff, tipOff)) return;
         this.tipOff = tipOff;
         passRefreshStateView();
     }
 
     public void setSummaryOn(CharSequence summaryOn) {
+        if (Objects.equals(this.summaryOn, summaryOn)) return;
         this.summaryOn = summaryOn;
         passRefreshStateView();
     }
 
     public void setSummaryOff(CharSequence summaryOff) {
+        if (Objects.equals(this.summaryOff, summaryOff)) return;
         this.summaryOff = summaryOff;
         passRefreshStateView();
     }
 
     public void setOnStateChangeListener(OnStateChangeListener listener) {
+        if (Objects.equals(this.listener, listener)) return;
         this.listener = listener;
         passRefreshStateView();
     }

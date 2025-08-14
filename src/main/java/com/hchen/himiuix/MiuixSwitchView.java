@@ -54,8 +54,13 @@ public class MiuixSwitchView extends MiuixStateView implements OnStateChangeList
     @Override
     void loadViewWhenBuild() {
         super.loadViewWhenBuild();
-        xSwitch = findViewById(R.id.miuix_switch_indicator);
+        xSwitch = (MiuixSwitch) getIndicatorView();
         xSwitch.setOnStateChangeListener(this);
+    }
+
+    @Override
+    DynamicIndicator loadDynamicIndicator() {
+        return DynamicIndicator.INDICATOR_SWITCH;
     }
 
     @Override
@@ -65,16 +70,11 @@ public class MiuixSwitchView extends MiuixStateView implements OnStateChangeList
     }
 
     @Override
-    boolean canShowCustomIndicatorView() {
-        return false;
-    }
-
-    @Override
     void updateViewContent() {
         // 跳过非用户的 Check 动作
         if (!pass) {
             if (!xSwitch.setUserChecked(isChecked)) {
-                isChecked = !isChecked;
+                isChecked = !isChecked; // 被拦截，还原
             }
         }
         super.updateViewContent();
@@ -94,6 +94,7 @@ public class MiuixSwitchView extends MiuixStateView implements OnStateChangeList
 
     @Override
     public void setChecked(boolean checked) {
+        if (isChecked == checked) return;
         isChecked = checked;
         xSwitch.setChecked(checked);
         passRefreshStateView();

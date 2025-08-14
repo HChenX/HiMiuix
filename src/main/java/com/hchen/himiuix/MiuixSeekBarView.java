@@ -22,7 +22,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.text.InputType;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +36,7 @@ import com.hchen.himiuix.helper.HapticFeedbackHelper;
 import com.hchen.himiuix.widget.MiuixEditText;
 import com.hchen.himiuix.widget.MiuixSeekBar;
 
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -138,10 +138,6 @@ public class MiuixSeekBarView extends MiuixBasicView {
         xEditText.setAutoRequestFocus(true);
         // 仅接收阿拉伯数字和“.”
         xEditText.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED | InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_CLASS_NUMBER);
-
-        LayoutParams params = (LayoutParams) getTipView().getLayoutParams();
-        params.gravity = Gravity.BOTTOM;
-        getTipView().setLayoutParams(params);
     }
 
     @Override
@@ -174,17 +170,17 @@ public class MiuixSeekBarView extends MiuixBasicView {
         if (isShowValueOnTip) getTipView().setVisibility(VISIBLE);
     }
 
-    @Override
-    boolean canShowCustomIndicatorView() {
-        return false;
-    }
-
     private void updateTipIfNeed() {
         if (isShowValueOnTip) {
             String tip = formatValue();
             tip = tip + (format != null ? format : "");
             getTipView().setText(tip);
         }
+    }
+
+    @Override
+    public boolean forceShowCustomIndicatorView() {
+        return isDialogModeEnabled;
     }
 
     @Override
@@ -242,6 +238,7 @@ public class MiuixSeekBarView extends MiuixBasicView {
     }
 
     public void setValue(int value) {
+        if (this.value == value) return;
         if (isStep) {
             int step = calculateStepCount(value);
             if (step > stepCount) step = stepCount;
@@ -256,60 +253,73 @@ public class MiuixSeekBarView extends MiuixBasicView {
     }
 
     public void setDefValue(int defValue) {
+        if (this.defValue == defValue) return;
         this.defValue = defValue;
         refreshView();
     }
 
     public void setMaxValue(int maxValue) {
+        if (this.maxValue == maxValue) return;
         this.maxValue = maxValue;
         isStep = false;
         refreshView();
     }
 
     public void setMinValue(int minValue) {
+        if (this.minValue == minValue) return;
         this.minValue = minValue;
         isStep = false;
         refreshView();
     }
 
     public void setStepValue(int stepValue) {
+        if (stepValue <= 0) return;
+        if (this.stepValue == stepValue) return;
         this.stepValue = stepValue;
         isStep = false;
         refreshView();
     }
 
     public void setDividerValue(int dividerValue) {
+        if (dividerValue <= 0) return;
+        if (this.dividerValue == dividerValue) return;
         this.dividerValue = dividerValue;
         refreshView();
     }
 
     public void setFormat(String format) {
+        if (Objects.equals(this.format, format)) return;
         this.format = format;
         refreshView();
     }
 
-    public void setShowValueOnTip(boolean showValueOnTip) {
-        this.isShowValueOnTip = showValueOnTip;
+    public void setShowValueOnTip(boolean show) {
+        if (isShowDefaultPoint == show) return;
+        isShowValueOnTip = show;
         refreshView();
     }
 
     public void setOnSeekBarChangeListener(SeekBar.OnSeekBarChangeListener listener) {
+        if (Objects.equals(this.listener, listener)) return;
         this.listener = listener;
         refreshView();
     }
 
     public void setDialogModeEnabled(boolean enable) {
-        this.isDialogModeEnabled = enable;
+        if (isDialogModeEnabled == enable) return;
+        isDialogModeEnabled = enable;
         refreshView();
     }
 
     public void setShowDefaultPoint(boolean show) {
-        this.isShowDefaultPoint = show;
+        if (isShowDefaultPoint == show) return;
+        isShowDefaultPoint = show;
         refreshView();
     }
 
     public void setAlwaysHapticFeedback(boolean enable) {
-        this.isAlwaysHapticFeedback = enable;
+        if (isAlwaysHapticFeedback == enable) return;
+        isAlwaysHapticFeedback = enable;
         refreshView();
     }
 

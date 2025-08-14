@@ -27,8 +27,8 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 
 import androidx.annotation.CallSuper;
 import androidx.annotation.DrawableRes;
@@ -38,7 +38,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.core.content.ContextCompat;
 import androidx.preference.Preference;
-import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceViewHolder;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -49,6 +48,7 @@ import com.hchen.himiuix.utils.InvokeUtils;
 import com.hchen.himiuix.widget.MiuixCardView;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * Preference
@@ -56,7 +56,7 @@ import java.util.ArrayList;
  * @author 焕晨HChen
  */
 public class MiuixPreference extends Preference implements OnRefreshViewListener {
-    static final String TAG = "HiMiuix";
+    static final String TAG = "HiMiuix:Preference";
     static final int CARD_RADIUS = 0;
     static final int CARD_TOP_RADIUS = 1;
     static final int CARD_BOTTOM_RADIUS = 2;
@@ -65,7 +65,6 @@ public class MiuixPreference extends Preference implements OnRefreshViewListener
     private int radius;
     private CharSequence tip;
     private Drawable indicator;
-    private View customView;
     private int iconRadius;
     private boolean isShadowEnabled;
     private boolean isHapticFeedbackEnabled;
@@ -100,14 +99,12 @@ public class MiuixPreference extends Preference implements OnRefreshViewListener
         tip = typedArray.getText(R.styleable.MiuixPreference_tip);
         indicator = typedArray.getDrawable(R.styleable.MiuixPreference_indicator);
         iconRadius = typedArray.getDimensionPixelSize(R.styleable.MiuixPreference_iconRadius, -1);
-        int layoutId = typedArray.getResourceId(R.styleable.MiuixPreference_android_layout, 0);
         isShadowEnabled = typedArray.getBoolean(R.styleable.MiuixPreference_shadowEnabled, true);
         isHapticFeedbackEnabled = typedArray.getBoolean(R.styleable.MiuixPreference_android_hapticFeedbackEnabled, true);
         typedArray.recycle();
 
         setLayoutResource(loadLayoutResource());
         radius = getContext().getResources().getDimensionPixelSize(R.dimen.miuix_prefs_card_radius);
-        if (layoutId != 0) customView = LayoutInflater.from(getContext()).inflate(layoutId, null);
     }
 
     @LayoutRes
@@ -121,6 +118,7 @@ public class MiuixPreference extends Preference implements OnRefreshViewListener
         MiuixCardView xCardView = (MiuixCardView) holder.itemView;
         MiuixBasicView xBasicView = holder.itemView.findViewById(R.id.miuix_prefs);
 
+        // 取消自动刷新
         xBasicView.setManuallyRefreshViewMode(true);
 
         xBasicView.setOnRefreshViewListener(null);
@@ -133,8 +131,6 @@ public class MiuixPreference extends Preference implements OnRefreshViewListener
         xBasicView.setIcon(getIcon());
         xBasicView.setIconRadius(iconRadius);
         xBasicView.setIndicator(indicator);
-        if (!skipSetCustomView()) // 是否跳过设置自定义布局
-            xBasicView.setCustomView(customView);
         // 不要设置 BasicView 的 Intent，可能会执行两次
         // xBasicView.setIntent(getIntent());
         xBasicView.setEnabled(isEnabled());
@@ -147,70 +143,54 @@ public class MiuixPreference extends Preference implements OnRefreshViewListener
         xBasicView.refreshView();
     }
 
+    // 在视图刷新后回调
     @Override
-    protected void onAttachedToHierarchy(@NonNull PreferenceManager preferenceManager) {
-        super.onAttachedToHierarchy(preferenceManager);
-        if (getPreferenceManager() != null) {
-            getPreferenceManager().setSharedPreferencesName(getContext().getString(R.string.prefs_name));
+    public void refreshed(MiuixBasicView view) {
+        if (view.getIndicatorView() instanceof ImageView) {
+            if (getFragment() != null || getIntent() != null ||
+                getOnPreferenceChangeListener() != null ||
+                getOnPreferenceClickListener() != null ||
+                view.forceShowCustomIndicatorView()
+            ) {
+                view.getIndicatorView().setVisibility(VISIBLE);
+            } else view.getIndicatorView().setVisibility(GONE);
         }
     }
 
-    @Override
-    public void refreshed(MiuixBasicView view) {
-        if (getFragment() != null || getIntent() != null ||
-            getOnPreferenceChangeListener() != null ||
-            getOnPreferenceClickListener() != null
-        ) {
-            view.getIndicatorView().setVisibility(VISIBLE);
-        } else view.getIndicatorView().setVisibility(GONE);
-    }
-
-    boolean skipSetCustomView() {
-        return false;
-    }
-
-    @Override
-    public void setViewId(int viewId) {
-    }
-
-    public void setTip(@StringRes int tip) {
-        setTip(getContext().getText(tip));
+    public void setTip(@StringRes int id) {
+        setTip(getContext().getText(id));
     }
 
     public void setTip(@Nullable CharSequence tip) {
+        if (Objects.equals(this.tip, tip)) return;
         this.tip = tip;
         notifyChanged();
     }
 
-    public void setIndicator(@DrawableRes int indicator) {
-        setIndicator(ContextCompat.getDrawable(getContext(), indicator));
+    public void setIndicator(@DrawableRes int id) {
+        setIndicator(ContextCompat.getDrawable(getContext(), id));
     }
 
     public void setIndicator(@Nullable Drawable indicator) {
+        if (Objects.equals(this.indicator, indicator)) return;
         this.indicator = indicator;
         notifyChanged();
     }
 
-    public void setCustomView(@LayoutRes int customView) {
-        setCustomView(LayoutInflater.from(getContext()).inflate(customView, null));
-    }
-
-    public void setCustomView(@Nullable View customView) {
-        this.customView = customView;
-        notifyChanged();
-    }
-
     public void setHapticFeedbackEnabled(boolean enabled) {
-        this.isHapticFeedbackEnabled = enabled;
+        if (isHapticFeedbackEnabled == enabled) return;
+        isHapticFeedbackEnabled = enabled;
         notifyChanged();
     }
 
     public void setShadowEnabled(boolean enabled) {
+        if (isShadowEnabled == enabled) return;
         isShadowEnabled = enabled;
         notifyChanged();
     }
 
     public void setIconRadius(int iconRadius) {
+        if (this.iconRadius == iconRadius) return;
         this.iconRadius = iconRadius;
         notifyChanged();
     }
@@ -220,28 +200,25 @@ public class MiuixPreference extends Preference implements OnRefreshViewListener
         return tip;
     }
 
-    public boolean isShadowEnabled() {
-        return isShadowEnabled;
-    }
-
     @Nullable
     public Drawable getIndicator() {
         return indicator;
-    }
-
-    public View getCustomView() {
-        return customView;
     }
 
     public int getIconRadius() {
         return iconRadius;
     }
 
+    public boolean isShadowEnabled() {
+        return isShadowEnabled;
+    }
+
     public boolean isHapticFeedbackEnabled() {
         return isHapticFeedbackEnabled;
     }
 
-    // ---------------------------------------------------------------
+    // ------------------------------ Inner Api -----------------------------------
+    // 快速的设置 Card 状态
     void setCardState(int cardState) {
         this.cardState = cardState;
     }
@@ -318,10 +295,34 @@ public class MiuixPreference extends Preference implements OnRefreshViewListener
     @Override
     protected void notifyChanged() {
         if (getContext() instanceof Activity activity) {
+            // 防止冲突
             RecyclerView recyclerView = activity.findViewById(R.id.recycler_view);
             if (recyclerView != null && recyclerView.isComputingLayout())
                 recyclerView.post(super::notifyChanged);
             else super.notifyChanged();
         } else super.notifyChanged();
     }
+
+    // ------------------------------ UnSupport --------------------------------
+    @Override
+    public void setViewId(int viewId) {
+        // UnSupport
+    }
+
+    @Override
+    public void setWidgetLayoutResource(int widgetLayoutResId) {
+        // UnSupport
+    }
+
+    @Override
+    public void setSingleLineTitle(boolean singleLineTitle) {
+        // UnSupport
+    }
+
+    @Override
+    public void setIconSpaceReserved(boolean iconSpaceReserved) {
+        // UnSupport
+    }
+
+    // setSummaryProvider // UnSupport
 }

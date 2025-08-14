@@ -33,6 +33,8 @@ import com.hchen.himiuix.MiuixStateView;
 import com.hchen.himiuix.R;
 import com.hchen.himiuix.callback.OnStateChangeListener;
 
+import java.util.Objects;
+
 /**
  * State Preference
  *
@@ -111,36 +113,43 @@ class MiuixStatePreference extends MiuixPreference implements OnStateChangeListe
     }
 
     public void setChecked(boolean checked) {
+        if (isChecked == checked) return;
         isChecked = checked;
         notifyChanged();
     }
 
-    public void setTipOn(CharSequence tipOn) {
+    public void setTipOnText(CharSequence tipOn) {
+        if (Objects.equals(this.tipOn, tipOn)) return;
         this.tipOn = tipOn;
         notifyChanged();
     }
 
-    public void setTipOff(CharSequence tipOff) {
+    public void setTipOffText(CharSequence tipOff) {
+        if (Objects.equals(this.tipOff, tipOff)) return;
         this.tipOff = tipOff;
         notifyChanged();
     }
 
-    public void setSummaryOn(CharSequence summaryOn) {
+    public void setSummaryOnText(CharSequence summaryOn) {
+        if (Objects.equals(this.summaryOn, summaryOn)) return;
         this.summaryOn = summaryOn;
         notifyChanged();
     }
 
-    public void setSummaryOff(CharSequence summaryOff) {
+    public void setSummaryOffText(CharSequence summaryOff) {
+        if (Objects.equals(this.summaryOff, summaryOff)) return;
         this.summaryOff = summaryOff;
         notifyChanged();
     }
 
     public void setOnStateChangeListener(OnStateChangeListener listener) {
+        if (Objects.equals(onStateChangeListener, listener)) return;
         onStateChangeListener = listener;
         notifyChanged();
     }
 
     public void setDisableDependentsState(boolean disableDependentsState) {
+        if (isDisableDependentsState == disableDependentsState) return;
         isDisableDependentsState = disableDependentsState;
         notifyChanged();
     }
@@ -192,7 +201,7 @@ class MiuixStatePreference extends MiuixPreference implements OnStateChangeListe
     protected void onSetInitialValue(@Nullable Object defaultValue) {
         super.onSetInitialValue(defaultValue);
         if (defaultValue == null) defaultValue = false;
-        setChecked(getPersistedBoolean((Boolean) defaultValue));
+        isChecked = getPersistedBoolean((Boolean) defaultValue);
     }
 
     @Nullable

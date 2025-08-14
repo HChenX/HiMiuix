@@ -64,8 +64,8 @@ public class MiuixCardView extends CardView {
         brRadius = typedArray.getDimension(R.styleable.MiuixCardView_cardBottomRightRadius, 0);
         typedArray.recycle();
 
-        setRadius(0f);
-        setCardElevation(0f);
+        setRadius(0.0f);
+        setCardElevation(0.0f);
         setPreventCornerOverlap(false);
         setUseCompatPadding(false);
         setCardBackgroundColor(getContext().getColor(android.R.color.transparent));
@@ -93,7 +93,7 @@ public class MiuixCardView extends CardView {
 
     @Override
     protected void onDraw(@NonNull Canvas canvas) {
-        if (getRadius() == 0f) {
+        if (getRadius() == 0.0f) {
             float[] radius = {tlRadius, tlRadius, trRadius, trRadius, brRadius, brRadius, blRadius, blRadius};
             RectF rectF = getRectF();
             path.reset();

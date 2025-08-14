@@ -31,6 +31,9 @@ import com.hchen.himiuix.callback.OnChooseItemListener;
 import com.hchen.himiuix.dialog.MiuixDropDownDialog;
 import com.hchen.himiuix.helper.HapticFeedbackHelper;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 /**
  * Miuix 弹窗选择视图
  *
@@ -75,7 +78,6 @@ public class MiuixDropDownView extends MiuixBasicView {
     @Override
     void loadShadowHelper() {
         super.loadShadowHelper();
-        // 切换震动模式
         getShadowHelper().setHapticFeedbackFlag(HapticFeedbackHelper.MIUI_POPUP_NORMAL);
     }
 
@@ -90,8 +92,10 @@ public class MiuixDropDownView extends MiuixBasicView {
         super.updateViewContent();
 
         if (isShowOnTip) {
-            if (entry != null) getTipView().setText(entry);
-            else if (value != null) getTipView().setText(entries[Integer.parseInt(value)]);
+            if (entry != null && !Objects.equals(getTipView().getText(), entry))
+                getTipView().setText(entry);
+            else if (value != null && !Objects.equals(getTipView().getText(), entries[Integer.parseInt(value)]))
+                getTipView().setText(entries[Integer.parseInt(value)]);
         }
     }
 
@@ -103,18 +107,20 @@ public class MiuixDropDownView extends MiuixBasicView {
 
     // 强制显示指示器
     @Override
-    boolean forceShowCustomIndicatorView() {
+    public boolean forceShowCustomIndicatorView() {
         return true;
     }
 
     // 设置备选项目
     public void setEntries(CharSequence[] entries) {
+        if (Arrays.equals(this.entries, entries)) return;
         this.entries = entries;
         refreshView();
     }
 
     // 设置当前选中项目的索引值
     public void setValue(String value) {
+        if (Objects.equals(this.value, value)) return;
         this.value = value;
         refreshView();
     }
@@ -122,18 +128,21 @@ public class MiuixDropDownView extends MiuixBasicView {
     // 设置当前选中的条目
     // 请注意，存在相同的条目时可能造成混乱
     public void setEntry(CharSequence entry) {
+        if (Objects.equals(this.entry, entry)) return;
         this.entry = entry;
         refreshView();
     }
 
 
     public void setOnChooseItemListener(OnChooseItemListener listener) {
+        if (Objects.equals(this.listener, listener)) return;
         this.listener = listener;
         refreshView();
     }
 
-    public void setShowOnTip(boolean showOnTip) {
-        isShowOnTip = showOnTip;
+    public void setShowOnTip(boolean show) {
+        if (isShowOnTip == show) return;
+        isShowOnTip = show;
         refreshView();
     }
 

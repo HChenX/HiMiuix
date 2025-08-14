@@ -51,9 +51,9 @@ public class ShadowHelper {
     private float initialX;
     private float initialY;
     private float touchSlop;
-    private boolean isPressCandidate = false;
-    private boolean isBackgroundChanged = false;
-    private boolean shouldKeepShadow = false;
+    private boolean isPressCandidate;
+    private boolean isBackgroundChanged;
+    private boolean shouldKeepShadow;
     private boolean isEnabled = true;
     private boolean isShadowEnabled = true;
     private int hapticFeedbackFlag = HapticFeedbackHelper.MIUI_HOLD;

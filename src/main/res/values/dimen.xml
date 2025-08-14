@@ -6,6 +6,7 @@
     <dimen name="miuix_basic_min_height">53dp</dimen>
     <dimen name="miuix_basic_radius">15dp</dimen>
     <dimen name="miuix_basic_icon_min">53dp</dimen>
+    <dimen name="miuix_basic_margin_height">0dp</dimen>
     <dimen name="miuix_basic_custom_indicator">27dp</dimen>
 
     <!-- icon -->

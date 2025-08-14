@@ -19,7 +19,6 @@
 package com.hchen.himiuix;
 
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.Icon;
@@ -27,7 +26,6 @@ import android.text.InputFilter;
 import android.text.TextWatcher;
 import android.text.method.KeyListener;
 import android.util.AttributeSet;
-import android.view.Gravity;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
@@ -42,11 +40,6 @@ import com.hchen.himiuix.widget.MiuixEditText;
  * @author 焕晨HChen
  */
 public class MiuixEditTextView extends MiuixBasicView {
-    private CharSequence editTip;
-    private CharSequence hint;
-    private Drawable icon;
-    private boolean isAutoRequestFocus;
-    private boolean isFirstLoad;
     private MiuixEditText xEditText;
 
     public MiuixEditTextView(@NonNull Context context) {
@@ -66,18 +59,6 @@ public class MiuixEditTextView extends MiuixBasicView {
     }
 
     @Override
-    void init(@Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        final TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.MiuixEditTextView, defStyleAttr, defStyleRes);
-        editTip = typedArray.getText(R.styleable.MiuixEditTextView_editTip);
-        hint = typedArray.getText(R.styleable.MiuixEditTextView_android_hint);
-        icon = typedArray.getDrawable(R.styleable.MiuixEditTextView_editIcon);
-        isAutoRequestFocus = typedArray.getBoolean(R.styleable.MiuixEditTextView_autoRequestFocus, false);
-        typedArray.recycle();
-
-        super.init(attrs, defStyleAttr, defStyleRes);
-    }
-
-    @Override
     void loadShadowHelper() {
         super.loadShadowHelper();
         // 禁用点击效果，Edit 不需要外部点击动画
@@ -89,31 +70,11 @@ public class MiuixEditTextView extends MiuixBasicView {
         super.loadViewWhenBuild();
         xEditText = new MiuixEditText(getContext());
         setCustomView(xEditText);
-
-        // 更新 Tip 位置
-        LayoutParams params = (LayoutParams) getTipView().getLayoutParams();
-        params.gravity = Gravity.BOTTOM;
-        getTipView().setLayoutParams(params);
-
-        isFirstLoad = true;
     }
 
     @Override
     void updateViewContent() {
         super.updateViewContent();
-
-        if (isFirstLoad) {
-            if (editTip != null) setTipText(editTip);
-            if (hint != null) setHint(hint);
-            if (icon != null) setImageDrawable(icon);
-            setAutoRequestFocus(isAutoRequestFocus);
-            isFirstLoad = false;
-        }
-    }
-
-    @Override
-    boolean canShowCustomIndicatorView() {
-        return false;
     }
 
     // -------------------- Inner EditText --------------------

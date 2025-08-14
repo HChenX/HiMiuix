@@ -29,9 +29,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.PreferenceViewHolder;
 
-import com.hchen.himiuix.MiuixBasicView;
 import com.hchen.himiuix.MiuixSeekBarView;
 import com.hchen.himiuix.R;
+
+import java.util.Objects;
 
 /**
  * SeekBar Preference
@@ -50,7 +51,7 @@ public class MiuixSeekBarPreference extends MiuixPreference implements SeekBar.O
     private boolean isShowDefaultPoint;
     private boolean isDialogModeEnabled;
     private boolean isAlwaysHapticFeedback;
-    private SeekBar.OnSeekBarChangeListener onSeekBarChangeListener;
+    private SeekBar.OnSeekBarChangeListener listener;
 
     public MiuixSeekBarPreference(@NonNull Context context) {
         super(context);
@@ -118,73 +119,77 @@ public class MiuixSeekBarPreference extends MiuixPreference implements SeekBar.O
         xSeekBarView.refreshView();
     }
 
-    @Override
-    public void refreshed(MiuixBasicView view) {
-        // 阻止显示指示器
-    }
-
-    @Override
-    boolean skipSetCustomView() {
-        return true;
-    }
-
     public void setValue(int value) {
+        if (this.value == value) return;
         this.value = value;
         notifyChanged();
     }
 
     public void setDefValue(int defValue) {
+        if (this.defValue == defValue) return;
         this.defValue = defValue;
         notifyChanged();
     }
 
     public void setMaxValue(int maxValue) {
+        if (this.maxValue == maxValue) return;
         this.maxValue = maxValue;
         notifyChanged();
     }
 
     public void setMinValue(int minValue) {
+        if (this.minValue == minValue) return;
         this.minValue = minValue;
         notifyChanged();
     }
 
     public void setStepValue(int stepValue) {
+        if (stepValue <= 0) return;
+        if (this.stepValue == stepValue) return;
         this.stepValue = stepValue;
         notifyChanged();
     }
 
     public void setDividerValue(int dividerValue) {
+        if (dividerValue <= 0) return;
+        if (this.dividerValue == dividerValue) return;
         this.dividerValue = dividerValue;
         notifyChanged();
     }
 
     public void setFormat(String format) {
+        if (Objects.equals(this.format, format)) return;
         this.format = format;
         notifyChanged();
     }
 
     public void setShowValueOnTip(boolean show) {
-        this.isShowValueOnTip = show;
+        if (isShowValueOnTip == show) return;
+        isShowValueOnTip = show;
         notifyChanged();
     }
 
     public void setOnSeekBarChangeListener(SeekBar.OnSeekBarChangeListener listener) {
-        this.onSeekBarChangeListener = listener;
+        if (Objects.equals(this.listener, listener)) return;
+        this.listener = listener;
         notifyChanged();
     }
 
     public void setDialogModeEnabled(boolean enabled) {
-        this.isDialogModeEnabled = enabled;
+        if (isDialogModeEnabled == enabled) return;
+        isDialogModeEnabled = enabled;
         notifyChanged();
     }
 
     public void setShowDefaultPoint(boolean show) {
-        this.isShowDefaultPoint = show;
+        if (isShowDefaultPoint == show) return;
+        isShowDefaultPoint = show;
         notifyChanged();
     }
 
     public void setAlwaysHapticFeedback(boolean enabled) {
-        this.isAlwaysHapticFeedback = enabled;
+        if (isAlwaysHapticFeedback == enabled) return;
+        isAlwaysHapticFeedback = enabled;
         notifyChanged();
     }
 
@@ -235,14 +240,14 @@ public class MiuixSeekBarPreference extends MiuixPreference implements SeekBar.O
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         value = progress;
-        if (onSeekBarChangeListener != null)
-            onSeekBarChangeListener.onProgressChanged(seekBar, progress, fromUser);
+        if (listener != null)
+            listener.onProgressChanged(seekBar, progress, fromUser);
     }
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-        if (onSeekBarChangeListener != null)
-            onSeekBarChangeListener.onStartTrackingTouch(seekBar);
+        if (listener != null)
+            listener.onStartTrackingTouch(seekBar);
     }
 
     @Override
@@ -250,8 +255,8 @@ public class MiuixSeekBarPreference extends MiuixPreference implements SeekBar.O
         persistInt(getValue());
         notifyDependencyChange(getShouldDisableView());
         notifyChanged();
-        if (onSeekBarChangeListener != null)
-            onSeekBarChangeListener.onStopTrackingTouch(seekBar);
+        if (listener != null)
+            listener.onStopTrackingTouch(seekBar);
     }
 
     @Nullable
@@ -264,7 +269,7 @@ public class MiuixSeekBarPreference extends MiuixPreference implements SeekBar.O
     protected void onSetInitialValue(@Nullable Object defaultValue) {
         super.onSetInitialValue(defaultValue);
         if (defaultValue == null) defaultValue = 0;
-        setValue(getPersistedInt((Integer) defaultValue));
+        value = getPersistedInt((Integer) defaultValue);
     }
 
     @Nullable

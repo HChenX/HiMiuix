@@ -39,6 +39,8 @@ import com.hchen.himiuix.callback.OnColorChangedListener;
 import com.hchen.himiuix.dialog.MiuixAlertDialog;
 import com.hchen.himiuix.widget.MiuixEditText;
 
+import java.util.Objects;
+
 /**
  * 色盘视图
  *
@@ -93,6 +95,7 @@ public class ColorPickerView extends LinearLayout implements OnColorChangedListe
 
     private void init() {
         LayoutInflater.from(getContext()).inflate(R.layout.miuix_color_picker, this, true);
+        setOrientation(VERTICAL);
         setHorizontalScrollBarEnabled(false);
         setVerticalScrollBarEnabled(false);
 
@@ -180,17 +183,20 @@ public class ColorPickerView extends LinearLayout implements OnColorChangedListe
         xEditText.removeTextChangedListener(textWatcher);
     }
 
-    public void setColorValue(@ColorInt int argb) {
-        this.colorValue = argb;
+    public void setColorValue(@ColorInt int color) {
+        if (colorValue == color) return;
+        colorValue = color;
         updateContent(ColorPickerType.FINAL_COLOR, true);
     }
 
     public void setDialogModeEnabled(boolean enabled) {
-        this.isDialogModeEnabled = enabled;
+        if (isDialogModeEnabled == enabled) return;
+        isDialogModeEnabled = enabled;
         xEditText.setIntercept(enabled);
     }
 
     public void setOnColorChangedListener(OnColorChangedListener listener) {
+        if (Objects.equals(this.listener, listener)) return;
         this.listener = listener;
     }
 

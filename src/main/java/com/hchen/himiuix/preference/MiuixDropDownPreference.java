@@ -33,6 +33,9 @@ import com.hchen.himiuix.MiuixDropDownView;
 import com.hchen.himiuix.R;
 import com.hchen.himiuix.callback.OnChooseItemListener;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 /**
  * DropDown Preference
  *
@@ -103,27 +106,32 @@ public class MiuixDropDownPreference extends MiuixPreference implements OnChoose
     }
 
     public void setEntries(CharSequence[] entries) {
+        if (Arrays.equals(this.entries, entries)) return;
         this.entries = entries;
         notifyChanged();
     }
 
     public void setValue(String value) {
+        if (Objects.equals(this.value, value)) return;
         this.value = value;
         notifyChanged();
     }
 
     public void setEntry(CharSequence entry) {
+        if (Objects.equals(this.entry, entry)) return;
         this.entry = entry;
         notifyChanged();
     }
 
     public void setOnChooseItemListener(OnChooseItemListener listener) {
+        if (Objects.equals(this.listener, listener)) return;
         this.listener = listener;
         notifyChanged();
     }
 
-    public void setShowOnTip(boolean showOnTip) {
-        isShowOnTip = showOnTip;
+    public void setShowOnTip(boolean show) {
+        if (isShowOnTip == show) return;
+        isShowOnTip = show;
         notifyChanged();
     }
 
@@ -172,7 +180,7 @@ public class MiuixDropDownPreference extends MiuixPreference implements OnChoose
     protected void onSetInitialValue(@Nullable Object defaultValue) {
         super.onSetInitialValue(defaultValue);
         if (defaultValue == null) defaultValue = "0";
-        setValue(getPersistedString((String) defaultValue));
+        value = getPersistedString((String) defaultValue);
     }
 
     @Nullable

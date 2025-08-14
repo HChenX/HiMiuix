@@ -32,7 +32,7 @@ import com.hchen.himiuix.R;
  * @author 焕晨HChen
  */
 public class MiuixRadioButtonPreference extends MiuixStatePreference {
-    private OnInnerCheckedListener onInnerCheckedListener;
+    private OnInnerCheckedListener listener;
 
     public MiuixRadioButtonPreference(@NonNull Context context) {
         super(context);
@@ -56,14 +56,14 @@ public class MiuixRadioButtonPreference extends MiuixStatePreference {
     }
 
     void setOnInnerCheckedListener(OnInnerCheckedListener listener) {
-        this.onInnerCheckedListener = listener;
+        this.listener = listener;
     }
 
     @Override
     public boolean onStateChange(boolean newValue) {
         boolean change = super.onStateChange(newValue);
-        if (change && newValue && onInnerCheckedListener != null)
-            onInnerCheckedListener.onChecked(this);
+        if (change && newValue && listener != null)
+            listener.onChecked(this);
 
         return change;
     }

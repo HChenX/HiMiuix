@@ -40,6 +40,7 @@ import com.hchen.himiuix.widget.MiuixCardView;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Objects;
 
 /**
  * Miuix List
@@ -159,7 +160,7 @@ public class MiuixListView extends MiuixBasicView implements OnChooseItemListene
     }
 
     @Override
-    boolean forceShowCustomIndicatorView() {
+    public boolean forceShowCustomIndicatorView() {
         return isDialogModeEnabled;
     }
 
@@ -215,31 +216,37 @@ public class MiuixListView extends MiuixBasicView implements OnChooseItemListene
     }
 
     public void setItems(CharSequence[] items) {
+        if (Arrays.equals(this.items, items)) return;
         this.items = items;
         refreshView();
     }
 
     public void setSelectedItems(CharSequence[] selectedItems) {
+        if (Arrays.equals(this.selectedItems, selectedItems)) return;
         this.selectedItems = selectedItems;
         refreshView();
     }
 
     public void setSelectedValues(Integer[] selectedValues) {
+        if (Arrays.equals(this.selectedValues, selectedValues)) return;
         this.selectedValues = selectedValues;
         refreshView();
     }
 
     public void setMultipleChoiceEnabled(boolean enabled) {
+        if (isMultipleChoiceEnabled == enabled) return;
         isMultipleChoiceEnabled = enabled;
         refreshView();
     }
 
     public void setOnChooseItemListener(OnChooseItemListener listener) {
-        this.onChooseItemListener = listener;
+        if (Objects.equals(onChooseItemListener, listener)) return;
+        onChooseItemListener = listener;
         refreshView();
     }
 
     public void setMaxHeight(int maxHeight) {
+        if (this.maxHeight == maxHeight) return;
         this.maxHeight = maxHeight;
         refreshView();
     }
@@ -276,8 +283,8 @@ public class MiuixListView extends MiuixBasicView implements OnChooseItemListene
     @Override
     public void onChooseAfter(CharSequence[] items, CharSequence[] selectedItems, Integer[] selectedValues) {
         if (isDialogModeEnabled) {
-            this.cacheSelectedItems = selectedItems;
-            this.cacheSelectedValues = selectedValues;
+            cacheSelectedItems = selectedItems;
+            cacheSelectedValues = selectedValues;
         } else {
             this.selectedItems = selectedItems;
             this.selectedValues = selectedValues;

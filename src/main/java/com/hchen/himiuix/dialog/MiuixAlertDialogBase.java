@@ -109,10 +109,10 @@ abstract class MiuixAlertDialogBase implements MiuixDialogInterface {
     CharSequence[] items;
     Integer[] selectedValues;
     SparseBooleanArray booleanArray;
-    boolean isListModeEnabled = false;
-    boolean isMultipleChoiceEnabled = false;
+    boolean isListModeEnabled;
+    boolean isMultipleChoiceEnabled;
     OnChooseItemListener onChooseItemListener;
-    boolean isCardViewModeEnabled = false;
+    boolean isCardViewModeEnabled;
 
     /**
      * @noinspection DeconstructionCanBeUsed
@@ -146,10 +146,10 @@ abstract class MiuixAlertDialogBase implements MiuixDialogInterface {
 
     MiuixAlertDialogBase(@NonNull Dialog dialog) {
         this.dialog = dialog;
-        this.context = dialog.getContext();
-        this.resources = context.getResources();
-        this.window = Objects.requireNonNull(dialog.getWindow());
-        this.point = MiuixUtils.getWindowSize(context);
+        context = dialog.getContext();
+        resources = context.getResources();
+        window = Objects.requireNonNull(dialog.getWindow());
+        point = MiuixUtils.getWindowSize(context);
     }
 
     final void init() {
@@ -323,16 +323,13 @@ abstract class MiuixAlertDialogBase implements MiuixDialogInterface {
 
         init();
         dialog.setOnShowListener(dialog -> {
-            if (onShowListener != null)
-                onShowListener.onShow(MiuixAlertDialogBase.this);
+            if (onShowListener != null) onShowListener.onShow(this);
         });
         dialog.setOnCancelListener(dialog -> {
-            if (onCancelListener != null)
-                onCancelListener.onCancel(MiuixAlertDialogBase.this);
+            if (onCancelListener != null) onCancelListener.onCancel(this);
         });
         dialog.setOnDismissListener(dialog -> {
-            if (onDismissListener != null)
-                onDismissListener.onDismiss(MiuixAlertDialogBase.this);
+            if (onDismissListener != null) onDismissListener.onDismiss(this);
         });
         dialog.setCancelable(isCancelable);
         dialog.setCanceledOnTouchOutside(isCanceledOnTouchOutside);

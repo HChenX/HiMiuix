@@ -30,7 +30,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceGroup;
-import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceViewHolder;
 
 import com.hchen.himiuix.R;
@@ -58,14 +57,6 @@ public class MiuixPreferenceCategory extends PreferenceGroup {
         setLayoutResource(R.layout.miuix_category);
         setSelectable(false);
         setPersistent(false);
-    }
-
-    @Override
-    protected void onAttachedToHierarchy(@NonNull PreferenceManager preferenceManager) {
-        super.onAttachedToHierarchy(preferenceManager);
-        if (getPreferenceManager() != null) {
-            getPreferenceManager().setSharedPreferencesName(getContext().getString(R.string.prefs_name));
-        }
     }
 
     @Override
@@ -99,6 +90,7 @@ public class MiuixPreferenceCategory extends PreferenceGroup {
      */
     @Override
     protected void notifyHierarchyChanged() {
+        // 实时刷新布局
         List<Preference> preferences = InvokeUtils.getField(this, "mPreferences");
         if (preferences.isEmpty())
             super.notifyHierarchyChanged();

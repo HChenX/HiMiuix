@@ -33,6 +33,8 @@ import com.hchen.himiuix.color.ColorPickerView;
 import com.hchen.himiuix.color.ColorSelectView;
 import com.hchen.himiuix.dialog.MiuixAlertDialog;
 
+import java.util.Objects;
+
 /**
  * Miuix 调色盘视图
  *
@@ -79,7 +81,7 @@ public class MiuixColorPickerView extends MiuixBasicView implements OnColorChang
     @Override
     void loadViewWhenBuild() {
         super.loadViewWhenBuild();
-        colorSelectView = findViewById(R.id.miuix_color_indicator);
+        colorSelectView = (ColorSelectView) getIndicatorView();
         colorPickerView = new ColorPickerView(getContext());
         colorPickerView.setColorValue(color); // 初始化 Color
         colorPickerView.setOnColorChangedListener(this);
@@ -90,10 +92,16 @@ public class MiuixColorPickerView extends MiuixBasicView implements OnColorChang
     }
 
     @Override
+    DynamicIndicator loadDynamicIndicator() {
+        return DynamicIndicator.INDICATOR_COLOR;
+    }
+
+    @Override
     void updateVisibility() {
         super.updateVisibility();
         // 必要时隐藏颜色指示器，视觉平衡
-        if (getTitle() != null || getSummary() != null) colorSelectView.setVisibility(VISIBLE);
+        if (getTitle() != null || getSummary() != null || getIcon() != null || isShowValueOnTip)
+            colorSelectView.setVisibility(VISIBLE);
         else colorSelectView.setVisibility(GONE);
         if (isShowValueOnTip) getTipView().setVisibility(VISIBLE);
     }
@@ -105,12 +113,6 @@ public class MiuixColorPickerView extends MiuixBasicView implements OnColorChang
         colorPickerView.setAlwaysHapticFeedback(isAlwaysHapticFeedback);
         if (isShowValueOnTip)
             getTipView().setText(getContext().getString(R.string.color_display, colorPickerView.formatColor(color)));
-    }
-
-    // 不允许显示其他指示器
-    @Override
-    boolean canShowCustomIndicatorView() {
-        return false;
     }
 
     @Override
@@ -156,21 +158,25 @@ public class MiuixColorPickerView extends MiuixBasicView implements OnColorChang
     }
 
     public void setColor(@ColorInt int color) {
+        if (this.color == color) return;
         this.color = color;
         refreshView();
     }
 
     public void setShowValueOnTip(boolean show) {
-        this.isShowValueOnTip = show;
+        if (isShowValueOnTip == show) return;
+        isShowValueOnTip = show;
         refreshView();
     }
 
     public void setAlwaysHapticFeedback(boolean enabled) {
-        this.isAlwaysHapticFeedback = enabled;
+        if (isAlwaysHapticFeedback == enabled) return;
+        isAlwaysHapticFeedback = enabled;
         refreshView();
     }
 
     public void setOnColorChangedListener(OnColorChangedListener listener) {
+        if (Objects.equals(this.listener, listener)) return;
         this.listener = listener;
         refreshView();
     }

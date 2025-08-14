@@ -42,7 +42,7 @@ import java.util.function.Consumer;
  * @author 焕晨HChen
  */
 public class MiuixRadioGroup extends LinearLayout implements MiuixRadioButtonView.OnInnerCheckedListener {
-    private static final String TAG = "HiMiuix";
+    private static final String TAG = "HiMiuix:RadioGroup";
     private final HashSet<MiuixRadioButtonView> radioButtonSet = new HashSet<>();
     private OnCheckedChangeListener onCheckedChangeListener;
     private int checkedId = -1;
@@ -61,24 +61,21 @@ public class MiuixRadioGroup extends LinearLayout implements MiuixRadioButtonVie
 
     public MiuixRadioGroup(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        setOrientation(LinearLayout.VERTICAL);
+        setOrientation(VERTICAL);
     }
 
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-
-        if (checkedId != -1) {
-            updateCheckedState(checkedId);
-        }
+        if (checkedId != -1) updateCheckedState(checkedId);
     }
 
     @Override
     public void addView(View child, int index, ViewGroup.LayoutParams params) {
         if (child instanceof MiuixRadioButtonView view) {
             int viewId = view.getId();
-            if (viewId == View.NO_ID) {
-                viewId = View.generateViewId();
+            if (viewId == NO_ID) {
+                viewId = generateViewId();
                 view.setId(viewId);
             }
             view.setInnerCheckedListener(this);

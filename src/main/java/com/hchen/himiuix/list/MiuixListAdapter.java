@@ -43,7 +43,6 @@ import com.hchen.himiuix.callback.OnChooseItemListener;
 import com.hchen.himiuix.widget.MiuixCheckBox;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 /**
  * Miuix List Adapter
@@ -51,7 +50,7 @@ import java.util.Map;
  * @author 焕晨HChen
  */
 public class MiuixListAdapter extends RecyclerView.Adapter<MiuixListAdapter.MiuixListViewHolder> {
-    private static final String TAG = "HiMiuix";
+    private static final String TAG = "HiMiuix:ListAdapter";
     @NonNull
     @UiContext
     private final Context context;
@@ -59,11 +58,11 @@ public class MiuixListAdapter extends RecyclerView.Adapter<MiuixListAdapter.Miui
     private final RecyclerView recyclerView;
     private final int layoutRes;
     private CharSequence[] items;
-    private Map<CharSequence, Drawable> map;
+    private Drawable[] icons;
     private int itemBackgroundColor;
     private int itemChooseBackgroundColor;
     private boolean isChooseBackgroundColorEnabled = true;
-    private boolean isMultipleChoiceEnabled = false;
+    private boolean isMultipleChoiceEnabled;
     private SparseBooleanArray booleanArray = new SparseBooleanArray();
     private OnChooseItemListener onChooseItemListener;
 
@@ -100,8 +99,8 @@ public class MiuixListAdapter extends RecyclerView.Adapter<MiuixListAdapter.Miui
         this.items = items;
     }
 
-    public void setIconItemsMap(Map<CharSequence, Drawable> map) {
-        this.map = map;
+    public void setIcons(Drawable[] icons) {
+        this.icons = icons;
     }
 
     public void setItemBackgroundColor(int color) {
@@ -143,9 +142,9 @@ public class MiuixListAdapter extends RecyclerView.Adapter<MiuixListAdapter.Miui
         holder.layout.setOnTouchListener(null);
         holder.xCheckBox.setOnStateChangeListener(null);
 
-        if (map == null) holder.iconView.setVisibility(GONE);
+        if (icons == null) holder.iconView.setVisibility(GONE);
         else {
-            holder.iconView.setImageDrawable(map.get(items[position]));
+            holder.iconView.setImageDrawable(icons[position]);
             holder.iconView.setVisibility(VISIBLE);
         }
         updateItemBackground(holder);

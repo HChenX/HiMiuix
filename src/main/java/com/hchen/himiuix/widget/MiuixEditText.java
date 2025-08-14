@@ -57,7 +57,7 @@ import com.hchen.himiuix.helper.ImeHelper;
  * @author 焕晨HChen
  */
 public class MiuixEditText extends LinearLayout implements OnImeVisibilityChangedListener {
-    private static final String TAG = "HiMiuix";
+    private static final String TAG = "HiMiuix:EditText";
     private TextView tipView;
     private ImageView iconView;
     private EditText editText;
@@ -78,12 +78,12 @@ public class MiuixEditText extends LinearLayout implements OnImeVisibilityChange
 
     public MiuixEditText(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        init();
+        init(attrs, defStyleAttr, defStyleRes);
     }
 
     @SuppressLint("AppCompatCustomView")
-    private void init() {
-        setOrientation(LinearLayout.HORIZONTAL);
+    private void init(AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        setOrientation(HORIZONTAL);
         setPadding(getResources().getDimensionPixelSize(R.dimen.miuix_edit_margin), 0, 0, 0);
         setBackgroundResource(R.drawable.miuix_edit_non_focused_border);
 
@@ -314,7 +314,7 @@ public class MiuixEditText extends LinearLayout implements OnImeVisibilityChange
 
     // 是否自动请求焦点并弹出键盘
     public void setAutoRequestFocus(boolean auto) {
-        this.isAutoRequestFocus = auto;
+        isAutoRequestFocus = auto;
         invalidate();
     }
 
