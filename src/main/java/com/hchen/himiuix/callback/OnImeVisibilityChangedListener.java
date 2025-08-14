@@ -24,5 +24,7 @@ package com.hchen.himiuix.callback;
  * @author 焕晨HChen
  */
 public interface OnImeVisibilityChangedListener {
+    // Ime 可见性回调
+    // 内部使用
     void visibilityChanged(boolean isShown);
 }

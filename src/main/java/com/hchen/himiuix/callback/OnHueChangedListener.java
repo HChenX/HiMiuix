@@ -26,5 +26,7 @@ package com.hchen.himiuix.callback;
  * @author 焕晨HChen
  */
 public interface OnHueChangedListener {
+    // 色相更改回调
+    // 内部使用
     void onHueValueChanged(int value);
 }

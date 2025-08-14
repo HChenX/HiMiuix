@@ -29,9 +29,11 @@ import com.hchen.himiuix.preference.MiuixRadioButtonPreference;
  * @author 焕晨HChen
  */
 public interface OnCheckedChangeListener {
+    // 普通 Radio 选中切换回调
     default void onCheckedChanged(MiuixRadioGroup group, @IdRes int checkedId) {
     }
 
+    // Preference Radio 选中切换回调
     default void onCheckedChanged(MiuixRadioButtonPreference preference) {
     }
 }

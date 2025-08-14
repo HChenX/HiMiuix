@@ -26,5 +26,7 @@ import com.hchen.himiuix.color.ColorPickerType;
  * @author 焕晨HChen
  */
 public interface OnColorChangedListener {
+    // 颜色更改时回调
+    // 你可以接受 FINAL_COLOR 或 COLOR_VALUE 事件
     void onColorValueChanged(ColorPickerType type, int value);
 }

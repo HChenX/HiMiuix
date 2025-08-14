@@ -38,6 +38,7 @@ import com.hchen.himiuix.callback.OnStateChangeListener;
  * @author 焕晨HChen
  */
 public class MiuixCheckBox extends AppCompatCheckBox {
+    private static final String TAG = "HiMiuix:CheckBox";
     private OnStateChangeListener onStateChangeListener;
 
     public MiuixCheckBox(@NonNull Context context) {
@@ -61,6 +62,7 @@ public class MiuixCheckBox extends AppCompatCheckBox {
         setClickable(true);
         setBackground(null);
         setSaveEnabled(false);
+        setSaveFromParentEnabled(false);
         if (buttonId == 0) setButtonDrawable(R.drawable.miuix_checkbox);
         else setButtonDrawable(buttonId);
     }

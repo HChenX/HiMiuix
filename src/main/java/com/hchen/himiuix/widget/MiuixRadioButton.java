@@ -34,6 +34,7 @@ import com.hchen.himiuix.callback.OnStateChangeListener;
  * @author 焕晨HChen
  */
 public class MiuixRadioButton extends AppCompatRadioButton {
+    private static final String TAG = "HiMiuix:RadioButton";
     private OnStateChangeListener onStateChangeListener;
 
     public MiuixRadioButton(Context context) {
@@ -57,6 +58,7 @@ public class MiuixRadioButton extends AppCompatRadioButton {
         setClickable(true);
         setBackground(null);
         setSaveEnabled(false);
+        setSaveFromParentEnabled(false);
         if (buttonId == 0) setButtonDrawable(R.drawable.miuix_radio_button);
         else setButtonDrawable(buttonId);
     }

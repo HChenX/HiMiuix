@@ -26,5 +26,6 @@ import com.hchen.himiuix.MiuixBasicView;
  * @author 焕晨HChen
  */
 public interface OnRefreshViewListener {
+    // 视图刷新后回调
     void refreshed(MiuixBasicView view);
 }
