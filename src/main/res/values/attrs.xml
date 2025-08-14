@@ -101,6 +101,7 @@
         <attr name="indicator" />
         <attr name="iconRadius" />
         <attr name="shadowEnabled" />
+        <attr name="android:layout" />
         <attr name="android:hapticFeedbackEnabled" />
     </declare-styleable>
 

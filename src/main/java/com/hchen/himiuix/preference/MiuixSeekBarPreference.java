@@ -94,6 +94,11 @@ public class MiuixSeekBarPreference extends MiuixPreference implements SeekBar.O
     }
 
     @Override
+    boolean canSetCustomView() {
+        return false;
+    }
+
+    @Override
     public void onBindViewHolder(@NonNull PreferenceViewHolder holder) {
         super.onBindViewHolder(holder);
         MiuixSeekBarView xSeekBarView = holder.itemView.findViewById(R.id.miuix_prefs);

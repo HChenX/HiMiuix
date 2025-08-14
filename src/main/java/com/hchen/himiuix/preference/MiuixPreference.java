@@ -27,6 +27,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -65,6 +66,7 @@ public class MiuixPreference extends Preference implements OnRefreshViewListener
     private int radius;
     private CharSequence tip;
     private Drawable indicator;
+    private View customView;
     private int iconRadius;
     private boolean isShadowEnabled;
     private boolean isHapticFeedbackEnabled;
@@ -101,6 +103,8 @@ public class MiuixPreference extends Preference implements OnRefreshViewListener
         iconRadius = typedArray.getDimensionPixelSize(R.styleable.MiuixPreference_iconRadius, -1);
         isShadowEnabled = typedArray.getBoolean(R.styleable.MiuixPreference_shadowEnabled, true);
         isHapticFeedbackEnabled = typedArray.getBoolean(R.styleable.MiuixPreference_android_hapticFeedbackEnabled, true);
+        int layout = typedArray.getResourceId(R.styleable.MiuixPreference_android_layout, 0);
+        if (layout != 0) customView = LayoutInflater.from(getContext()).inflate(layout, null);
         typedArray.recycle();
 
         setLayoutResource(loadLayoutResource());
@@ -131,6 +135,8 @@ public class MiuixPreference extends Preference implements OnRefreshViewListener
         xBasicView.setIcon(getIcon());
         xBasicView.setIconRadius(iconRadius);
         xBasicView.setIndicator(indicator);
+        if (canSetCustomView())
+            xBasicView.setCustomView(customView);
         // 不要设置 BasicView 的 Intent，可能会执行两次
         // xBasicView.setIntent(getIntent());
         xBasicView.setEnabled(isEnabled());
@@ -141,6 +147,10 @@ public class MiuixPreference extends Preference implements OnRefreshViewListener
 
         xBasicView.setManuallyRefreshViewMode(false);
         xBasicView.refreshView();
+    }
+
+    boolean canSetCustomView() {
+        return true;
     }
 
     // 在视图刷新后回调
