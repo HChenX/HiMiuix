@@ -70,22 +70,23 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
     private static final int VERTICAL = 2;
     // Wrong Value
     // public static final int ANGLE = 4;
+    private final SpringBackLayoutHelper mHelper;
+    private final SpringScroller mSpringScroller;
     private int mConsumeNestFlingCounter;
     private int mActivePointerId;
     private int mFakeScrollX;
     private int mFakeScrollY;
-    private final SpringBackLayoutHelper mHelper;
     private float mInitialDownX;
     private float mInitialDownY;
     private float mInitialMotionX;
     private float mInitialMotionY;
+    private int mNestedScrollAxes;
     private boolean mIsBeingDragged;
     private boolean mNestedFlingInProgress;
-    private int mNestedScrollAxes;
     private boolean mNestedScrollInProgress;
+    private final int[] mNestedScrollingV2ConsumedCompat;
     private final NestedScrollingChildHelper mNestedScrollingChildHelper;
     private final NestedScrollingParentHelper mNestedScrollingParentHelper;
-    private final int[] mNestedScrollingV2ConsumedCompat;
     private final List<ViewCompatOnScrollChangeListener> mOnScrollChangeListeners;
     private OnSpringListener mOnSpringListener;
     private int mOriginScrollOrientation;
@@ -98,8 +99,8 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
     private int mScrollState;
     private boolean isGluttonEnabled;
     private boolean isSpringBackEnabled;
+    private boolean isLinkageToolbar;
     private int mSpringBackMode;
-    private final SpringScroller mSpringScroller;
     private View mTarget;
     private final int mTargetId;
     private float mTotalFlingUnconsumed;
@@ -133,6 +134,7 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
         TypedArray typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.SpringBackLayout);
         isSpringBackEnabled = typedArray.getBoolean(R.styleable.SpringBackLayout_springBackEnabled, true);
         isGluttonEnabled = typedArray.getBoolean(R.styleable.SpringBackLayout_gluttonEnabled, false);
+        isLinkageToolbar = typedArray.getBoolean(R.styleable.SpringBackLayout_linkageToolbar, false);
         mTargetId = typedArray.getResourceId(R.styleable.SpringBackLayout_scrollableView, -1);
         mOriginScrollOrientation = typedArray.getInt(R.styleable.SpringBackLayout_scrollOrientation, VERTICAL);
         mSpringBackMode = typedArray.getInt(R.styleable.SpringBackLayout_springBackMode, SPRING_BACK_START_END);
@@ -161,6 +163,14 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
 
     public boolean isGluttonEnabled() {
         return isGluttonEnabled;
+    }
+
+    public void setLinkageToolbar(boolean linkageToolbar) {
+        isLinkageToolbar = linkageToolbar;
+    }
+
+    public boolean isLinkageToolbar() {
+        return isLinkageToolbar;
     }
 
     public void setScrollOrientation(int orientation) {
@@ -238,6 +248,7 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
     }
 
     public View getTarget() {
+        ensureTarget();
         return mTarget;
     }
 
@@ -871,6 +882,16 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
     }
 
     @Override
+    public void onNestedScroll(@NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int type) {
+        onNestedScroll(target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, type, mNestedScrollingV2ConsumedCompat);
+    }
+
+    @Override
+    public void onNestedScroll(@NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
+        onNestedScroll(target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, TYPE_TOUCH, mNestedScrollingV2ConsumedCompat);
+    }
+
+    @Override
     public void onNestedScroll(@NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int type, @NonNull int[] consumed) {
         final boolean isVertical = (mNestedScrollAxes == ViewCompat.SCROLL_AXIS_VERTICAL);
         final int primaryConsumed = isVertical ? dyConsumed : dxConsumed; // 主轴已消费量
@@ -958,16 +979,6 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
         }
         // 把本次未消费量写回 consumed (减少父容器后续需要处理的量)
         consumed[axisIndex] = consumed[axisIndex] + netUnconsumed;
-    }
-
-    @Override
-    public void onNestedScroll(@NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int type) {
-        onNestedScroll(target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, type, mNestedScrollingV2ConsumedCompat);
-    }
-
-    @Override
-    public void onNestedScroll(@NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
-        onNestedScroll(target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, TYPE_TOUCH, mNestedScrollingV2ConsumedCompat);
     }
 
     @Override

@@ -8,6 +8,11 @@
     <dimen name="miuix_basic_icon_min">53dp</dimen>
     <dimen name="miuix_basic_margin_height">0dp</dimen>
     <dimen name="miuix_basic_custom_indicator">27dp</dimen>
+    <dimen name="miuix_appbar_padding_start">28dp</dimen>
+    <dimen name="miuix_appbar_title_size">20sp</dimen>
+    <dimen name="miuix_appbar_large_title_size">34sp</dimen>
+    <dimen name="miuix_appbar_padding_top">4dp</dimen>
+    <dimen name="miuix_appbar_padding_bottom">8dp</dimen>
 
     <!-- icon -->
     <dimen name="miuix_icon_max_height">40dp</dimen>
