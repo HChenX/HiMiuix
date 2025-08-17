@@ -24,6 +24,7 @@ import android.view.ViewGroup;
 import com.hchen.himiuix.callback.OnToolbarListener;
 import com.hchen.himiuix.springback.SpringBackLayout;
 
+import java.util.HashMap;
 import java.util.HashSet;
 
 /**
@@ -33,25 +34,38 @@ import java.util.HashSet;
  */
 public class AppBarHelper {
     private static final String TAG = "HiMiuix:AppBar";
-    private static final HashSet<OnToolbarListener> mToolbarListeners = new HashSet<>();
+    private static final HashSet<OnToolbarListener> toolbarListeners = new HashSet<>();
+    private static final HashMap<View, View> viewToTargetMap = new HashMap<>();
 
     public static void addOnToolbarListener(OnToolbarListener listener) {
-        mToolbarListeners.add(listener);
+        toolbarListeners.add(listener);
     }
 
     public static void removeOnToolbarListener(OnToolbarListener listener) {
-        if (listener == null) mToolbarListeners.clear();
-        mToolbarListeners.remove(listener);
+        if (listener == null) toolbarListeners.clear();
+        toolbarListeners.remove(listener);
     }
 
     public static void callTargetRegister(View view) {
+        if (viewToTargetMap.get(view) != null) {
+            for (OnToolbarListener listener : toolbarListeners) {
+                listener.targetRegister(viewToTargetMap.get(view));
+            }
+            return;
+        }
+
         view.post(() -> {
             View target = findTargetView((ViewGroup) view);
             if (target == null) return;
-            for (OnToolbarListener listener : mToolbarListeners) {
+            viewToTargetMap.put(view, target);
+            for (OnToolbarListener listener : toolbarListeners) {
                 listener.targetRegister(target);
             }
         });
+    }
+
+    public static void onDestroyView(View view) {
+        viewToTargetMap.remove(view);
     }
 
     private static View findTargetView(ViewGroup group) {

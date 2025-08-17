@@ -40,4 +40,10 @@ public class Fragment extends androidx.fragment.app.Fragment {
     public void onPause() {
         super.onPause();
     }
+
+    @Override
+    public void onDestroyView() {
+        AppBarHelper.onDestroyView(getView());
+        super.onDestroyView();
+    }
 }

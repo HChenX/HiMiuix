@@ -39,4 +39,10 @@ public abstract class PreferenceFragmentCompat extends androidx.preference.Prefe
     @Override public void onPause() {
         super.onPause();
     }
+
+    @Override
+    public void onDestroyView() {
+        AppBarHelper.onDestroyView(getView());
+        super.onDestroyView();
+    }
 }
