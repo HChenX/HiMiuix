@@ -99,7 +99,7 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
     private int mScrollState;
     private boolean isGluttonEnabled;
     private boolean isSpringBackEnabled;
-    private boolean isLinkageToolbar;
+    private boolean isLinkageAppBar;
     private int mSpringBackMode;
     private View mTarget;
     private final int mTargetId;
@@ -134,7 +134,7 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
         TypedArray typedArray = context.obtainStyledAttributes(attributeSet, R.styleable.SpringBackLayout);
         isSpringBackEnabled = typedArray.getBoolean(R.styleable.SpringBackLayout_springBackEnabled, true);
         isGluttonEnabled = typedArray.getBoolean(R.styleable.SpringBackLayout_gluttonEnabled, false);
-        isLinkageToolbar = typedArray.getBoolean(R.styleable.SpringBackLayout_linkageToolbar, false);
+        isLinkageAppBar = typedArray.getBoolean(R.styleable.SpringBackLayout_linkageAppBar, false);
         mTargetId = typedArray.getResourceId(R.styleable.SpringBackLayout_scrollableView, -1);
         mOriginScrollOrientation = typedArray.getInt(R.styleable.SpringBackLayout_scrollOrientation, VERTICAL);
         mSpringBackMode = typedArray.getInt(R.styleable.SpringBackLayout_springBackMode, SPRING_BACK_START_END);
@@ -165,12 +165,12 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
         return isGluttonEnabled;
     }
 
-    public void setLinkageToolbar(boolean linkageToolbar) {
-        isLinkageToolbar = linkageToolbar;
+    public void setLinkageAppBar(boolean linkageAppBar) {
+        isLinkageAppBar = linkageAppBar;
     }
 
-    public boolean isLinkageToolbar() {
-        return isLinkageToolbar;
+    public boolean isLinkageAppBar() {
+        return isLinkageAppBar;
     }
 
     public void setScrollOrientation(int orientation) {

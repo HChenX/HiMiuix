@@ -21,7 +21,7 @@ package com.hchen.himiuix.helper;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.hchen.himiuix.callback.OnToolbarListener;
+import com.hchen.himiuix.callback.OnAppBarListener;
 import com.hchen.himiuix.springback.SpringBackLayout;
 
 import java.util.HashMap;
@@ -34,21 +34,22 @@ import java.util.HashSet;
  */
 public class AppBarHelper {
     private static final String TAG = "HiMiuix:AppBar";
-    private static final HashSet<OnToolbarListener> toolbarListeners = new HashSet<>();
+    private static final HashSet<OnAppBarListener> toolbarListeners = new HashSet<>();
     private static final HashMap<View, View> viewToTargetMap = new HashMap<>();
 
-    public static void addOnToolbarListener(OnToolbarListener listener) {
+    public static void addOnToolbarListener(OnAppBarListener listener) {
         toolbarListeners.add(listener);
     }
 
-    public static void removeOnToolbarListener(OnToolbarListener listener) {
+    public static void removeOnToolbarListener(OnAppBarListener listener) {
         if (listener == null) toolbarListeners.clear();
         toolbarListeners.remove(listener);
     }
 
     public static void callTargetRegister(View view) {
+        if (view == null) return;
         if (viewToTargetMap.get(view) != null) {
-            for (OnToolbarListener listener : toolbarListeners) {
+            for (OnAppBarListener listener : toolbarListeners) {
                 listener.targetRegister(viewToTargetMap.get(view));
             }
             return;
@@ -58,7 +59,7 @@ public class AppBarHelper {
             View target = findTargetView((ViewGroup) view);
             if (target == null) return;
             viewToTargetMap.put(view, target);
-            for (OnToolbarListener listener : toolbarListeners) {
+            for (OnAppBarListener listener : toolbarListeners) {
                 listener.targetRegister(target);
             }
         });
@@ -70,14 +71,14 @@ public class AppBarHelper {
 
     private static View findTargetView(ViewGroup group) {
         if (group instanceof SpringBackLayout springBackLayout) {
-            if (springBackLayout.isLinkageToolbar())
+            if (springBackLayout.isLinkageAppBar())
                 return springBackLayout.getTarget();
         }
         for (int i = 0; i < group.getChildCount(); i++) {
             View view = group.getChildAt(i);
 
             if (view instanceof SpringBackLayout springBackLayout) {
-                if (springBackLayout.isLinkageToolbar()) {
+                if (springBackLayout.isLinkageAppBar()) {
                     return springBackLayout.getTarget();
                 }
             }

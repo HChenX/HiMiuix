@@ -38,7 +38,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.NestedScrollingParent3;
 import androidx.core.view.NestedScrollingParentHelper;
 
-import com.hchen.himiuix.callback.OnToolbarListener;
+import com.hchen.himiuix.callback.OnAppBarListener;
 import com.hchen.himiuix.helper.AppBarHelper;
 
 /**
@@ -46,7 +46,7 @@ import com.hchen.himiuix.helper.AppBarHelper;
  *
  * @author 焕晨HChen
  */
-public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3, OnToolbarListener {
+public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3, OnAppBarListener {
     private static final String TAG = "HiMiuix:AppBar";
     private NestedScrollingParentHelper helper;
 
@@ -136,7 +136,13 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
         toolbar = new Toolbar(getContext()) {
             @Override
             public void setTitle(CharSequence title) {
+                largeTitleView.setText(title);
                 toolbarTitleView.setText(title);
+            }
+
+            @Override
+            public CharSequence getTitle() {
+                return title;
             }
         };
         toolbar.setLayoutParams(params);

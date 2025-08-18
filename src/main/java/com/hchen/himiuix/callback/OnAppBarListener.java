@@ -21,11 +21,11 @@ package com.hchen.himiuix.callback;
 import android.view.View;
 
 /**
- * OnToolbarListener
+ * OnAppBarListener
  *
  * @author 焕晨HChen
  */
-public interface OnToolbarListener {
+public interface OnAppBarListener {
     // 内部使用
     void targetRegister(View view);
 }

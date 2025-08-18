@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="SpringBackLayout">
-        <attr name="linkageToolbar" format="boolean" />
+        <attr name="linkageAppBar" format="boolean" />
         <attr name="gluttonEnabled" format="boolean" />
         <attr name="springBackEnabled" format="boolean" />
         <attr name="scrollableView" format="reference" />
