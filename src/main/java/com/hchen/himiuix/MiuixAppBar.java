@@ -20,7 +20,6 @@ package com.hchen.himiuix;
 
 import static androidx.core.view.ViewCompat.TYPE_TOUCH;
 
-import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
@@ -28,9 +27,9 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.OverScroller;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -79,10 +78,16 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
 
     private int currentScrollOffset = 0; // 当前累积的滚动偏移量
 
-    // --- 吸附动画相关 ---
-    private ValueAnimator snapAnimator; // 用于执行吸附动画的 ValueAnimator
-    private static final int MIN_SNAP_ANIMATION_DURATION = 50; // 最小吸附动画时间 (毫秒)
-    private static final int MAX_SNAP_ANIMATION_DURATION = 200; // 最大吸附动画时间 (毫秒)
+    // --- Scroller 吸附动画相关 ---
+    private OverScroller scroller;
+    private Runnable scrollUpdateRunnable;
+
+    // 动态速度控制参数
+    private static final float BASE_VELOCITY = 2000.0f; // 基础速度 (px/s)
+    private static final float VELOCITY_SCALE_FACTOR = 0.6f; // 速度缩放因子，控制距离对速度的影响程度
+    private static final float MIN_VELOCITY_MULTIPLIER = 0.3f; // 最小速度倍数
+    private static final float MAX_VELOCITY_MULTIPLIER = 2.0f; // 最大速度倍数
+
 
     public MiuixAppBar(@NonNull Context context) {
         this(context, null);
@@ -109,6 +114,23 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
         setOrientation(VERTICAL);
         AppBarHelper.addOnToolbarListener(this);
         helper = new NestedScrollingParentHelper(this);
+
+        scroller = new OverScroller(getContext());
+        scrollUpdateRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (scroller.computeScrollOffset()) {
+                    int newOffset = scroller.getCurrY();
+                    if (newOffset != currentScrollOffset) {
+                        currentScrollOffset = newOffset;
+                        applyAnimationValues();
+                    }
+                    post(this);
+                } else {
+                    finalizeSnapAnimation();
+                }
+            }
+        };
 
         LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         toolbar = new Toolbar(getContext()) {
@@ -164,6 +186,10 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
         return title;
     }
 
+    public Toolbar getToolbar() {
+        return toolbar;
+    }
+
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
@@ -185,7 +211,7 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
             }
             case MotionEvent.ACTION_MOVE -> {
                 if (ev.getRawY() - lastTouchY > 0) touchDirection = TOUCH_DOWN;
-                else touchDirection = TOUCH_UP;
+                else if (ev.getRawY() - lastTouchY < 0) touchDirection = TOUCH_UP;
                 lastTouchY = ev.getRawY();
             }
             case MotionEvent.ACTION_UP -> {
@@ -294,14 +320,13 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
             int previousOffset = currentScrollOffset;
             int newOffset = currentScrollOffset + dy;
 
-            // 限制 currentScrollOffset 在 [0, largeTitleScrollRange] 之间
+            // 限制 currentScrollOffset 在 [0, collapsibleScrollRange] 之间
             newOffset = Math.max(0, Math.min(newOffset, collapsibleScrollRange));
 
             int delta = newOffset - previousOffset;
             if (delta != 0) {
                 currentScrollOffset = newOffset;
                 applyAnimationValues();
-                // 不应该消耗，保证顺滑
                 consumed[1] = delta;
             }
         }
@@ -314,7 +339,6 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
 
         // --- 大标题动画 ---
         // a. 位移: 大标题整体向上移动，直到完全移出父布局的顶部
-        // translationY 为负值表示向上移动
         largeTitleView.setTranslationY(-currentScrollOffset);
         collapsibleTitleView.setCollapseOffset(currentScrollOffset);
 
@@ -339,54 +363,76 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
             (toolbarTitleTargetTranslationY - toolbarTitleInitialTranslationY) * toolbarTitleAlphaProgress;
         toolbarTitleView.setTranslationY(currentToolbarTitleY);
 
-
-        // 严格互斥：当一个标题的 alpha > 0.05 (即比较可见) 时，另一个强制为 0
-        if (largeTitleAlpha > 0.05f) { // 如果大标题还比较可见
-            toolbarTitleView.setAlpha(0.0f);
-        } else { // 否则，大标题基本不可见，显示 Toolbar 标题
-            toolbarTitleView.setAlpha(toolbarTitleAlpha);
-        }
+        // 透明的互斥
+        if (largeTitleAlpha > 0.05f) toolbarTitleView.setAlpha(0.0f);
+        else toolbarTitleView.setAlpha(toolbarTitleAlpha);
     }
 
     private void handleSnap() {
         if (collapsibleScrollRange <= 0) return;
-        // 如果已经完全展开或完全收起，则无需吸附
         if (currentScrollOffset == 0 || currentScrollOffset == collapsibleScrollRange)
             return;
 
-        int targetOffset;
-        // 判断吸附到哪个状态
-        if (isScrollDown) targetOffset = 0;
-        else targetOffset = collapsibleScrollRange;
+        int targetOffset = determineSnapTarget();
+        if (currentScrollOffset == targetOffset) return;
 
-        int scrollDistance = Math.abs(targetOffset - currentScrollOffset);
-        long calculatedDuration;
-        if (collapsibleScrollRange > 0) {
-            final float PIXELS_PER_MILLISECOND = 1.0f; // 每毫秒移动 1 个像素
-            calculatedDuration = (long) (scrollDistance / PIXELS_PER_MILLISECOND);
-        } else calculatedDuration = MIN_SNAP_ANIMATION_DURATION;
-        long actualDuration = Math.max(MIN_SNAP_ANIMATION_DURATION, Math.min(calculatedDuration, MAX_SNAP_ANIMATION_DURATION));
+        startSnapAnimation(targetOffset);
+    }
 
-        // 如果当前偏移量与目标偏移量不同，则启动动画
+    private int determineSnapTarget() {
+        if (isScrollDown) return 0; // 向下滚动，展开
+        else return collapsibleScrollRange;
+    }
+
+    private void startSnapAnimation(int targetOffset) {
+        cancelSnapAnimation();
+
+        int scrollDistance = targetOffset - currentScrollOffset;
+        int initialVelocity = calculateDynamicVelocity(Math.abs(scrollDistance));
+        // 根据滚动方向调整速度符号
+        if (scrollDistance < 0) initialVelocity = -initialVelocity;
+
+        scroller.fling(
+            0, currentScrollOffset,     // 起始位置 (startX, startY)
+            0, initialVelocity,         // 初始速度 (velocityX, velocityY)
+            0, 0,                       // X 方向边界 (minX, maxX)
+            Math.min(0, targetOffset),  // Y 方向最小值
+            Math.max(collapsibleScrollRange, targetOffset), // Y 方向最大值
+            0, 0                        // 过度滚动距离 (overX, overY)
+        );
+        post(scrollUpdateRunnable);
+    }
+
+    private int calculateDynamicVelocity(int distance) {
+        if (collapsibleScrollRange <= 0) {
+            return (int) BASE_VELOCITY;
+        }
+
+        // 计算距离比例 (0.0 - 1.0)
+        float distanceRatio = Math.min(1.0f, (float) distance / collapsibleScrollRange);
+
+        // 使用非线性函数计算速度倍数
+        // 短距离（小比例）-> 高速度倍数
+        // 长距离（大比例）-> 低速度倍数
+        float velocityMultiplier = MIN_VELOCITY_MULTIPLIER +
+            (MAX_VELOCITY_MULTIPLIER - MIN_VELOCITY_MULTIPLIER) * (1.0f - (float) Math.pow(distanceRatio, VELOCITY_SCALE_FACTOR));
+
+        return (int) (BASE_VELOCITY * velocityMultiplier);
+    }
+
+    private void finalizeSnapAnimation() {
+        int targetOffset = determineSnapTarget();
         if (currentScrollOffset != targetOffset) {
-            cancelSnapAnimation();
-
-            snapAnimator = ValueAnimator.ofInt(currentScrollOffset, targetOffset);
-            snapAnimator.setDuration(actualDuration);
-            snapAnimator.setInterpolator(new DecelerateInterpolator());
-            snapAnimator.addUpdateListener(animation -> {
-                currentScrollOffset = (int) animation.getAnimatedValue();
-                applyAnimationValues();
-            });
-            snapAnimator.start();
+            currentScrollOffset = targetOffset;
+            applyAnimationValues();
         }
     }
 
     private void cancelSnapAnimation() {
-        if (snapAnimator != null && snapAnimator.isRunning()) {
-            snapAnimator.cancel();
-        }
-        snapAnimator = null;
+        if (scroller.isFinished()) return;
+
+        scroller.forceFinished(true);
+        removeCallbacks(scrollUpdateRunnable);
     }
 
     @Override
@@ -439,7 +485,6 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
             if (maxHeight == 0) return;
             visibleHeight = Math.max(0, maxHeight - offset);
             requestLayout(); // 重新测量并刷新
-            invalidate();
         }
 
         public void setTargetView(View targetView) {
