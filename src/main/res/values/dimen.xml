@@ -17,6 +17,9 @@
     <dimen name="miuix_appbar_padding_top">4dp</dimen>
     <dimen name="miuix_appbar_padding_bottom">8dp</dimen>
 
+    <!-- back -->
+    <dimen name="miuix_back">24dp</dimen>
+
     <!-- icon -->
     <dimen name="miuix_icon_max_height">40dp</dimen>
     <dimen name="miuix_icon_max_width">40dp</dimen>
