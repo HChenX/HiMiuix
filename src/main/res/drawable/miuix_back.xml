@@ -1,0 +1,9 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="1024"
+    android:viewportHeight="1024">
+    <path
+        android:fillColor="@color/miuix_back_color"
+        android:pathData="M10.1,489.9a33.8,33.8 0,0 1,1.4 -1.5l327,-328.5a32.9,32.9 0,0 1,46.7 0,33.3 33.3,0 0,1 0,46.9l-272.2,273.5h877.9a33.2,33.2 0,0 1,0 66.4H112.6l270.8,272.1a33.3,33.3 0,0 1,-0.1 47.1c-12.9,12.8 -33.7,12.8 -46.6,-0.1l-327,-328.5a33.3,33.3 0,0 1,0.4 -47.4z" />
+</vector>

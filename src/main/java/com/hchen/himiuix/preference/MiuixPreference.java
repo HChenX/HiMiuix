@@ -285,6 +285,9 @@ public class MiuixPreference extends Preference implements OnRefreshViewListener
 
     @Override
     public void notifyDependencyChange(boolean disableDependents) {
+        if (getParent() != null && getParent() instanceof MiuixPreferenceCategory category)
+            category.updateCardRadius();
+
         for (MiuixPreference xPreference : mDependents) {
             xPreference.setVisible(!shouldDisableDependents());
             xPreference.onDependencyChanged(this, disableDependents);

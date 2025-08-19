@@ -22,12 +22,14 @@ import static androidx.core.view.ViewCompat.TYPE_TOUCH;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.OverScroller;
 import android.widget.TextView;
@@ -40,6 +42,7 @@ import androidx.core.view.NestedScrollingParentHelper;
 
 import com.hchen.himiuix.callback.OnAppBarListener;
 import com.hchen.himiuix.helper.AppBarHelper;
+import com.hchen.himiuix.utils.InvokeUtils;
 
 /**
  * Miuix AppBar
@@ -66,10 +69,9 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
     private float lastTouchY;
 
     // --- 动画参数 ---
-    private boolean isScrollDown = false;
     private int collapsibleScrollRange; // 大标题完全滚动消失所需的距离
     private final float largeTitleAlphaStartOffsetFraction = 0.0f; // 大标题开始变透明的滚动偏移比例
-    private final float largeTitleAlphaEndOffsetFraction = 0.45f; // 大标题完全变透明的滚动偏移比例 (早于完全移出)
+    private final float largeTitleAlphaEndOffsetFraction = 0.25f; // 大标题完全变透明的滚动偏移比例 (早于完全移出)
 
     private final float toolbarTitleTargetTranslationY = 0.0f; // Toolbar 标题最终的 Y 轴位置
     private float toolbarTitleInitialTranslationY; // Toolbar 标题初始的 Y 轴偏移
@@ -83,11 +85,10 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
     private Runnable scrollUpdateRunnable;
 
     // 动态速度控制参数
-    private static final float BASE_VELOCITY = 2000.0f; // 基础速度 (px/s)
-    private static final float VELOCITY_SCALE_FACTOR = 0.6f; // 速度缩放因子，控制距离对速度的影响程度
-    private static final float MIN_VELOCITY_MULTIPLIER = 0.3f; // 最小速度倍数
-    private static final float MAX_VELOCITY_MULTIPLIER = 2.0f; // 最大速度倍数
-
+    private static final float BASE_VELOCITY = 1000.0f; // 基础速度 (px/s)
+    private static final float VELOCITY_SCALE_FACTOR = 0.8f; // 速度缩放因子，控制距离对速度的影响程度
+    private static final float MIN_VELOCITY_MULTIPLIER = 0.6f; // 最小速度倍数
+    private static final float MAX_VELOCITY_MULTIPLIER = 1.8f; // 最大速度倍数
 
     public MiuixAppBar(@NonNull Context context) {
         this(context, null);
@@ -121,6 +122,8 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
             public void run() {
                 if (scroller.computeScrollOffset()) {
                     int newOffset = scroller.getCurrY();
+                    if (collapsibleScrollRange <= newOffset)
+                        newOffset = collapsibleScrollRange;
                     if (newOffset != currentScrollOffset) {
                         currentScrollOffset = newOffset;
                         applyAnimationValues();
@@ -144,7 +147,18 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
             public CharSequence getTitle() {
                 return title;
             }
+
+            @Override
+            public void setNavigationIcon(@Nullable Drawable icon) {
+                super.setNavigationIcon(icon);
+                ImageButton button = InvokeUtils.callMethod(this, "getNavButtonView", new Class[0]);
+                if (button != null) {
+                    button.setBackground(null);
+                }
+            }
         };
+        toolbar.setNavigationIcon(R.drawable.miuix_back);
+        toolbar.setPadding(getResources().getDimensionPixelSize(R.dimen.miuix_appbar_padding), 0, getResources().getDimensionPixelSize(R.dimen.miuix_appbar_padding), 0);
         toolbar.setLayoutParams(params);
         toolbarTitleView = new TextView(getContext());
         toolbarTitleView.setSingleLine();
@@ -176,6 +190,7 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
     }
 
     public void setTitle(CharSequence title) {
+        this.title = title;
         toolbarTitleView.setText(title);
         largeTitleView.setText(title);
     }
@@ -222,7 +237,7 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
             }
             case MotionEvent.ACTION_UP -> {
                 lastTouchY = 0.0f;
-                touchDirection = TOUCH_UNKNOWN;
+                // touchDirection = TOUCH_UNKNOWN;
             }
         }
         return super.dispatchTouchEvent(ev);
@@ -247,8 +262,8 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
                 toolbarTitleInitialTranslationY = 0;
             }
 
-            if (collapsibleTitleView.getMaxHeight() > 0 && collapsibleScrollRange == 0)
-                collapsibleScrollRange = collapsibleTitleView.getMaxHeight();
+            if (collapsibleTitleView.getOriginalHeight() > 0 && collapsibleScrollRange == 0)
+                collapsibleScrollRange = collapsibleTitleView.getOriginalHeight();
             else if (largeTitleView.getMeasuredHeight() > 0 && collapsibleScrollRange == 0)
                 collapsibleScrollRange = largeTitleView.getMeasuredHeight() + collapsibleTitleView.getPaddingTop() + collapsibleTitleView.getPaddingBottom();
             if (toolbar.getMeasuredHeight() > 0 && toolbarTitleInitialTranslationY == 0)
@@ -281,12 +296,15 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
         // 当 targetView 滚动到顶部或底部后，还有未消耗的滚动量 dyUnconsumed
         // dyUnconsumed < 0: targetView 滚动到顶部后，还想继续向下滚动 (展开 Toolbar 的机会)
         if (dyUnconsumed < 0) {
-            if (type == TYPE_TOUCH && touchDirection != TOUCH_DOWN) return;
+            if (type == TYPE_TOUCH) {
+                if (touchDirection != TOUCH_DOWN) return;
+            }
 
             int previousOffset = currentScrollOffset;
-            int newOffset = Math.max(0, currentScrollOffset + dyUnconsumed);
+            int newOffset = Math.max(0, Math.min(collapsibleScrollRange, currentScrollOffset + dyUnconsumed));
             int delta = newOffset - previousOffset;
             if (delta != 0) {
+                cancelSnapAnimation();
                 currentScrollOffset = newOffset;
                 applyAnimationValues();
                 consumed[1] += delta;
@@ -322,15 +340,13 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
                 if (dy < 0 && touchDirection != TOUCH_DOWN) return;
             }
 
-            isScrollDown = dy < 0;
             int previousOffset = currentScrollOffset;
             int newOffset = currentScrollOffset + dy;
-
-            // 限制 currentScrollOffset 在 [0, collapsibleScrollRange] 之间
             newOffset = Math.max(0, Math.min(newOffset, collapsibleScrollRange));
 
             int delta = newOffset - previousOffset;
             if (delta != 0) {
+                cancelSnapAnimation();
                 currentScrollOffset = newOffset;
                 applyAnimationValues();
                 consumed[1] = delta;
@@ -353,7 +369,7 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
         float largeTitleAlphaProgress = (overallFraction - largeTitleAlphaStartOffsetFraction) /
             (largeTitleAlphaEndOffsetFraction - largeTitleAlphaStartOffsetFraction);
         largeTitleAlphaProgress = Math.max(0.0f, Math.min(1.0f, largeTitleAlphaProgress)); // 裁剪到 [0, 1]
-        float largeTitleAlpha = 1.0f - largeTitleAlphaProgress;
+        float largeTitleAlpha = 1.0f - easeOutCubic(largeTitleAlphaProgress);
         largeTitleView.setAlpha(largeTitleAlpha);
 
         // --- Toolbar 标题动画 ---
@@ -361,7 +377,7 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
         float toolbarTitleAlphaProgress = (overallFraction - toolbarTitleAlphaStartOffsetFraction) /
             (toolbarTitleAlphaEndOffsetFraction - toolbarTitleAlphaStartOffsetFraction);
         toolbarTitleAlphaProgress = Math.max(0.0f, Math.min(1.0f, toolbarTitleAlphaProgress)); // 裁剪到 [0, 1]
-        float toolbarTitleAlpha = toolbarTitleAlphaProgress;
+        float toolbarTitleAlpha = easeInOutCubic(toolbarTitleAlphaProgress);
 
         // b. 位移: 从初始位置 (toolbarTitleInitialTranslationY) 移动到目标位置 (toolbarTitleTargetTranslationY)
         // 位移的进度与透明度进度同步
@@ -370,8 +386,16 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
         toolbarTitleView.setTranslationY(currentToolbarTitleY);
 
         // 透明的互斥
-        if (largeTitleAlpha > 0.05f) toolbarTitleView.setAlpha(0.0f);
+        if (largeTitleAlpha > 0.1f) toolbarTitleView.setAlpha(0.0f);
         else toolbarTitleView.setAlpha(toolbarTitleAlpha);
+    }
+
+    private float easeOutCubic(float t) {
+        return 1.0f - (float) Math.pow(1.0f - t, 3);
+    }
+
+    private float easeInOutCubic(float t) {
+        return t < 0.5f ? 4.0f * t * t * t : 1.0f - (float) Math.pow(-2.0f * t + 2.0f, 3) / 2.0f;
     }
 
     private void handleSnap() {
@@ -386,7 +410,7 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
     }
 
     private int determineSnapTarget() {
-        if (isScrollDown) return 0; // 向下滚动，展开
+        if (touchDirection == TOUCH_DOWN) return 0; // 向下滚动，展开
         else return collapsibleScrollRange;
     }
 
@@ -449,7 +473,7 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
 
     public static class CollapsibleTitleLayout extends FrameLayout {
         private View targetView;
-        private int maxHeight = 0;
+        private int originalHeight = 0;
         private int visibleHeight = 0;
 
         public CollapsibleTitleLayout(Context context) {
@@ -471,9 +495,9 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
         @Override
         protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
             super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-            if (maxHeight == 0 && targetView.getMeasuredHeight() > 0) {
-                maxHeight = targetView.getMeasuredHeight() + getPaddingTop() + getPaddingBottom();
-                visibleHeight = maxHeight;
+            if (originalHeight == 0 && targetView.getMeasuredHeight() > 0) {
+                originalHeight = targetView.getMeasuredHeight() + getPaddingTop() + getPaddingBottom();
+                visibleHeight = originalHeight;
             }
             setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.makeMeasureSpec(visibleHeight, MeasureSpec.EXACTLY));
         }
@@ -482,14 +506,14 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
         protected void onSizeChanged(int w, int h, int oldw, int oldh) {
             super.onSizeChanged(w, h, oldw, oldh);
             if (targetView.getMeasuredHeight() > 0) {
-                maxHeight = targetView.getMeasuredHeight() + getPaddingTop() + getPaddingBottom();
-                visibleHeight = maxHeight;
+                originalHeight = targetView.getMeasuredHeight() + getPaddingTop() + getPaddingBottom();
+                visibleHeight = originalHeight;
             }
         }
 
         public void setCollapseOffset(int offset) {
-            if (maxHeight == 0) return;
-            visibleHeight = Math.max(0, maxHeight - offset);
+            if (originalHeight == 0) return;
+            visibleHeight = Math.max(0, originalHeight - offset);
             requestLayout(); // 重新测量并刷新
         }
 
@@ -501,8 +525,8 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
             return targetView;
         }
 
-        public int getMaxHeight() {
-            return maxHeight;
+        public int getOriginalHeight() {
+            return originalHeight;
         }
     }
 }

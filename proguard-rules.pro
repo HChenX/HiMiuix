@@ -21,9 +21,12 @@
 #-renamesourcefileattribute SourceFile
 
 -keep class androidx.preference.Preference {
-       private boolean mWasDetached;
-       private java.lang.String mDependencyKey;
+    private boolean mWasDetached;
+    private java.lang.String mDependencyKey;
 }
 -keep class androidx.preference.PreferenceGroup {
     private final java.util.List mPreferences;
+}
+-keep class androidx.appcompat.widget.Toolbar {
+    android.view.View getNavButtonView();
 }

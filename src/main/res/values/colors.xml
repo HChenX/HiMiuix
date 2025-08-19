@@ -10,6 +10,9 @@
     <color name="miuix_tip_color">#666666</color>
     <color name="miuix_arrow_right">#B2B2B2</color>
 
+    <!-- back -->
+    <color name="miuix_back_color">#FF000000</color>
+
     <!-- switch -->
     <color name="miuix_switch_off">#E5E5E5</color>
     <color name="miuix_switch_on">#4980F7</color>

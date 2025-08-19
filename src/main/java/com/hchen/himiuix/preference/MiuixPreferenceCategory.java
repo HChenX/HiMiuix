@@ -35,7 +35,9 @@ import androidx.preference.PreferenceViewHolder;
 import com.hchen.himiuix.R;
 import com.hchen.himiuix.utils.InvokeUtils;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Preference Category
@@ -43,6 +45,7 @@ import java.util.List;
  * @author 焕晨HChen
  */
 public class MiuixPreferenceCategory extends PreferenceGroup {
+    private static final String TAG = "HiMiuix:Preference";
 
     public MiuixPreferenceCategory(@NonNull Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
@@ -85,13 +88,22 @@ public class MiuixPreferenceCategory extends PreferenceGroup {
         return false;
     }
 
+    @Override
+    protected void notifyHierarchyChanged() {
+        updateCardRadius();
+        super.notifyHierarchyChanged();
+    }
+
     /**
      * @noinspection SequencedCollectionMethodCanBeUsed
      */
-    @Override
-    protected void notifyHierarchyChanged() {
+    public void updateCardRadius() {
         // 实时刷新布局
         List<Preference> preferences = InvokeUtils.getField(this, "mPreferences");
+        preferences = preferences.stream()
+            .filter(Preference::isVisible)
+            .collect(Collectors.toCollection(ArrayList::new));
+
         if (preferences.isEmpty())
             super.notifyHierarchyChanged();
         else if (preferences.size() == 1) {
@@ -118,7 +130,5 @@ public class MiuixPreferenceCategory extends PreferenceGroup {
                 }
             }
         }
-
-        super.notifyHierarchyChanged();
     }
 }
