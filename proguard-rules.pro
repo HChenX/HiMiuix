@@ -20,6 +20,8 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
+-keep class * extends com.hchen.himiuix.fragment.Fragment
+-keep class * extends com.hchen.himiuix.fragment.PreferenceFragmentCompat
 -keep class androidx.preference.Preference {
     private boolean mWasDetached;
     private java.lang.String mDependencyKey;

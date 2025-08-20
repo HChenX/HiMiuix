@@ -18,6 +18,13 @@
  */
 package com.hchen.himiuix.springback;
 
+/**
+ * SpringOperator
+ * <p>
+ * 改编自 HyperOS 2
+ *
+ * @author 焕晨HChen
+ */
 public class SpringOperator {
     private final double dampingCoefficient; // 阻尼系数 (c/m 或 2 * ζ * ω)
     private final double stiffnessOverMass;  // 刚度与质量之比 (k/m 或 ω^2)
@@ -28,7 +35,6 @@ public class SpringOperator {
      * @param dampingRatio  阻尼比 (ζ)。一个无量纲参数，描述振荡如何衰减
      *                      0: 无阻尼; (0,1): 欠阻尼; 1: 临界阻尼; >1: 过阻尼
      * @param naturalPeriod 固有振荡周期 (T)。在无阻尼情况下，完成一次完整振荡所需的时间
-     *                      如果 period 为 0，可能会导致除零错误，应避免
      */
     public SpringOperator(float dampingRatio, float naturalPeriod) {
         if (naturalPeriod <= 0)
@@ -47,11 +53,11 @@ public class SpringOperator {
      *
      * @param currentVelocity 当前的速度
      * @param deltaTime       时间步长 (dt)
-     * @param targetPosition  弹簧的目标位置或平衡位置
      * @param currentPosition 当前的位置
+     * @param targetPosition  弹簧的目标位置或平衡位置
      * @return 更新后的速度
      */
-    public double updateVelocity(double currentVelocity, float deltaTime, double targetPosition, double currentPosition) {
+    public double updateVelocity(double currentVelocity, float deltaTime, double currentPosition, double targetPosition) {
         double velocityDecayFactor = 1.0 - dampingCoefficient * deltaTime;
         double velocityIncreaseFromSpring = stiffnessOverMass * (targetPosition - currentPosition) * deltaTime;
 

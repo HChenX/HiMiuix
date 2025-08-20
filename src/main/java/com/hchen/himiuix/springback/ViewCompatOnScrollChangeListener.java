@@ -20,6 +20,11 @@ package com.hchen.himiuix.springback;
 
 import android.view.View;
 
+/**
+ * 滚动状态更改监听
+ *
+ * @author 焕晨HChen
+ */
 public interface ViewCompatOnScrollChangeListener {
     void onStateChanged(int oldState, int state, boolean finished);
 

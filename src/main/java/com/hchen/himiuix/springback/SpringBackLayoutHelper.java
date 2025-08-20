@@ -18,34 +18,39 @@
  */
 package com.hchen.himiuix.springback;
 
+import static com.hchen.himiuix.springback.SpringBackLayout.HORIZONTAL;
+import static com.hchen.himiuix.springback.SpringBackLayout.UNCHECK_ORIENTATION;
+import static com.hchen.himiuix.springback.SpringBackLayout.VERTICAL;
+
 import android.graphics.Rect;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 
+/**
+ * SpringBack 帮助
+ * <p>
+ * 改编自 HyperOS 2
+ *
+ * @author 焕晨HChen
+ */
 public class SpringBackLayoutHelper {
-    float mInitialDownX; // 手指初次按下时的 X 坐标
-    float mInitialDownY; // 手指初次按下时的 Y 坐标
-    int mScrollOrientation; // 检测到的滚动方向 (0: 未确定, 1: 水平, 2: 垂直)
-    int mActivePointerId = -1; // 当前活动的手指 ID
-    private final int mTouchSlop; // 系统定义的最小滑动距离阈值
-    private final ViewGroup mTarget; // 宿主 ViewGroup
-    private static final int ORIENTATION_NONE = 0;
-    private static final int ORIENTATION_HORIZONTAL = 1;
-    private static final int ORIENTATION_VERTICAL = 2;
+    private final Rect mTargetBoundsInWindow = new Rect();
+    float mInitialDownX; // 手指按下时的 X 坐标
+    float mInitialDownY; // 手指按下时的 Y 坐标
+    int mScrollOrientation;
+    int mActivePointerId = -1;
+    private final int mTouchSlop;
+    private final ViewGroup mTarget;
 
     public SpringBackLayoutHelper(ViewGroup target) {
         mTarget = target;
         mTouchSlop = ViewConfiguration.get(target.getContext()).getScaledTouchSlop();
     }
 
-    private final Rect mTargetBoundsInWindow = new Rect(); // 可复用的Rect
-
     public boolean isTouchInTarget(MotionEvent event) {
         int pointerIndex = event.findPointerIndex(event.getPointerId(0));
-        if (pointerIndex < 0) {
-            return false; // 无效指针
-        }
+        if (pointerIndex < 0) return false;
 
         float touchScreenX = event.getX(pointerIndex); // 获取触摸点在事件源坐标系中的 X 坐标
         float touchScreenY = event.getY(pointerIndex); // 获取触摸点在事件源坐标系中的 Y 坐标
@@ -70,21 +75,19 @@ public class SpringBackLayoutHelper {
 
         switch (action) {
             case MotionEvent.ACTION_DOWN:
-                // 总是以第一个按下的手指作为活动指针进行方向检测
                 mActivePointerId = event.getPointerId(0);
                 int downPointerIndex = event.findPointerIndex(mActivePointerId);
                 if (downPointerIndex >= 0) {
                     mInitialDownX = event.getX(downPointerIndex);
                     mInitialDownY = event.getY(downPointerIndex);
                 } else mActivePointerId = -1;
-                mScrollOrientation = ORIENTATION_NONE; // 重置滚动方向
+
+                mScrollOrientation = UNCHECK_ORIENTATION;
                 break;
 
             case MotionEvent.ACTION_MOVE:
-                if (mActivePointerId == -1) {
-                    // 没有活动的指针，不处理移动
-                    break;
-                }
+                if (mActivePointerId == -1) break;
+
                 int movePointerIndex = event.findPointerIndex(mActivePointerId);
                 if (movePointerIndex >= 0) {
                     float currentX = event.getX(movePointerIndex);
@@ -96,26 +99,20 @@ public class SpringBackLayoutHelper {
                     float absDeltaX = Math.abs(deltaX);
                     float absDeltaY = Math.abs(deltaY);
 
-                    // 只有当滑动距离超过阈值时才确定方向
                     if (absDeltaX > mTouchSlop || absDeltaY > mTouchSlop) {
-                        if (absDeltaX > absDeltaY) {
-                            mScrollOrientation = ORIENTATION_HORIZONTAL;
-                        } else {
-                            // 如果 absDeltaX == absDeltaY，默认垂直优先 (或根据需求调整)
-                            mScrollOrientation = ORIENTATION_VERTICAL;
-                        }
+                        if (absDeltaX > absDeltaY) mScrollOrientation = HORIZONTAL;
+                        else mScrollOrientation = VERTICAL;
                     }
                 } else {
-                    // 活动指针已失效
                     mActivePointerId = -1;
-                    mScrollOrientation = ORIENTATION_NONE;
+                    mScrollOrientation = UNCHECK_ORIENTATION;
                 }
                 break;
 
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                mActivePointerId = -1; // 清除非活动指针
-                mScrollOrientation = ORIENTATION_NONE;
+                mActivePointerId = -1;
+                mScrollOrientation = UNCHECK_ORIENTATION;
                 mTarget.requestDisallowInterceptTouchEvent(false);
                 break;
         }

@@ -3,6 +3,7 @@
     <declare-styleable name="SpringBackLayout">
         <attr name="linkageAppBar" format="boolean" />
         <attr name="gluttonEnabled" format="boolean" />
+        <attr name="android:hapticFeedbackEnabled" />
         <attr name="springBackEnabled" format="boolean" />
         <attr name="scrollableView" format="reference" />
         <attr name="scrollOrientation" format="integer|flags">

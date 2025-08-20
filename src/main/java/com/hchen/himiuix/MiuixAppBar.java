@@ -121,16 +121,12 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
             @Override
             public void run() {
                 if (scroller.computeScrollOffset()) {
-                    int newOffset = scroller.getCurrY();
-                    if (collapsibleScrollRange <= newOffset)
-                        newOffset = collapsibleScrollRange;
+                    int newOffset = Math.max(0, Math.min(scroller.getCurrY(), collapsibleScrollRange));
                     if (newOffset != currentScrollOffset) {
                         currentScrollOffset = newOffset;
                         applyAnimationValues();
                     }
                     post(this);
-                } else {
-                    finalizeSnapAnimation();
                 }
             }
         };
@@ -334,10 +330,9 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
 
         // dy > 0: 手指向上滑动，内容向上滚动 (折叠Toolbar)
         // dy < 0: 手指向下滑动，内容向下滚动 (展开Toolbar)
-        if (dy > 0 || (dy < 0 && !targetView.canScrollVertically(-1))) {
+        if (dy > 0) {
             if (type == TYPE_TOUCH) {
-                if (dy > 0 && touchDirection != TOUCH_UP) return;
-                if (dy < 0 && touchDirection != TOUCH_DOWN) return;
+                if (touchDirection != TOUCH_UP) return;
             }
 
             int previousOffset = currentScrollOffset;
@@ -448,14 +443,6 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
             (MAX_VELOCITY_MULTIPLIER - MIN_VELOCITY_MULTIPLIER) * (1.0f - (float) Math.pow(distanceRatio, VELOCITY_SCALE_FACTOR));
 
         return (int) (BASE_VELOCITY * velocityMultiplier);
-    }
-
-    private void finalizeSnapAnimation() {
-        int targetOffset = determineSnapTarget();
-        if (currentScrollOffset != targetOffset) {
-            currentScrollOffset = targetOffset;
-            applyAnimationValues();
-        }
     }
 
     private void cancelSnapAnimation() {
