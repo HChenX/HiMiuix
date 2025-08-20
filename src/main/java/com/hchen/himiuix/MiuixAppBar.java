@@ -31,7 +31,6 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.OverScroller;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -42,6 +41,8 @@ import androidx.core.view.NestedScrollingParentHelper;
 
 import com.hchen.himiuix.callback.OnAppBarListener;
 import com.hchen.himiuix.helper.AppBarHelper;
+import com.hchen.himiuix.springback.SpringBackLayout;
+import com.hchen.himiuix.springback.SpringScroller;
 import com.hchen.himiuix.utils.InvokeUtils;
 
 /**
@@ -80,15 +81,9 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
 
     private int currentScrollOffset = 0; // 当前累积的滚动偏移量
 
-    // --- Scroller 吸附动画相关 ---
-    private OverScroller scroller;
-    private Runnable scrollUpdateRunnable;
-
-    // 动态速度控制参数
-    private static final float BASE_VELOCITY = 1000.0f; // 基础速度 (px/s)
-    private static final float VELOCITY_SCALE_FACTOR = 0.8f; // 速度缩放因子，控制距离对速度的影响程度
-    private static final float MIN_VELOCITY_MULTIPLIER = 0.6f; // 最小速度倍数
-    private static final float MAX_VELOCITY_MULTIPLIER = 1.8f; // 最大速度倍数
+    // --- SpringScroller 弹性动画相关 ---
+    private SpringScroller springScroller;
+    private Runnable springUpdateRunnable;
 
     public MiuixAppBar(@NonNull Context context) {
         this(context, null);
@@ -116,12 +111,14 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
         AppBarHelper.addOnToolbarListener(this);
         helper = new NestedScrollingParentHelper(this);
 
-        scroller = new OverScroller(getContext());
-        scrollUpdateRunnable = new Runnable() {
+        springScroller = new SpringScroller();
+        springUpdateRunnable = new Runnable() {
             @Override
             public void run() {
-                if (scroller.computeScrollOffset()) {
-                    int newOffset = Math.max(0, Math.min(scroller.getCurrY(), collapsibleScrollRange));
+                if (springScroller.computeScrollOffset()) {
+                    int newOffset = springScroller.getCurrentY();
+                    newOffset = Math.max(0, Math.min(newOffset, collapsibleScrollRange));
+
                     if (newOffset != currentScrollOffset) {
                         currentScrollOffset = newOffset;
                         applyAnimationValues();
@@ -216,7 +213,7 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        cancelSnapAnimation();
+        cancelSpringAnimation();
         AppBarHelper.removeOnToolbarListener(this);
     }
 
@@ -230,10 +227,6 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
                 if (ev.getRawY() - lastTouchY > 0) touchDirection = TOUCH_DOWN;
                 else if (ev.getRawY() - lastTouchY < 0) touchDirection = TOUCH_UP;
                 lastTouchY = ev.getRawY();
-            }
-            case MotionEvent.ACTION_UP -> {
-                lastTouchY = 0.0f;
-                // touchDirection = TOUCH_UNKNOWN;
             }
         }
         return super.dispatchTouchEvent(ev);
@@ -269,22 +262,19 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
 
     @Override
     public boolean onStartNestedScroll(@NonNull View child, @NonNull View target, int axes, int type) {
-        if ((axes & SCROLL_AXIS_VERTICAL) != 0) {
-            cancelSnapAnimation();
-            return true;
-        }
-        return false;
+        return (axes & SCROLL_AXIS_VERTICAL) != 0;
     }
 
     @Override
     public void onNestedScrollAccepted(@NonNull View child, @NonNull View target, int axes, int type) {
         helper.onNestedScrollAccepted(child, target, axes);
+        cancelSpringAnimation();
     }
 
     @Override
     public void onStopNestedScroll(@NonNull View target, int type) {
         helper.onStopNestedScroll(target, type);
-        handleSnap();
+        handleSpringSnap();
     }
 
     @Override
@@ -300,7 +290,7 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
             int newOffset = Math.max(0, Math.min(collapsibleScrollRange, currentScrollOffset + dyUnconsumed));
             int delta = newOffset - previousOffset;
             if (delta != 0) {
-                cancelSnapAnimation();
+                cancelSpringAnimation();
                 currentScrollOffset = newOffset;
                 applyAnimationValues();
                 consumed[1] += delta;
@@ -330,9 +320,10 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
 
         // dy > 0: 手指向上滑动，内容向上滚动 (折叠Toolbar)
         // dy < 0: 手指向下滑动，内容向下滚动 (展开Toolbar)
-        if (dy > 0) {
+        if (dy > 0 || (dy < 0 && !targetView.canScrollVertically(-1))) {
             if (type == TYPE_TOUCH) {
-                if (touchDirection != TOUCH_UP) return;
+                if (dy > 0 && touchDirection != TOUCH_UP) return;
+                if (dy < 0 && touchDirection != TOUCH_DOWN) return;
             }
 
             int previousOffset = currentScrollOffset;
@@ -341,7 +332,7 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
 
             int delta = newOffset - previousOffset;
             if (delta != 0) {
-                cancelSnapAnimation();
+                cancelSpringAnimation();
                 currentScrollOffset = newOffset;
                 applyAnimationValues();
                 consumed[1] = delta;
@@ -393,7 +384,7 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
         return t < 0.5f ? 4.0f * t * t * t : 1.0f - (float) Math.pow(-2.0f * t + 2.0f, 3) / 2.0f;
     }
 
-    private void handleSnap() {
+    private void handleSpringSnap() {
         if (collapsibleScrollRange <= 0) return;
         if (currentScrollOffset == 0 || currentScrollOffset == collapsibleScrollRange)
             return;
@@ -401,55 +392,34 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
         int targetOffset = determineSnapTarget();
         if (currentScrollOffset == targetOffset) return;
 
-        startSnapAnimation(targetOffset);
+        startSpringSnapAnimation(targetOffset);
     }
 
     private int determineSnapTarget() {
-        if (touchDirection == TOUCH_DOWN) return 0; // 向下滚动，展开
+        if (touchDirection == TOUCH_DOWN) return 0;
         else return collapsibleScrollRange;
     }
 
-    private void startSnapAnimation(int targetOffset) {
-        cancelSnapAnimation();
+    private void startSpringSnapAnimation(int targetOffset) {
+        cancelSpringAnimation();
 
-        int scrollDistance = targetOffset - currentScrollOffset;
-        int initialVelocity = calculateDynamicVelocity(Math.abs(scrollDistance));
-        // 根据滚动方向调整速度符号
-        if (scrollDistance < 0) initialVelocity = -initialVelocity;
-
-        scroller.fling(
-            0, currentScrollOffset,     // 起始位置 (startX, startY)
-            0, initialVelocity,         // 初始速度 (velocityX, velocityY)
-            0, 0,                       // X 方向边界 (minX, maxX)
-            Math.min(0, targetOffset),  // Y 方向最小值
-            Math.max(collapsibleScrollRange, targetOffset), // Y 方向最大值
-            0, 0                        // 过度滚动距离 (overX, overY)
+        // 启动 SpringScroller 动画
+        springScroller.scrollByFling(
+            0, 0,
+            currentScrollOffset, targetOffset,
+            0,
+            SpringBackLayout.VERTICAL,
+            false
         );
-        post(scrollUpdateRunnable);
+        post(springUpdateRunnable);
     }
 
-    private int calculateDynamicVelocity(int distance) {
-        if (collapsibleScrollRange <= 0) {
-            return (int) BASE_VELOCITY;
-        }
+    private void cancelSpringAnimation() {
+        if (springScroller.isFinished())
+            return;
 
-        // 计算距离比例 (0.0 - 1.0)
-        float distanceRatio = Math.min(1.0f, (float) distance / collapsibleScrollRange);
-
-        // 使用非线性函数计算速度倍数
-        // 短距离（小比例）-> 高速度倍数
-        // 长距离（大比例）-> 低速度倍数
-        float velocityMultiplier = MIN_VELOCITY_MULTIPLIER +
-            (MAX_VELOCITY_MULTIPLIER - MIN_VELOCITY_MULTIPLIER) * (1.0f - (float) Math.pow(distanceRatio, VELOCITY_SCALE_FACTOR));
-
-        return (int) (BASE_VELOCITY * velocityMultiplier);
-    }
-
-    private void cancelSnapAnimation() {
-        if (scroller.isFinished()) return;
-
-        scroller.forceFinished(true);
-        removeCallbacks(scrollUpdateRunnable);
+        springScroller.forceStop();
+        removeCallbacks(springUpdateRunnable);
     }
 
     @Override

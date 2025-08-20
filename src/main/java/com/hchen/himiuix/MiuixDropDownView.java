@@ -40,11 +40,11 @@ import java.util.Objects;
  * @author 焕晨HChen
  */
 public class MiuixDropDownView extends MiuixBasicView {
+    private OnChooseItemListener listener;
     private CharSequence[] entries;
     private CharSequence entry;
     private String value;
     private boolean isShowOnTip;
-    private OnChooseItemListener listener;
     private boolean isShowing;
 
     public MiuixDropDownView(@NonNull Context context) {

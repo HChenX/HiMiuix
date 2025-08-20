@@ -12,6 +12,7 @@
         android:gravity="center"
         android:orientation="horizontal">
 
+        <!-- icon 视图 -->
         <androidx.cardview.widget.CardView
             android:id="@id/miuix_icon_card"
             android:layout_width="wrap_content"
@@ -32,6 +33,7 @@
                 tools:src="@drawable/ic_default_icon" />
         </androidx.cardview.widget.CardView>
 
+        <!-- content 视图 -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -60,7 +62,7 @@
             android:gravity="center"
             android:orientation="horizontal">
 
-            <!-- 需要焦点执行滚动，maxWidth 防止过长 -->
+            <!-- tip 视图 -->
             <com.hchen.himiuix.widget.MiuixTextView
                 android:id="@id/miuix_tip"
                 style="@style/MiuixTipStyle"
@@ -79,6 +81,7 @@
         </LinearLayout>
     </LinearLayout>
 
+    <!-- margin 视图 -->
     <View
         android:id="@id/miuix_margin_view"
         android:layout_width="match_parent"
@@ -87,6 +90,7 @@
         android:clickable="false"
         android:focusable="false" />
 
+    <!-- 自定义视图 -->
     <LinearLayout
         android:id="@id/miuix_custom_view"
         android:layout_width="match_parent"

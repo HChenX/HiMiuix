@@ -153,6 +153,14 @@ public class MiuixAlertDialog {
     }
 
     /**
+     * 设置每个条目的图标
+     */
+    public MiuixAlertDialog setIcons(Drawable[] icons) {
+        base.icons = icons;
+        return this;
+    }
+
+    /**
      * 设置 List 选中监听
      */
     public MiuixAlertDialog setOnChooseItemListener(OnChooseItemListener listener) {

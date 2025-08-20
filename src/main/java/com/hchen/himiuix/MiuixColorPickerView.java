@@ -83,7 +83,7 @@ public class MiuixColorPickerView extends MiuixBasicView implements OnColorChang
         super.loadViewWhenBuild();
         colorSelectView = (ColorSelectView) getIndicatorView();
         colorPickerView = new ColorPickerView(getContext());
-        colorPickerView.setColorValue(color); // 初始化 Color
+        colorPickerView.setColorValue(color); // 初始化 color
         colorPickerView.setOnColorChangedListener(this);
 
         // 设置是否启用 Dialog 模式

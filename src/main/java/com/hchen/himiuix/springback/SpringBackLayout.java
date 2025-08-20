@@ -77,8 +77,8 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
     private static final int SPRING_BACK_BOTTOM = 2; // 底部回弹
     private static final int SPRING_BACK_TOP_BOTTOM = 3; // 顶部/底部回弹
     static final int UNCHECK_ORIENTATION = 0;
-    static final int HORIZONTAL = 1; // 方向水平
-    static final int VERTICAL = 2; // 方向垂直
+    public static final int HORIZONTAL = 1; // 方向水平
+    public static final int VERTICAL = 2; // 方向垂直
     private static final int X = 0;
     private static final int Y = 1;
     private static final int SCROLL_STATE_IDLE = 0;
@@ -1379,16 +1379,6 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
                 listener.onStateChanged(lastState, scrollState, mSpringScroller.isFinished());
             }
         }
-    }
-
-    public void smoothScrollTo(int targetX, int targetY) {
-        if (targetX - getScrollX() == 0 && targetY - getScrollY() == 0) {
-            return;
-        }
-        mSpringScroller.forceStop();
-        mSpringScroller.scrollByFling(getScrollX(), targetX, getScrollY(), targetY, 0.0f, 2, true);
-        dispatchScrollState(SCROLL_STATE_SETTLING);
-        postInvalidateOnAnimation();
     }
 
     public void addOnScrollChangeListener(ViewCompatOnScrollChangeListener listener) {

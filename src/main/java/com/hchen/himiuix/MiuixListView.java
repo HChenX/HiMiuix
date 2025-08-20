@@ -20,6 +20,7 @@ package com.hchen.himiuix;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.SparseBooleanArray;
 import android.view.MotionEvent;
@@ -54,13 +55,12 @@ public class MiuixListView extends MiuixBasicView implements OnChooseItemListene
     private CharSequence[] lastItems;
     private CharSequence[] items;
     private CharSequence[] selectedItems;
-    private CharSequence[] cacheSelectedItems;
     private Integer[] selectedValues;
-    private Integer[] cacheSelectedValues;
+    private Drawable[] icons;
     private int maxHeight;
     private boolean isMultipleChoiceEnabled;
     private boolean isDialogModeEnabled;
-    private OnChooseItemListener onChooseItemListener;
+    private OnChooseItemListener listener;
     private boolean isShowing;
 
     public MiuixListView(@NonNull Context context) {
@@ -128,6 +128,7 @@ public class MiuixListView extends MiuixBasicView implements OnChooseItemListene
                     xListAdapter.notifyDataSetChanged();
                 lastItems = items;
             }
+            xListAdapter.setIcons(icons);
             xListAdapter.setOnChooseItemListener(this);
             xListAdapter.setMultipleChoiceEnabled(isMultipleChoiceEnabled);
             if (selectedValues != null || selectedItems != null) {
@@ -189,8 +190,8 @@ public class MiuixListView extends MiuixBasicView implements OnChooseItemListene
                     .setNegativeButton(getContext().getText(R.string.dialog_negative), null)
                     .setPositiveButton(getContext().getText(R.string.dialog_positive),
                         (dialog, which) -> {
-                            selectedItems = cacheSelectedItems;
-                            selectedValues = cacheSelectedValues;
+                            if (listener != null)
+                                listener.onChooseAfter(items, selectedItems, selectedValues);
                         }
                     )
                     .setCancelable(false)
@@ -233,6 +234,12 @@ public class MiuixListView extends MiuixBasicView implements OnChooseItemListene
         refreshView();
     }
 
+    public void setIcons(Drawable[] icons) {
+        if (Arrays.deepEquals(this.icons, icons)) return;
+        this.icons = icons;
+        refreshView();
+    }
+
     public void setMultipleChoiceEnabled(boolean enabled) {
         if (isMultipleChoiceEnabled == enabled) return;
         isMultipleChoiceEnabled = enabled;
@@ -240,8 +247,8 @@ public class MiuixListView extends MiuixBasicView implements OnChooseItemListene
     }
 
     public void setOnChooseItemListener(OnChooseItemListener listener) {
-        if (Objects.equals(onChooseItemListener, listener)) return;
-        onChooseItemListener = listener;
+        if (Objects.equals(this.listener, listener)) return;
+        this.listener = listener;
         refreshView();
     }
 
@@ -263,6 +270,10 @@ public class MiuixListView extends MiuixBasicView implements OnChooseItemListene
         return selectedValues;
     }
 
+    public Drawable[] getIcons() {
+        return icons;
+    }
+
     public int getMaxHeight() {
         return maxHeight;
     }
@@ -273,7 +284,7 @@ public class MiuixListView extends MiuixBasicView implements OnChooseItemListene
 
     @Override
     public boolean onChooseBefore(CharSequence item, int which) {
-        if (onChooseItemListener == null || onChooseItemListener.onChooseBefore(item, which)) {
+        if (listener == null || listener.onChooseBefore(item, which)) {
             HapticFeedbackHelper.performHapticFeedback(this, HapticFeedbackHelper.MIUI_POPUP_NORMAL);
             return true;
         }
@@ -282,15 +293,10 @@ public class MiuixListView extends MiuixBasicView implements OnChooseItemListene
 
     @Override
     public void onChooseAfter(CharSequence[] items, CharSequence[] selectedItems, Integer[] selectedValues) {
-        if (isDialogModeEnabled) {
-            cacheSelectedItems = selectedItems;
-            cacheSelectedValues = selectedValues;
-        } else {
-            this.selectedItems = selectedItems;
-            this.selectedValues = selectedValues;
-        }
+        this.selectedItems = selectedItems;
+        this.selectedValues = selectedValues;
 
-        if (onChooseItemListener != null)
-            onChooseItemListener.onChooseAfter(items, selectedItems, selectedValues);
+        if (listener != null && !isDialogModeEnabled)
+            listener.onChooseAfter(items, selectedItems, selectedValues);
     }
 }

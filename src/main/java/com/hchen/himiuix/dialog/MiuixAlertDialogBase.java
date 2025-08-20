@@ -108,6 +108,7 @@ abstract class MiuixAlertDialogBase implements MiuixDialogInterface {
     OnDismissListener onDismissListener;
     CharSequence[] items;
     Integer[] selectedValues;
+    Drawable[] icons;
     SparseBooleanArray booleanArray;
     boolean isListModeEnabled;
     boolean isMultipleChoiceEnabled;
@@ -257,6 +258,7 @@ abstract class MiuixAlertDialogBase implements MiuixDialogInterface {
         xListAdapter.setItems(items);
         xListAdapter.setMultipleChoiceEnabled(isMultipleChoiceEnabled);
         xListAdapter.setOnChooseItemListener(onChooseItemListener);
+        xListAdapter.setIcons(icons);
         if (selectedValues != null) {
             HashSet<Integer> hashSet = new HashSet<>(Arrays.asList(selectedValues));
             for (int i = 0; i < items.length; i++) {

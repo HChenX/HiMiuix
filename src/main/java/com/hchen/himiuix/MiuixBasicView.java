@@ -67,6 +67,7 @@ public class MiuixBasicView extends LinearLayout {
     private ViewStub dynamicViewStub;
     private View indicatorView;
     private LinearLayout customLayout;
+
     private CharSequence title;
     private CharSequence summary;
     private CharSequence tip;

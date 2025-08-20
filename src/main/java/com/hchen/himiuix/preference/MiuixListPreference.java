@@ -98,6 +98,7 @@ public class MiuixListPreference extends MiuixPreference implements OnChooseItem
         xListView.setOnChooseItemListener(this);
 
         xListView.setItems(items);
+        xListView.setIcons(icons);
         xListView.setSelectedItems(selectedItems);
         xListView.setSelectedValues(selectedValues);
         xListView.setMultipleChoiceEnabled(isMultipleChoiceEnabled);

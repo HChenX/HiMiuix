@@ -63,7 +63,7 @@ public class MiuixPreference extends Preference implements OnRefreshViewListener
     static final int CARD_BOTTOM_RADIUS = 2;
     static final int CARD_NON_RADIUS = 3;
     private int cardState = CARD_RADIUS;
-    private int radius;
+    private int basicRadius;
     private CharSequence tip;
     private Drawable indicator;
     private View customView;
@@ -108,7 +108,7 @@ public class MiuixPreference extends Preference implements OnRefreshViewListener
         typedArray.recycle();
 
         setLayoutResource(loadLayoutResource());
-        radius = getContext().getResources().getDimensionPixelSize(R.dimen.miuix_prefs_card_radius);
+        basicRadius = getContext().getResources().getDimensionPixelSize(R.dimen.miuix_prefs_card_radius);
     }
 
     @LayoutRes
@@ -246,11 +246,11 @@ public class MiuixPreference extends Preference implements OnRefreshViewListener
     private void updateCardView(MiuixCardView xCardView, int state) {
         switch (state) {
             case CARD_RADIUS ->
-                xCardView.setTrRadius(radius).setTlRadius(radius).setBlRadius(radius).setBrRadius(radius);
+                xCardView.setTrRadius(basicRadius).setTlRadius(basicRadius).setBlRadius(basicRadius).setBrRadius(basicRadius);
             case CARD_TOP_RADIUS ->
-                xCardView.setTlRadius(radius).setTrRadius(radius).setBlRadius(0).setBrRadius(0);
+                xCardView.setTlRadius(basicRadius).setTrRadius(basicRadius).setBlRadius(0).setBrRadius(0);
             case CARD_BOTTOM_RADIUS ->
-                xCardView.setBlRadius(radius).setBrRadius(radius).setTlRadius(0).setTrRadius(0);
+                xCardView.setBlRadius(basicRadius).setBrRadius(basicRadius).setTlRadius(0).setTrRadius(0);
             case CARD_NON_RADIUS ->
                 xCardView.setTlRadius(0).setTrRadius(0).setBrRadius(0).setBlRadius(0);
         }
