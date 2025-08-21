@@ -20,6 +20,10 @@ package com.hchen.himiuix;
 
 import static androidx.core.view.ViewCompat.TYPE_TOUCH;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
@@ -28,6 +32,8 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -49,6 +55,7 @@ import com.hchen.himiuix.utils.InvokeUtils;
  * Miuix AppBar
  *
  * @author 焕晨HChen
+ * @noinspection FieldCanBeLocal
  */
 public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3, OnAppBarListener {
     private static final String TAG = "HiMiuix:AppBar";
@@ -63,21 +70,32 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
     private View targetView;
 
     // --- Touch ---
-    private int touchDirection;
-    private final int TOUCH_UNKNOWN = 0;
-    private final int TOUCH_UP = 1;
-    private final int TOUCH_DOWN = 2;
+    private static final int TOUCH_UNKNOWN = 0;
+    private static final int TOUCH_UP = 1;
+    private static final int TOUCH_DOWN = 2;
+    private int touchDirection = TOUCH_UNKNOWN;
     private float lastTouchY;
 
     // --- 动画参数 ---
     private int collapsibleScrollRange; // 大标题完全滚动消失所需的距离
-    private final float largeTitleAlphaStartOffsetFraction = 0.0f; // 大标题开始变透明的滚动偏移比例
-    private final float largeTitleAlphaEndOffsetFraction = 0.25f; // 大标题完全变透明的滚动偏移比例 (早于完全移出)
-
-    private final float toolbarTitleTargetTranslationY = 0.0f; // Toolbar 标题最终的 Y 轴位置
     private float toolbarTitleInitialTranslationY; // Toolbar 标题初始的 Y 轴偏移
-    private final float toolbarTitleAlphaStartOffsetFraction = 0.6f; // Toolbar 标题开始出现的滚动偏移比例
-    private final float toolbarTitleAlphaEndOffsetFraction = 1.0f; // Toolbar 标题完全出现的滚动偏移比例
+    private final float toolbarTitleTargetTranslationY = 0.0f; // Toolbar 标题最终的 Y 轴位置
+    private final float toolbarTitleTranslationYConvert = 0.15f;
+    private final int LARGE_TITLE_ANIMATION_DURATION = 300;
+    private final int TOOLBAR_TITLE_ANIMATION_DURATION = 100;
+
+    // --- 动画状态 ---
+    private AnimatorSet currentAnimationSet;
+    private float largeTitleAlphaProgress = 1.0f;
+    private float toolbarTitleAlphaProgress = 0.0f;
+
+    // --- 状态追踪 ---
+    private static final int ANIMATION_IDLE = 0;
+    private static final int ANIMATION_COLLAPSING = 1;
+    private static final int ANIMATION_EXPANDING = 2;
+    private int animationRunningState = ANIMATION_IDLE;
+    private boolean isCollapsing = false; // 是否正在折叠过程中
+    private boolean isExpanding = false; // 是否正在展开过程中
 
     private int currentScrollOffset = 0; // 当前累积的滚动偏移量
 
@@ -256,7 +274,7 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
             else if (largeTitleView.getMeasuredHeight() > 0 && collapsibleScrollRange == 0)
                 collapsibleScrollRange = largeTitleView.getMeasuredHeight() + collapsibleTitleView.getPaddingTop() + collapsibleTitleView.getPaddingBottom();
             if (toolbar.getMeasuredHeight() > 0 && toolbarTitleInitialTranslationY == 0)
-                toolbarTitleInitialTranslationY = toolbar.getMeasuredHeight() * 0.1f;
+                toolbarTitleInitialTranslationY = toolbar.getMeasuredHeight() * toolbarTitleTranslationYConvert;
         });
     }
 
@@ -279,19 +297,18 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
 
     @Override
     public void onNestedScroll(@NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int type, @NonNull int[] consumed) {
+        if (target != targetView.getParent()) return;
+
         // 当 targetView 滚动到顶部或底部后，还有未消耗的滚动量 dyUnconsumed
         // dyUnconsumed < 0: targetView 滚动到顶部后，还想继续向下滚动 (展开 Toolbar 的机会)
         if (dyUnconsumed < 0) {
-            if (type == TYPE_TOUCH) {
-                if (touchDirection != TOUCH_DOWN) return;
-            }
-
             int previousOffset = currentScrollOffset;
             int newOffset = Math.max(0, Math.min(collapsibleScrollRange, currentScrollOffset + dyUnconsumed));
             int delta = newOffset - previousOffset;
             if (delta != 0) {
                 cancelSpringAnimation();
                 currentScrollOffset = newOffset;
+                targetView.offsetTopAndBottom(-delta);
                 applyAnimationValues();
                 consumed[1] += delta;
             }
@@ -321,11 +338,6 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
         // dy > 0: 手指向上滑动，内容向上滚动 (折叠Toolbar)
         // dy < 0: 手指向下滑动，内容向下滚动 (展开Toolbar)
         if (dy > 0 || (dy < 0 && !targetView.canScrollVertically(-1))) {
-            if (type == TYPE_TOUCH) {
-                if (dy > 0 && touchDirection != TOUCH_UP) return;
-                if (dy < 0 && touchDirection != TOUCH_DOWN) return;
-            }
-
             int previousOffset = currentScrollOffset;
             int newOffset = currentScrollOffset + dy;
             newOffset = Math.max(0, Math.min(newOffset, collapsibleScrollRange));
@@ -334,6 +346,7 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
             if (delta != 0) {
                 cancelSpringAnimation();
                 currentScrollOffset = newOffset;
+                targetView.offsetTopAndBottom(-delta);
                 applyAnimationValues();
                 consumed[1] = delta;
             }
@@ -341,47 +354,117 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
     }
 
     private void applyAnimationValues() {
-        // 1. 计算整体进度百分比 (0.0 to 1.0)
-        // 0.0 = 完全展开 (大标题可见), 1.0 = 完全折叠 (大标题不可见)
+        if (collapsibleScrollRange <= 0) return;
+
+        // 计算整体进度百分比 (0.0 to 1.0)
         float overallFraction = Math.max(0.0f, Math.min(1.0f, (float) currentScrollOffset / collapsibleScrollRange));
 
-        // --- 大标题动画 ---
-        // a. 位移: 大标题整体向上移动，直到完全移出父布局的顶部
+        // 更新大标题位移和容器高度
         largeTitleView.setTranslationY(-currentScrollOffset);
         collapsibleTitleView.setCollapseOffset(currentScrollOffset);
 
-        // b. 透明度: 在指定区间内从 1 (不透明) 渐变到 0 (透明)
-        // (fraction - start) / (end - start) => 映射到 0-1
-        float largeTitleAlphaProgress = (overallFraction - largeTitleAlphaStartOffsetFraction) /
-            (largeTitleAlphaEndOffsetFraction - largeTitleAlphaStartOffsetFraction);
-        largeTitleAlphaProgress = Math.max(0.0f, Math.min(1.0f, largeTitleAlphaProgress)); // 裁剪到 [0, 1]
-        float largeTitleAlpha = 1.0f - easeOutCubic(largeTitleAlphaProgress);
-        largeTitleView.setAlpha(largeTitleAlpha);
-
-        // --- Toolbar 标题动画 ---
-        // a. 透明度: 在指定区间内从 0 (透明) 渐变到 1 (不透明)
-        float toolbarTitleAlphaProgress = (overallFraction - toolbarTitleAlphaStartOffsetFraction) /
-            (toolbarTitleAlphaEndOffsetFraction - toolbarTitleAlphaStartOffsetFraction);
-        toolbarTitleAlphaProgress = Math.max(0.0f, Math.min(1.0f, toolbarTitleAlphaProgress)); // 裁剪到 [0, 1]
-        float toolbarTitleAlpha = easeInOutCubic(toolbarTitleAlphaProgress);
-
-        // b. 位移: 从初始位置 (toolbarTitleInitialTranslationY) 移动到目标位置 (toolbarTitleTargetTranslationY)
-        // 位移的进度与透明度进度同步
-        float currentToolbarTitleY = toolbarTitleInitialTranslationY +
-            (toolbarTitleTargetTranslationY - toolbarTitleInitialTranslationY) * toolbarTitleAlphaProgress;
-        toolbarTitleView.setTranslationY(currentToolbarTitleY);
-
-        // 透明的互斥
-        if (largeTitleAlpha > 0.1f) toolbarTitleView.setAlpha(0.0f);
-        else toolbarTitleView.setAlpha(toolbarTitleAlpha);
+        handleAnimationLogic(overallFraction);
+        if (currentAnimationSet == null || !currentAnimationSet.isRunning())
+            applyTitleBasicState();
     }
 
-    private float easeOutCubic(float t) {
-        return 1.0f - (float) Math.pow(1.0f - t, 3);
+    private void handleAnimationLogic(float overallFraction) {
+        boolean isCurrentlyCollapsing = touchDirection == TOUCH_UP;
+        boolean isCurrentlyExpanding = touchDirection == TOUCH_DOWN;
+
+        if (overallFraction == 1.0f) {
+            if (currentAnimationSet != null && currentAnimationSet.isRunning()) {
+                cancelCollapseExpandAnimation();
+                pushCollapseExpandAnimation(true, true);
+            }
+            return;
+        }
+
+        if (isCurrentlyCollapsing && !isCollapsing) {
+            isCollapsing = true;
+            isExpanding = false;
+        } else if (isCurrentlyExpanding && !isExpanding) {
+            isExpanding = true;
+            isCollapsing = false;
+        }
+
+        if (isCollapsing) handleCollapsingLogic();
+        else if (isExpanding) handleExpandingLogic();
     }
 
-    private float easeInOutCubic(float t) {
-        return t < 0.5f ? 4.0f * t * t * t : 1.0f - (float) Math.pow(-2.0f * t + 2.0f, 3) / 2.0f;
+    private void handleCollapsingLogic() {
+        if (animationRunningState == ANIMATION_COLLAPSING) return;
+        cancelCollapseExpandAnimation();
+        pushCollapseExpandAnimation(true, false);
+    }
+
+    private void handleExpandingLogic() {
+        if (animationRunningState == ANIMATION_EXPANDING) return;
+        cancelCollapseExpandAnimation();
+        pushCollapseExpandAnimation(false, false);
+    }
+
+    private void pushCollapseExpandAnimation(boolean isCollapse, boolean onlyToolbar) {
+        AnimatorSet animatorSet = new AnimatorSet();
+
+        ValueAnimator largeTitleAnimator = ValueAnimator.ofFloat(
+            largeTitleAlphaProgress, isCollapse ? 0.0f : 1.0f);
+        largeTitleAnimator.setDuration(LARGE_TITLE_ANIMATION_DURATION);
+        largeTitleAnimator.setInterpolator(new AccelerateDecelerateInterpolator());
+        largeTitleAnimator.addUpdateListener(animation -> {
+            largeTitleAlphaProgress = (float) animation.getAnimatedValue();
+            applyTitleBasicState();
+        });
+
+        ValueAnimator toolbarTitleAnimator = ValueAnimator.ofFloat(
+            toolbarTitleAlphaProgress, isCollapse ? 1.0f : 0.0f);
+        toolbarTitleAnimator.setDuration(TOOLBAR_TITLE_ANIMATION_DURATION);
+        largeTitleAnimator.setInterpolator(new DecelerateInterpolator());
+        toolbarTitleAnimator.addUpdateListener(animation -> {
+            toolbarTitleAlphaProgress = (float) animation.getAnimatedValue();
+            applyTitleBasicState();
+        });
+
+        if (!onlyToolbar) {
+            if (isCollapse) animatorSet.playSequentially(largeTitleAnimator, toolbarTitleAnimator);
+            else animatorSet.playSequentially(toolbarTitleAnimator, largeTitleAnimator);
+        } else {
+            animatorSet.play(toolbarTitleAnimator);
+        }
+
+        animatorSet.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                animationRunningState = ANIMATION_IDLE;
+                currentAnimationSet = null;
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                animationRunningState = ANIMATION_IDLE;
+                currentAnimationSet = null;
+            }
+        });
+        currentAnimationSet = animatorSet;
+        currentAnimationSet.start();
+
+        animationRunningState = isCollapse ? ANIMATION_COLLAPSING : ANIMATION_EXPANDING;
+    }
+
+    private void applyTitleBasicState() {
+        largeTitleView.setAlpha(largeTitleAlphaProgress);
+
+        toolbarTitleView.setAlpha(toolbarTitleAlphaProgress);
+        toolbarTitleView.setTranslationY(Math.max(toolbarTitleTargetTranslationY,
+            toolbarTitleInitialTranslationY - (toolbarTitleInitialTranslationY * toolbarTitleAlphaProgress)));
+    }
+
+    private void cancelCollapseExpandAnimation() {
+        if (currentAnimationSet != null && currentAnimationSet.isRunning())
+            currentAnimationSet.cancel();
+
+        animationRunningState = ANIMATION_IDLE;
+        currentAnimationSet = null;
     }
 
     private void handleSpringSnap() {

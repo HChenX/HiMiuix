@@ -127,8 +127,14 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
     private boolean isSpringBackEnabled;
     private boolean isLinkageAppBar; // 关联 Appbar
     private boolean isHapticFeedbackEnabled;
-    protected int mScreenHeight;
-    protected int mScreenWidth;
+    private int mScreenHeight;
+    private int mScreenWidth;
+    // --- Touch ---
+    private int touchDirection;
+    private final int TOUCH_UNKNOWN = 0;
+    private final int TOUCH_UP = 1;
+    private final int TOUCH_DOWN = 2;
+    private float lastTouchY;
 
     public interface OnSpringListener {
         boolean onSpringBack();
@@ -412,6 +418,19 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
      * */
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
+        if (isLinkageAppBar) {
+            switch (event.getActionMasked()) {
+                case ACTION_DOWN -> {
+                    lastTouchY = event.getRawY();
+                }
+                case ACTION_MOVE -> {
+                    if (event.getRawY() - lastTouchY > 0) touchDirection = TOUCH_DOWN;
+                    else if (event.getRawY() - lastTouchY < 0) touchDirection = TOUCH_UP;
+                    lastTouchY = event.getRawY();
+                }
+            }
+        }
+
         // 当手指按下 (ACTION_DOWN) 并且当前正处于回弹动画中 (SCROLL_STATE_SETTLING)
         // 并且触摸点在目标 View 内，此时应该将滚动状态从 SETTLING 改为 DRAGGING
         // 因为用户可能想要在回弹动画未结束时再次拖动
@@ -913,6 +932,15 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
 
     @Override
     public void onNestedScroll(@NonNull View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed, int type, @NonNull int[] consumed) {
+        if (isLinkageAppBar) { // 消抖
+            if (type == TYPE_TOUCH) {
+                if ((dyUnconsumed > 0 && touchDirection != TOUCH_UP) || (dyUnconsumed < 0 && touchDirection != TOUCH_DOWN)) {
+                    consumed[1] += dyUnconsumed; // 全部消耗，不用再传递了
+                    return;
+                }
+            }
+        }
+
         final boolean isVertical = (mNestedScrollAxes == ViewCompat.SCROLL_AXIS_VERTICAL);
         final int primaryConsumed = isVertical ? dyConsumed : dxConsumed; // 主轴已消费量
         final int axisIndex = isVertical ? Y : X;  // consumed 数组索引 (0:X, 1:Y)
@@ -1081,6 +1109,15 @@ public class SpringBackLayout extends ViewGroup implements NestedScrollingParent
 
     @Override
     public void onNestedPreScroll(@NonNull View target, int dx, int dy, @NonNull int[] consumed, int type) {
+        if (isLinkageAppBar) { // 消抖
+            if (type == TYPE_TOUCH) {
+                if ((dy > 0 && touchDirection != TOUCH_UP) || (dy < 0 && touchDirection != TOUCH_DOWN)) {
+                    consumed[1] = dy; // 全部消耗，不用再传递了
+                    return;
+                }
+            }
+        }
+
         if (isSpringBackEnabled) {
             if ((mNestedScrollAxes & SCROLL_AXIS_VERTICAL) != 0) {
                 handlePreScrollOnPrimaryAxis(dy, consumed, type);
