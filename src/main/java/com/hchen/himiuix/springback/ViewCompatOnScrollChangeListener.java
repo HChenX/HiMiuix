@@ -21,7 +21,9 @@ package com.hchen.himiuix.springback;
 import android.view.View;
 
 /**
- * 滚动状态更改监听
+ * ViewCompatOnScrollChangeListener
+ * <p>
+ * 改编自 HyperOS 2
  *
  * @author 焕晨HChen
  */

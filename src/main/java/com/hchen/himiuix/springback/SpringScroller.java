@@ -23,6 +23,13 @@ import static com.hchen.himiuix.springback.SpringBackLayout.VERTICAL;
 
 import android.view.animation.AnimationUtils;
 
+/**
+ * SpringScroller
+ * <p>
+ * 改编自 HyperOS 2
+ *
+ * @author 焕晨HChen
+ */
 public class SpringScroller {
     private static final float MAX_FRAME_DELTA_SECONDS = 0.016f; // 约 60fps
     private static final float MIN_FRAME_DELTA_SECONDS = 0.001f; // 避免 deltaTime 为 0
