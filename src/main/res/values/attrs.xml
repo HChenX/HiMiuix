@@ -18,6 +18,7 @@
 
     <declare-styleable name="MiuixBasicView">
         <attr name="tip" format="string" />
+        <attr name="reverseLayout"/>
         <attr name="android:icon" />
         <attr name="android:title" />
         <attr name="android:summary" />

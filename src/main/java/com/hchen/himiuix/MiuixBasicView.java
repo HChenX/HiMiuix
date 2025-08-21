@@ -79,6 +79,7 @@ public class MiuixBasicView extends LinearLayout {
     private int iconRadius;
     private boolean isEnabled;
     private boolean isAdded;
+    private boolean isReverseEnabled;
     private boolean isHapticFeedbackEnabled;
     private boolean isShadowEnabled;
     private boolean isManuallyRefreshView;
@@ -120,6 +121,7 @@ public class MiuixBasicView extends LinearLayout {
         iconRadius = typedArray.getDimensionPixelSize(R.styleable.MiuixBasicView_iconRadius, -1);
         background = typedArray.getResourceId(R.styleable.MiuixBasicView_android_background, 0);
         isEnabled = typedArray.getBoolean(R.styleable.MiuixBasicView_android_enabled, true);
+        isReverseEnabled = typedArray.getBoolean(R.styleable.MiuixBasicView_reverseLayout, false);
         isShadowEnabled = typedArray.getBoolean(R.styleable.MiuixBasicView_shadowEnabled, true);
         isHapticFeedbackEnabled = typedArray.getBoolean(R.styleable.MiuixBasicView_android_hapticFeedbackEnabled, true);
         indicator = typedArray.getDrawable(R.styleable.MiuixBasicView_indicator);
@@ -141,7 +143,9 @@ public class MiuixBasicView extends LinearLayout {
     // 加载基本布局
     // 这是本组件的核心布局
     void createLayout() {
-        LayoutInflater.from(getContext()).inflate(R.layout.miuix_layout, this, true);
+        LayoutInflater.from(getContext()).inflate(
+            isReverseEnabled ? R.layout.miuix_reverse_layout : R.layout.miuix_layout,
+            this, true);
         setOrientation(VERTICAL);
         setGravity(CENTER);
     }

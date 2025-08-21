@@ -23,17 +23,18 @@
     <!-- icon -->
     <dimen name="miuix_icon_max_height">40dp</dimen>
     <dimen name="miuix_icon_max_width">40dp</dimen>
-    <dimen name="miuix_icon_margin_end">15dp</dimen>
+    <dimen name="miuix_icon_margin">15dp</dimen>
 
     <!-- text -->
-    <dimen name="miuix_tip_margin_start">15dp</dimen>
+    <dimen name="miuix_tip_margin">15dp</dimen>
     <dimen name="miuix_title">17sp</dimen>
     <dimen name="miuix_summary">14sp</dimen>
     <dimen name="miuix_tip">13sp</dimen>
     <dimen name="miuix_tip_max_width">100dp</dimen>
 
     <!-- indicator -->
-    <dimen name="miuix_indicator_margin_start">5dp</dimen>
+    <dimen name="miuix_indicator_margin">5dp</dimen>
+    <dimen name="miuix_indicator_margin_end">15dp</dimen>
     <dimen name="miuix_indicator_width">10dp</dimen>
     <dimen name="miuix_indicator_height">16dp</dimen>
 
