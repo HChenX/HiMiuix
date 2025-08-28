@@ -14,8 +14,7 @@
     <dimen name="miuix_appbar_padding_start">28dp</dimen>
     <dimen name="miuix_appbar_title_size">20sp</dimen>
     <dimen name="miuix_appbar_large_title_size">34sp</dimen>
-    <dimen name="miuix_appbar_padding_top">4dp</dimen>
-    <dimen name="miuix_appbar_padding_bottom">8dp</dimen>
+    <dimen name="miuix_appbar_collapsible_title_height">57dp</dimen>
 
     <!-- back -->
     <dimen name="miuix_back">24dp</dimen>
@@ -127,4 +126,11 @@
     <!-- prefs -->
     <dimen name="miuix_prefs_margin">@dimen/miuix_basic_margin</dimen>
     <dimen name="miuix_prefs_card_radius">@dimen/miuix_basic_radius</dimen>
+
+    <!-- bottom menu -->
+    <dimen name="miuix_bottom_menu_min_height">56dp</dimen>
+    <dimen name="miuix_bottom_menu_max_height">76dp</dimen>
+    <dimen name="miuix_bottom_menu_icon_size">24dp</dimen>
+    <dimen name="miuix_bottom_menu_padding_top">8dp</dimen>
+    <dimen name="miuix_bottom_menu_padding_bottom">10dp</dimen>
 </resources>

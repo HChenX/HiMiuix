@@ -18,7 +18,7 @@
 
     <declare-styleable name="MiuixBasicView">
         <attr name="tip" format="string" />
-        <attr name="reverseLayout"/>
+        <attr name="reverseLayout" />
         <attr name="android:icon" />
         <attr name="android:title" />
         <attr name="android:summary" />
@@ -151,5 +151,25 @@
         <attr name="android:entries" />
         <attr name="android:maxHeight" />
         <attr name="multipleChoiceEnabled" />
+    </declare-styleable>
+
+    <declare-styleable name="MiuixBottomNavigatorView">
+        <attr name="menu" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="MenuGroup">
+        <attr name="android:id" />
+        <attr name="android:visible" />
+        <attr name="android:enabled" />
+    </declare-styleable>
+
+    <declare-styleable name="MenuItem">
+        <attr name="android:id" />
+        <attr name="android:title" />
+        <attr name="android:icon" />
+        <attr name="android:checked" />
+        <attr name="android:checkable" />
+        <attr name="android:visible" />
+        <attr name="android:enabled" />
     </declare-styleable>
 </resources>

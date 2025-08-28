@@ -32,42 +32,54 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.graphics.Insets;
 import androidx.core.view.NestedScrollingParent3;
 import androidx.core.view.NestedScrollingParentHelper;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.hchen.himiuix.callback.OnAppBarListener;
 import com.hchen.himiuix.helper.AppBarHelper;
+import com.hchen.himiuix.helper.WindowInsetsHelper;
 import com.hchen.himiuix.springback.SpringBackLayout;
 import com.hchen.himiuix.springback.SpringScroller;
 import com.hchen.himiuix.utils.InvokeUtils;
+import com.hchen.himiuix.utils.MiuiSuperBlur;
+
+import java.util.WeakHashMap;
 
 /**
  * Miuix AppBar
+ * <p>
+ * 此视图不响应 paddingTop/Bottom
  *
  * @author 焕晨HChen
  * @noinspection FieldCanBeLocal
  */
-public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3, OnAppBarListener {
+public class MiuixAppBar extends ViewGroup implements NestedScrollingParent3, OnAppBarListener {
     private static final String TAG = "HiMiuix:AppBar";
     private NestedScrollingParentHelper helper;
 
+    private ViewGroup overallView;
     private Toolbar toolbar;
     private TextView toolbarTitleView;
     private TextView largeTitleView;
     private CollapsibleTitleLayout collapsibleTitleView;
+    private final WeakHashMap<View, Boolean> targetSet = new WeakHashMap<>();
 
     private CharSequence title;
     private View targetView;
+    private boolean isAdded;
+    private boolean isInitialled;
 
     // --- Touch ---
     private static final int TOUCH_UNKNOWN = 0;
@@ -125,7 +137,6 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
         title = typedArray.getText(R.styleable.MiuixAppBar_android_title);
         typedArray.recycle();
 
-        setOrientation(VERTICAL);
         AppBarHelper.addOnToolbarListener(this);
         helper = new NestedScrollingParentHelper(this);
 
@@ -138,7 +149,9 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
                     newOffset = Math.max(0, Math.min(newOffset, collapsibleScrollRange));
 
                     if (newOffset != currentScrollOffset) {
+                        int delta = currentScrollOffset - newOffset;
                         currentScrollOffset = newOffset;
+                        targetView.offsetTopAndBottom(delta);
                         applyAnimationValues();
                     }
                     post(this);
@@ -183,35 +196,90 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
         toolbarTitleView.setAlpha(0);
 
         collapsibleTitleView = new CollapsibleTitleLayout(getContext());
-        collapsibleTitleView.setPadding(0, getResources().getDimensionPixelSize(R.dimen.miuix_appbar_padding_top),
-            0, getResources().getDimensionPixelSize(R.dimen.miuix_appbar_padding_bottom));
         largeTitleView = new TextView(getContext());
         largeTitleView.setSingleLine();
-        largeTitleView.setGravity(Gravity.LEFT | Gravity.CLIP_VERTICAL);
+        largeTitleView.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
         largeTitleView.setTextColor(getResources().getColor(R.color.miuix_title_color));
         largeTitleView.setPadding(getResources().getDimensionPixelSize(R.dimen.miuix_appbar_padding_start), 0, 0, 0);
         largeTitleView.setTextSize(TypedValue.COMPLEX_UNIT_PX, getResources().getDimensionPixelSize(R.dimen.miuix_appbar_large_title_size));
-        largeTitleView.setLayoutParams(params);
-        collapsibleTitleView.setTargetView(largeTitleView);
+        LayoutParams titleParams = new LayoutParams(LayoutParams.MATCH_PARENT, getResources().getDimensionPixelSize(R.dimen.miuix_appbar_collapsible_title_height));
+        largeTitleView.setLayoutParams(titleParams);
+        collapsibleTitleView.setTitleView(largeTitleView);
         collapsibleTitleView.addView(largeTitleView);
-        addView(toolbar);
-        addView(collapsibleTitleView);
+
+        overallView = new ViewGroup(getContext()) {
+            @Override
+            protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+                int measuredWidth;
+                int measuredHeight;
+                final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+                final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+                final int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+                final int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+
+                Toolbar toolbar = (Toolbar) getChildAt(0);
+                CollapsibleTitleLayout titleLayout = (CollapsibleTitleLayout) getChildAt(1);
+
+                measureChild(toolbar, widthMeasureSpec, MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+                measureChild(titleLayout, widthMeasureSpec, MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+
+                if (widthMode == MeasureSpec.EXACTLY) {
+                    measuredWidth = widthSize;
+                } else {
+                    int maxChildWidth = 0;
+                    maxChildWidth = Math.max(maxChildWidth, toolbar.getMeasuredWidth());
+                    maxChildWidth = Math.max(maxChildWidth, titleLayout.getMeasuredWidth());
+                    measuredWidth = maxChildWidth + getPaddingLeft() + getPaddingRight();
+                    if (widthMode == MeasureSpec.AT_MOST) {
+                        measuredWidth = Math.min(widthSize, measuredWidth);
+                    }
+                }
+
+                if (heightMode == MeasureSpec.EXACTLY) {
+                    measuredHeight = heightSize;
+                } else {
+                    int totalChildHeight = 0;
+                    totalChildHeight += toolbar.getMeasuredHeight();
+                    totalChildHeight += titleLayout.getMeasuredHeight();
+                    measuredHeight = totalChildHeight + getPaddingTop() + getPaddingBottom();
+                    if (heightMode == MeasureSpec.AT_MOST) {
+                        measuredHeight = Math.min(heightSize, measuredHeight);
+                    }
+                }
+
+                setMeasuredDimension(measuredWidth, measuredHeight);
+            }
+
+            @Override
+            protected void onLayout(boolean changed, int l, int t, int r, int b) {
+                Toolbar toolbar = (Toolbar) getChildAt(0);
+                CollapsibleTitleLayout titleLayout = (CollapsibleTitleLayout) getChildAt(1);
+
+                int currentTop = getPaddingTop();
+                int currentLeft = getPaddingLeft();
+                int width = getMeasuredWidth() - getPaddingLeft() - getPaddingRight();
+
+                int toolbarHeight = toolbar.getMeasuredHeight();
+                toolbar.layout(currentLeft, currentTop, currentLeft + width, currentTop + toolbarHeight);
+                currentTop += toolbarHeight;
+
+                int titleHeight = titleLayout.getMeasuredHeight();
+                titleLayout.layout(currentLeft, currentTop, currentLeft + width, currentTop + titleHeight);
+            }
+        };
+        overallView.addView(toolbar);
+        overallView.addView(collapsibleTitleView);
+        addView(overallView);
 
         setTitle(title);
+        applyWindowInsets();
+        isInitialled = true;
     }
 
     public void setTitle(CharSequence title) {
         this.title = title;
         toolbarTitleView.setText(title);
         largeTitleView.setText(title);
-    }
-
-    public void setTargetView(View targetView) {
-        this.targetView = targetView;
-    }
-
-    public View getTargetView() {
-        return targetView;
     }
 
     public CharSequence getTitle() {
@@ -229,8 +297,17 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
     }
 
     @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        MiuiSuperBlur.setMiViewBlurMode(overallView, 1);
+        MiuiSuperBlur.setMiBackgroundBlurMode(overallView, 1);
+        MiuiSuperBlur.setMiBackgroundBlurRadius(overallView, 400);
+    }
+
+    @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
+        targetSet.clear();
         cancelSpringAnimation();
         AppBarHelper.removeOnToolbarListener(this);
     }
@@ -252,8 +329,104 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        initialParament(false);
+        int measuredWidth;
+        int measuredHeight;
+        final int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        final int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+        final int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        final int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+
+        ViewGroup overallView;
+        View contentView = isAdded ? getChildAt(0) : null;
+        if (contentView != null) overallView = (ViewGroup) getChildAt(1);
+        else overallView = (ViewGroup) getChildAt(0);
+
+        measureChild(overallView, widthMeasureSpec, MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+
+        if (contentView != null) {
+            int contentHeightMeasureSpec;
+            if (heightMode == MeasureSpec.UNSPECIFIED) {
+                contentHeightMeasureSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
+            } else {
+                int availableHeight = heightSize + collapsibleScrollRange;
+                contentHeightMeasureSpec = MeasureSpec.makeMeasureSpec(availableHeight, heightMode);
+            }
+            measureChild(contentView, widthMeasureSpec, contentHeightMeasureSpec);
+        }
+
+        if (widthMode == MeasureSpec.EXACTLY) {
+            measuredWidth = widthSize;
+        } else {
+            int maxChildWidth = 0;
+            maxChildWidth = Math.max(maxChildWidth, overallView.getMeasuredWidth());
+            if (contentView != null)
+                maxChildWidth = Math.max(maxChildWidth, contentView.getMeasuredWidth());
+            measuredWidth = maxChildWidth + getPaddingLeft() + getPaddingRight();
+            if (widthMode == MeasureSpec.AT_MOST) {
+                measuredWidth = Math.min(widthSize, measuredWidth);
+            }
+        }
+
+        if (heightMode == MeasureSpec.EXACTLY) {
+            measuredHeight = heightSize;
+        } else {
+            int totalChildHeight = 0;
+            if (contentView != null) totalChildHeight += contentView.getMeasuredHeight();
+            totalChildHeight += overallView.getMeasuredHeight();
+            measuredHeight = totalChildHeight /* + getPaddingTop() + getPaddingBottom() ignore */;
+            if (heightMode == MeasureSpec.AT_MOST)
+                measuredHeight = Math.min(heightSize, measuredHeight);
+        }
+
+        setMeasuredDimension(measuredWidth, measuredHeight);
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        ViewGroup overallView;
+        View contentView = isAdded ? getChildAt(0) : null;
+        if (contentView != null) overallView = (ViewGroup) getChildAt(1);
+        else overallView = (Toolbar) getChildAt(0);
+
+        int currentTop = 0;
+        int currentLeft = getPaddingLeft();
+        int width = getMeasuredWidth() - getPaddingLeft() - getPaddingRight();
+
+        if (contentView != null) {
+            int contentHeight = contentView.getMeasuredHeight();
+            contentView.layout(currentLeft, currentTop, currentLeft + width, currentTop + contentHeight);
+        }
+
+        int toolbarHeight = overallView.getMeasuredHeight();
+        overallView.layout(currentLeft, currentTop, currentLeft + width, currentTop + toolbarHeight);
+
+        if (!targetSet.isEmpty()) {
+            for (View lastTargetView : targetSet.keySet()) {
+                lastTargetView.layout(lastTargetView.getLeft(), lastTargetView.getTop(), lastTargetView.getRight(), lastTargetView.getBottom());
+                if (isCollapsed()) {
+                    if (lastTargetView.getTop() == 0)
+                        lastTargetView.offsetTopAndBottom(-currentScrollOffset);
+                    else if (lastTargetView.getTop() < 0 && lastTargetView.getTop() > (-currentScrollOffset))
+                        lastTargetView.offsetTopAndBottom(-((currentScrollOffset) - Math.abs(lastTargetView.getTop())));
+                    else if (lastTargetView.getTop() > 0)
+                        lastTargetView.offsetTopAndBottom(-(currentScrollOffset + lastTargetView.getTop()));
+                } else if (isExpanded()) {
+                    if (lastTargetView.getTop() != 0) {
+                        if (lastTargetView.getTop() < 0)
+                            lastTargetView.offsetTopAndBottom(Math.abs(lastTargetView.getTop()));
+                        else if (lastTargetView.getTop() > 0)
+                            lastTargetView.offsetTopAndBottom(-lastTargetView.getTop());
+                    }
+                }
+            }
+        }
+
+        if (targetView != null) {
+            targetView.layout(targetView.getLeft(), targetView.getTop(), targetView.getRight(), targetView.getBottom());
+            if (targetView.getTop() == 0 && currentScrollOffset != 0) {
+                targetView.offsetTopAndBottom(-currentScrollOffset);
+            }
+        }
     }
 
     @Override
@@ -271,10 +444,28 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
 
             if (collapsibleTitleView.getOriginalHeight() > 0 && collapsibleScrollRange == 0)
                 collapsibleScrollRange = collapsibleTitleView.getOriginalHeight();
-            else if (largeTitleView.getMeasuredHeight() > 0 && collapsibleScrollRange == 0)
-                collapsibleScrollRange = largeTitleView.getMeasuredHeight() + collapsibleTitleView.getPaddingTop() + collapsibleTitleView.getPaddingBottom();
             if (toolbar.getMeasuredHeight() > 0 && toolbarTitleInitialTranslationY == 0)
                 toolbarTitleInitialTranslationY = toolbar.getMeasuredHeight() * toolbarTitleTranslationYConvert;
+        });
+    }
+
+    @Override
+    public void addView(View child, int index, ViewGroup.LayoutParams params) {
+        if (!isInitialled) super.addView(child, index, params);
+        else if (!isAdded) {
+            isAdded = true;
+            super.addView(child, 0, params);
+        } else throw new RuntimeException("Only supports a single sub view!");
+    }
+
+    private void applyWindowInsets() {
+        WindowInsetsHelper.setOnApplyWindowInsetsListener(new androidx.core.view.OnApplyWindowInsetsListener() {
+            @NonNull @Override
+            public WindowInsetsCompat onApplyWindowInsets(@NonNull View v, @NonNull WindowInsetsCompat insets) {
+                Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+                overallView.setPadding(0, systemBars.top, 0, 0);
+                return insets;
+            }
         });
     }
 
@@ -337,7 +528,7 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
 
         // dy > 0: 手指向上滑动，内容向上滚动 (折叠Toolbar)
         // dy < 0: 手指向下滑动，内容向下滚动 (展开Toolbar)
-        if (dy > 0 || (dy < 0 && !targetView.canScrollVertically(-1))) {
+        if (dy > 0 || (dy < 0 && !canScrollVertically())) {
             int previousOffset = currentScrollOffset;
             int newOffset = currentScrollOffset + dy;
             newOffset = Math.max(0, Math.min(newOffset, collapsibleScrollRange));
@@ -351,6 +542,19 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
                 consumed[1] = delta;
             }
         }
+    }
+
+    // 是否移动到顶/底
+    private boolean canScrollVertically() {
+        return targetView != null && targetView.canScrollVertically(-1);
+    }
+
+    private boolean isCollapsed() {
+        return currentScrollOffset == collapsibleScrollRange;
+    }
+
+    private boolean isExpanded() {
+        return currentScrollOffset == 0;
     }
 
     private void applyAnimationValues() {
@@ -506,15 +710,34 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
     }
 
     @Override
+    public void targetStart(View view) {
+        if (view != null) targetSet.put(view, Boolean.TRUE);
+    }
+
+    @Override
     public void targetRegister(View view) {
         if (view == null) return;
         targetView = view;
+        targetSet.remove(targetView);
+        if (targetView.getTop() != -currentScrollOffset)
+            targetView.requestLayout();
     }
 
-    public static class CollapsibleTitleLayout extends FrameLayout {
-        private View targetView;
-        private int originalHeight = 0;
-        private int visibleHeight = 0;
+    @Override
+    public void targetUnregister(View view) {
+        if (view == null) return;
+        targetSet.put(view, Boolean.TRUE);
+    }
+
+    @Override
+    public void targetDestroy(View view) {
+        if (view != null) targetSet.remove(view);
+    }
+
+    private static class CollapsibleTitleLayout extends FrameLayout {
+        private View titleView;
+        private int originalHeight;
+        private int visibleHeight;
 
         public CollapsibleTitleLayout(Context context) {
             super(context);
@@ -534,19 +757,20 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
 
         @Override
         protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-            super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-            if (originalHeight == 0 && targetView.getMeasuredHeight() > 0) {
-                originalHeight = targetView.getMeasuredHeight() + getPaddingTop() + getPaddingBottom();
-                visibleHeight = originalHeight;
-            }
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+            updateCurrentHeight(false);
             setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.makeMeasureSpec(visibleHeight, MeasureSpec.EXACTLY));
         }
 
         @Override
         protected void onSizeChanged(int w, int h, int oldw, int oldh) {
             super.onSizeChanged(w, h, oldw, oldh);
-            if (targetView.getMeasuredHeight() > 0) {
-                originalHeight = targetView.getMeasuredHeight() + getPaddingTop() + getPaddingBottom();
+            updateCurrentHeight(true);
+        }
+
+        public void updateCurrentHeight(boolean reset) {
+            if (reset || (originalHeight == 0 && titleView.getMeasuredHeight() > 0)) {
+                originalHeight = titleView.getMeasuredHeight() + getPaddingTop() + getPaddingBottom();
                 visibleHeight = originalHeight;
             }
         }
@@ -557,12 +781,12 @@ public class MiuixAppBar extends LinearLayout implements NestedScrollingParent3,
             requestLayout(); // 重新测量并刷新
         }
 
-        public void setTargetView(View targetView) {
-            this.targetView = targetView;
+        public void setTitleView(View titleView) {
+            this.titleView = titleView;
         }
 
-        public View getTargetView() {
-            return targetView;
+        public View getTitleView() {
+            return titleView;
         }
 
         public int getOriginalHeight() {

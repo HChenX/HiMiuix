@@ -18,20 +18,10 @@
  */
 package com.hchen.himiuix.callback;
 
-import android.view.View;
+import androidx.annotation.NonNull;
 
-/**
- * OnAppBarListener
- *
- * @author 焕晨HChen
- */
-public interface OnAppBarListener {
-    // 内部使用
-    void targetStart(View view);
+import com.hchen.himiuix.MiuixBottomNavigatorView;
 
-    void targetRegister(View view);
-
-    void targetUnregister(View view);
-
-    void targetDestroy(View view);
+public interface OnItemSelectedListener {
+    boolean onNavigationItemSelected(@NonNull MiuixBottomNavigatorView.MenuInfo item);
 }

@@ -46,6 +46,25 @@ public class AppBarHelper {
         toolbarListeners.remove(listener);
     }
 
+    public static void callTargetStart(View view) {
+        if (view == null) return;
+        if (viewToTargetMap.get(view) != null) {
+            for (OnAppBarListener listener : toolbarListeners) {
+                listener.targetStart(viewToTargetMap.get(view));
+            }
+            return;
+        }
+
+        view.post(() -> {
+            View target = findTargetView((ViewGroup) view);
+            if (target == null) return;
+            viewToTargetMap.put(view, target);
+            for (OnAppBarListener listener : toolbarListeners) {
+                listener.targetStart(target);
+            }
+        });
+    }
+
     public static void callTargetRegister(View view) {
         if (view == null) return;
         if (viewToTargetMap.get(view) != null) {
@@ -65,7 +84,29 @@ public class AppBarHelper {
         });
     }
 
+    public static void callTargetUnregister(View view) {
+        if (view == null) return;
+        if (viewToTargetMap.get(view) != null) {
+            for (OnAppBarListener listener : toolbarListeners) {
+                listener.targetUnregister(viewToTargetMap.get(view));
+            }
+            return;
+        }
+
+        view.post(() -> {
+            View target = findTargetView((ViewGroup) view);
+            if (target == null) return;
+            viewToTargetMap.put(view, target);
+            for (OnAppBarListener listener : toolbarListeners) {
+                listener.targetUnregister(target);
+            }
+        });
+    }
+
     public static void onDestroyView(View view) {
+        for (OnAppBarListener listener : toolbarListeners) {
+            listener.targetDestroy(viewToTargetMap.get(view));
+        }
         viewToTargetMap.remove(view);
     }
 

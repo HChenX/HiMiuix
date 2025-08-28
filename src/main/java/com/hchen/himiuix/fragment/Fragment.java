@@ -30,6 +30,13 @@ import com.hchen.himiuix.helper.AppBarHelper;
 public class Fragment extends androidx.fragment.app.Fragment {
     @Override
     @CallSuper
+    public void onStart() {
+        AppBarHelper.callTargetStart(getView());
+        super.onStart();
+    }
+
+    @Override
+    @CallSuper
     public void onResume() {
         AppBarHelper.callTargetRegister(getView());
         super.onResume();
@@ -38,10 +45,12 @@ public class Fragment extends androidx.fragment.app.Fragment {
     @Override
     @CallSuper
     public void onPause() {
+        AppBarHelper.callTargetUnregister(getView());
         super.onPause();
     }
 
     @Override
+    @CallSuper
     public void onDestroyView() {
         AppBarHelper.onDestroyView(getView());
         super.onDestroyView();
