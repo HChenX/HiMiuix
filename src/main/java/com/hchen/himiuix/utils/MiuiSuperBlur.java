@@ -101,6 +101,10 @@ public class MiuiSuperBlur {
         });
     }
 
+    public static boolean isSupportBlur() {
+        return setMiViewBlurMode != null;
+    }
+
     public static void chooseBackgroundBlurContainer(View view, View container) {
         run(() -> chooseBackgroundBlurContainer.invoke(view, container));
     }

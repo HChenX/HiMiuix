@@ -270,6 +270,8 @@ public class MiuixAppBar extends ViewGroup implements NestedScrollingParent3, On
         };
         overallView.addView(toolbar);
         overallView.addView(collapsibleTitleView);
+        if (!MiuiSuperBlur.isSupportBlur())
+            overallView.setBackgroundColor(getContext().getColor(R.color.miuix_theme_color));
         addView(overallView);
 
         setTitle(title);
@@ -300,7 +302,7 @@ public class MiuixAppBar extends ViewGroup implements NestedScrollingParent3, On
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        applyBlur();
+        if (MiuiSuperBlur.isSupportBlur()) applyBlur();
     }
 
     private void applyBlur() {

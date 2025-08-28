@@ -26,7 +26,6 @@ import android.content.res.TypedArray;
 import android.content.res.XmlResourceParser;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.Xml;
@@ -97,6 +96,8 @@ public class MiuixBottomNavigatorView extends LinearLayout implements OnItemSele
         typedArray.recycle();
 
         setOrientation(HORIZONTAL);
+        if (!MiuiSuperBlur.isSupportBlur())
+            setBackgroundColor(getContext().getColor(R.color.miuix_default_surface_color));
         setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
         setMinimumHeight(getResources().getDimensionPixelSize(R.dimen.miuix_bottom_menu_min_height));
         targetHeight = getResources().getDimensionPixelSize(R.dimen.miuix_bottom_menu_target_height);
@@ -105,7 +106,6 @@ public class MiuixBottomNavigatorView extends LinearLayout implements OnItemSele
         dividerPaint.setStrokeWidth(getResources().getDisplayMetrics().density);
 
         if (menuId != -1) inflateMenu(menuId);
-        setBackground(new ColorDrawable(0));
         applyWindowInsets();
     }
 
@@ -140,7 +140,7 @@ public class MiuixBottomNavigatorView extends LinearLayout implements OnItemSele
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        applyBlur();
+        if (MiuiSuperBlur.isSupportBlur()) applyBlur();
     }
 
     private void applyBlur() {
@@ -165,12 +165,7 @@ public class MiuixBottomNavigatorView extends LinearLayout implements OnItemSele
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        if (targetHeight > 0) {
-            int size = MeasureSpec.getSize(heightMeasureSpec);
-            if (size > targetHeight)
-                heightMeasureSpec = MeasureSpec.makeMeasureSpec(targetHeight, MeasureSpec.EXACTLY);
-        }
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        super.onMeasure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(targetHeight, MeasureSpec.EXACTLY));
     }
 
     @Override
