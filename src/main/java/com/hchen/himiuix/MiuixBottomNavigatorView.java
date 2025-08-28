@@ -57,6 +57,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Miuix 底部导航栏视图
+ *
+ * @author 焕晨HChen
+ */
 public class MiuixBottomNavigatorView extends LinearLayout implements OnItemSelectedListener {
     private static final String TAG = "Miuix:BottomNavigatorView";
     private static final String XML_MENU = "menu"; // Menu tag name in XML.

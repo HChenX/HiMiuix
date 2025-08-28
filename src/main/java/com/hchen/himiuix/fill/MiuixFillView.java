@@ -29,6 +29,11 @@ import androidx.annotation.Nullable;
 
 import com.hchen.himiuix.R;
 
+/**
+ * 适用于 MiuixAppBar/MiuixBottomNavigatorView 的填充视图
+ *
+ * @author 焕晨HChen
+ */
 public class MiuixFillView extends LinearLayout {
     public static final String View_Tag = "Miuix:FillView";
     private int collapsibleTitleHeight;

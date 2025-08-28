@@ -727,7 +727,10 @@ public class MiuixAppBar extends ViewGroup implements NestedScrollingParent3, On
 
     @Override
     public void targetStart(View view) {
-        if (view != null) targetSet.put(view, Boolean.TRUE);
+        if (view != null) {
+            targetSet.put(view, Boolean.TRUE);
+            view.requestLayout();
+        }
     }
 
     @Override
@@ -735,8 +738,6 @@ public class MiuixAppBar extends ViewGroup implements NestedScrollingParent3, On
         if (view == null) return;
         targetView = view;
         targetSet.remove(targetView);
-        if (targetView.getTop() != -currentScrollOffset)
-            targetView.requestLayout();
     }
 
     @Override

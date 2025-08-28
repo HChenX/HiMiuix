@@ -29,6 +29,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.hchen.himiuix.R;
 
+/**
+ * 适用于 MiuixAppBar/MiuixBottomNavigatorView 的填充视图
+ *
+ * @author 焕晨HChen
+ */
 public class MiuixRecyclerFillView extends RecyclerView {
     public static final String View_Tag = "Miuix:RecyclerFillView";
     private int collapsibleTitleHeight;

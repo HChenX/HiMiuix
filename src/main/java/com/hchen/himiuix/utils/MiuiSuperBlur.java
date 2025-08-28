@@ -28,6 +28,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
+ * 反射使用小米高级材质
+ *
+ * @author 焕晨HChen
  * @noinspection JavaReflectionMemberAccess
  */
 public class MiuiSuperBlur {
