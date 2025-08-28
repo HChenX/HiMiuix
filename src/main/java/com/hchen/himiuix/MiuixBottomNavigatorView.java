@@ -153,7 +153,7 @@ public class MiuixBottomNavigatorView extends LinearLayout implements OnItemSele
         MiuiSuperBlur.setMiViewBlurMode(this, 1);
         MiuiSuperBlur.setMiBackgroundBlurMode(this, 1);
         MiuiSuperBlur.setMiBackgroundBlurRadius(this, (int) (getContext().getResources().getDisplayMetrics().density * 66 + 0.5f));
-        int[] colors = MiuiSuperBlur.getBlendColor(colorBottomSurface, !MiuixUtils.isDarkMode(getResources()) ?
+        int[] colors = MiuiSuperBlur.getBlendColor(getContext(), colorBottomSurface, !MiuixUtils.isDarkMode(getResources()) ?
             new int[]{-1889443744, -1543503873} :
             new int[]{1970500467, -1979711488, 184549375});
         int[] colorMode = !MiuixUtils.isDarkMode(getResources()) ? new int[]{18, 3} : new int[]{19, 3, 3};

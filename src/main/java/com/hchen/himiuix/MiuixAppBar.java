@@ -26,6 +26,7 @@ import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -306,11 +307,10 @@ public class MiuixAppBar extends ViewGroup implements NestedScrollingParent3, On
     }
 
     private void applyBlur() {
-        int colorBottomSurface = getContext().getColor(R.color.miuix_theme_color);
         MiuiSuperBlur.setMiViewBlurMode(overallView, 1);
         MiuiSuperBlur.setMiBackgroundBlurMode(overallView, 1);
         MiuiSuperBlur.setMiBackgroundBlurRadius(overallView, (int) (getContext().getResources().getDisplayMetrics().density * 66 + 0.5f));
-        int[] colors = MiuiSuperBlur.getBlendColor(colorBottomSurface, !MiuixUtils.isDarkMode(getResources()) ?
+        int[] colors = MiuiSuperBlur.getBlendColor(getContext(), Color.TRANSPARENT, !MiuixUtils.isDarkMode(getResources()) ?
             new int[]{-1889443744, -1543503873} :
             new int[]{1970500467, -1979711488, 184549375});
         int[] colorMode = !MiuixUtils.isDarkMode(getResources()) ? new int[]{18, 3} : new int[]{19, 3, 3};

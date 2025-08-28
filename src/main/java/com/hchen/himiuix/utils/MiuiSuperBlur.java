@@ -18,10 +18,17 @@
  */
 package com.hchen.himiuix.utils;
 
+import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Outline;
 import android.graphics.Point;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewOutlineProvider;
+
+import androidx.appcompat.content.res.AppCompatResources;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -197,12 +204,31 @@ public class MiuiSuperBlur {
         setPassWindowBlurEnabled(view, false);
     }
 
-    public static int[] getBlendColor(int color, int[] colors) {
+    public static int[] getBlendColor(Context context, int color, int[] colors) {
         int length = colors.length;
         int[] newColors = new int[length];
         System.arraycopy(colors, 0, newColors, 0, length);
+        if (color == Color.TRANSPARENT) {
+            Drawable background = resolveDrawable(context, android.R.attr.windowBackground);
+            if (background instanceof ColorDrawable)
+                color = ((ColorDrawable) background).getColor();
+        }
         if (color != 0) newColors[1] = (16777215 & color) | ((-16777216) & colors[1]);
         return newColors;
+    }
+
+    private static Drawable resolveDrawable(Context context, int id) {
+        TypedValue outValue = new TypedValue();
+        if (context.getTheme().resolveAttribute(id, outValue, true)) {
+            if (outValue.resourceId > 0) {
+                return AppCompatResources.getDrawable(context, outValue.resourceId);
+            } else if (outValue.type < TypedValue.TYPE_INT_COLOR_ARGB8 || outValue.type > TypedValue.TYPE_INT_COLOR_RGB4) {
+                return null;
+            } else {
+                return new ColorDrawable(outValue.data);
+            }
+        }
+        return null;
     }
 
     private static void run(RunnableTry runnable) {
