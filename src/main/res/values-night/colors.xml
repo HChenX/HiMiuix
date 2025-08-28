@@ -27,6 +27,7 @@
 
     <!-- divider -->
     <color name="miuix_divider_color">#797E94</color>
+    <color name="miuix_bottom_divider_color">#26FFFFFF</color>
 
     <!-- dialog -->
     <color name="miuix_dialog_background">#242424</color>
@@ -63,4 +64,5 @@
 
     <!-- other -->
     <color name="miuix_card_other">#505050</color>
+    <color name="miuix_default_surface_color">#000000</color>
 </resources>

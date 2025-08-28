@@ -36,7 +36,7 @@ import java.util.Map;
  * @author 焕晨HChen
  */
 public class HapticFeedbackHelper {
-    private static final String TAG = "HiMiuix";
+    private static final String TAG = "HiMiuix:Haptic";
 
     // ------------------- Xiaomi ---------------------
     static final int MIUI_HAPTIC_VERSION_1_START = 0x10000000;

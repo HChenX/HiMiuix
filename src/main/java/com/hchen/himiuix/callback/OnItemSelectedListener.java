@@ -23,5 +23,5 @@ import androidx.annotation.NonNull;
 import com.hchen.himiuix.MiuixBottomNavigatorView;
 
 public interface OnItemSelectedListener {
-    boolean onNavigationItemSelected(@NonNull MiuixBottomNavigatorView.MenuInfo item);
+    boolean onNavigationItemSelected(@NonNull MiuixBottomNavigatorView.MenuInfo item, boolean fromUser);
 }

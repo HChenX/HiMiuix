@@ -54,6 +54,7 @@ import com.hchen.himiuix.springback.SpringBackLayout;
 import com.hchen.himiuix.springback.SpringScroller;
 import com.hchen.himiuix.utils.InvokeUtils;
 import com.hchen.himiuix.utils.MiuiSuperBlur;
+import com.hchen.himiuix.utils.MiuixUtils;
 
 import java.util.WeakHashMap;
 
@@ -299,9 +300,21 @@ public class MiuixAppBar extends ViewGroup implements NestedScrollingParent3, On
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
+        applyBlur();
+    }
+
+    private void applyBlur() {
+        int colorBottomSurface = getContext().getColor(R.color.miuix_theme_color);
         MiuiSuperBlur.setMiViewBlurMode(overallView, 1);
         MiuiSuperBlur.setMiBackgroundBlurMode(overallView, 1);
-        MiuiSuperBlur.setMiBackgroundBlurRadius(overallView, 400);
+        MiuiSuperBlur.setMiBackgroundBlurRadius(overallView, (int) (getContext().getResources().getDisplayMetrics().density * 66 + 0.5f));
+        int[] colors = MiuiSuperBlur.getBlendColor(colorBottomSurface, !MiuixUtils.isDarkMode(getResources()) ?
+            new int[]{-1889443744, -1543503873} :
+            new int[]{1970500467, -1979711488, 184549375});
+        int[] colorMode = !MiuixUtils.isDarkMode(getResources()) ? new int[]{18, 3} : new int[]{19, 3, 3};
+        for (int i = 0; i < colors.length; i++) {
+            MiuiSuperBlur.addMiBackgroundBlendColor(overallView, colors[i], colorMode[i]);
+        }
     }
 
     @Override
@@ -309,6 +322,7 @@ public class MiuixAppBar extends ViewGroup implements NestedScrollingParent3, On
         super.onDetachedFromWindow();
         targetSet.clear();
         cancelSpringAnimation();
+        MiuiSuperBlur.clearAllBlur(overallView);
         AppBarHelper.removeOnToolbarListener(this);
     }
 

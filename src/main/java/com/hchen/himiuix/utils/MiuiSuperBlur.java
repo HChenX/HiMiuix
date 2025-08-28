@@ -190,6 +190,14 @@ public class MiuiSuperBlur {
         setPassWindowBlurEnabled(view, false);
     }
 
+    public static int[] getBlendColor(int color, int[] colors) {
+        int length = colors.length;
+        int[] newColors = new int[length];
+        System.arraycopy(colors, 0, newColors, 0, length);
+        if (color != 0) newColors[1] = (16777215 & color) | ((-16777216) & colors[1]);
+        return newColors;
+    }
+
     private static void run(RunnableTry runnable) {
         try {
             runnable.run();

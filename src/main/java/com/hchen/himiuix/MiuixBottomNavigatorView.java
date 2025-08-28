@@ -45,8 +45,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.hchen.himiuix.callback.OnItemSelectedListener;
+import com.hchen.himiuix.helper.HapticFeedbackHelper;
 import com.hchen.himiuix.helper.WindowInsetsHelper;
 import com.hchen.himiuix.utils.MiuiSuperBlur;
+import com.hchen.himiuix.utils.MiuixUtils;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -65,9 +67,11 @@ public class MiuixBottomNavigatorView extends LinearLayout implements OnItemSele
     private final List<MenuInfo> subMenuInfos = new ArrayList<>();
     private final Paint dividerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private OnItemSelectedListener listener;
-    private int maxHeight;
+    private boolean isHapticFeedbackEnabled;
+    private int targetHeight;
     @MenuRes
     private int menuId;
+    private int checkedId;
 
     public MiuixBottomNavigatorView(Context context) {
         this(context, null);
@@ -88,15 +92,16 @@ public class MiuixBottomNavigatorView extends LinearLayout implements OnItemSele
 
     private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         final TypedArray typedArray = getContext().obtainStyledAttributes(attrs, R.styleable.MiuixBottomNavigatorView, defStyleAttr, defStyleRes);
+        isHapticFeedbackEnabled = typedArray.getBoolean(R.styleable.MiuixBottomNavigatorView_android_hapticFeedbackEnabled, true);
         menuId = typedArray.getResourceId(R.styleable.MiuixBottomNavigatorView_menu, -1);
         typedArray.recycle();
 
         setOrientation(HORIZONTAL);
         setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
         setMinimumHeight(getResources().getDimensionPixelSize(R.dimen.miuix_bottom_menu_min_height));
-        maxHeight = getResources().getDimensionPixelSize(R.dimen.miuix_bottom_menu_max_height);
+        targetHeight = getResources().getDimensionPixelSize(R.dimen.miuix_bottom_menu_target_height);
 
-        dividerPaint.setColor(0xFFCCCCCC);
+        dividerPaint.setColor(getResources().getColor(R.color.miuix_bottom_divider_color));
         dividerPaint.setStrokeWidth(getResources().getDisplayMetrics().density);
 
         if (menuId != -1) inflateMenu(menuId);
@@ -120,6 +125,14 @@ public class MiuixBottomNavigatorView extends LinearLayout implements OnItemSele
         }
     }
 
+    public void check(int id) {
+        for (MenuInfo info : subMenuInfos) {
+            if (info.id == id) {
+                info.setChecked(true);
+            }
+        }
+    }
+
     public void setOnItemSelectedListener(OnItemSelectedListener listener) {
         this.listener = listener;
     }
@@ -127,17 +140,35 @@ public class MiuixBottomNavigatorView extends LinearLayout implements OnItemSele
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
+        applyBlur();
+    }
+
+    private void applyBlur() {
+        int colorBottomSurface = getContext().getColor(R.color.miuix_default_surface_color);
         MiuiSuperBlur.setMiViewBlurMode(this, 1);
         MiuiSuperBlur.setMiBackgroundBlurMode(this, 1);
-        MiuiSuperBlur.setMiBackgroundBlurRadius(this, 400);
+        MiuiSuperBlur.setMiBackgroundBlurRadius(this, (int) (getContext().getResources().getDisplayMetrics().density * 66 + 0.5f));
+        int[] colors = MiuiSuperBlur.getBlendColor(colorBottomSurface, !MiuixUtils.isDarkMode(getResources()) ?
+            new int[]{-1889443744, -1543503873} :
+            new int[]{1970500467, -1979711488, 184549375});
+        int[] colorMode = !MiuixUtils.isDarkMode(getResources()) ? new int[]{18, 3} : new int[]{19, 3, 3};
+        for (int i = 0; i < colors.length; i++) {
+            MiuiSuperBlur.addMiBackgroundBlendColor(this, colors[i], colorMode[i]);
+        }
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        MiuiSuperBlur.clearAllBlur(this);
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        if (maxHeight > 0) {
+        if (targetHeight > 0) {
             int size = MeasureSpec.getSize(heightMeasureSpec);
-            if (size > maxHeight)
-                heightMeasureSpec = MeasureSpec.makeMeasureSpec(maxHeight, MeasureSpec.EXACTLY);
+            if (size > targetHeight)
+                heightMeasureSpec = MeasureSpec.makeMeasureSpec(targetHeight, MeasureSpec.EXACTLY);
         }
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
@@ -222,23 +253,25 @@ public class MiuixBottomNavigatorView extends LinearLayout implements OnItemSele
         if (subMenuInfos.isEmpty()) return;
         for (MenuInfo state : subMenuInfos) {
             MenuSingleView singleView = new MenuSingleView(getContext());
+            state.setSingleView(singleView);
+
+            singleView.setInfo(state);
             singleView.setId(state.id);
             singleView.setTitle(state.title);
             singleView.setIcon(state.icon);
             singleView.setClickable(state.isCheckable);
             singleView.setChecked(state.isChecked);
             singleView.setEnabled(state.isEnabled);
+            singleView.setHapticFeedbackEnabled(isHapticFeedbackEnabled);
             singleView.setVisibility(state.isVisible ? VISIBLE : GONE);
 
-            singleView.setInfo(state);
-            state.setSingleView(singleView);
             addView(singleView);
         }
     }
 
     @Override
-    public boolean onNavigationItemSelected(@NonNull MenuInfo item) {
-        if (listener == null || listener.onNavigationItemSelected(item)) {
+    public boolean onNavigationItemSelected(@NonNull MenuInfo item, boolean fromUser) {
+        if (listener == null || listener.onNavigationItemSelected(item, fromUser)) {
             for (MenuInfo info : subMenuInfos) {
                 if (Objects.equals(info, item)) continue;
                 info.setChecked(false);
@@ -474,8 +507,14 @@ public class MiuixBottomNavigatorView extends LinearLayout implements OnItemSele
         }
 
         public void setChecked(boolean checked) {
-            isChecked = checked;
-            updateAlphaWhenSelected();
+            if (checkedId != getId()) {
+                isChecked = checked;
+                updateSelectedState();
+                if (isChecked) {
+                    checkedId = getId();
+                    repel();
+                }
+            }
         }
 
         private void setInfo(MenuInfo info) {
@@ -493,16 +532,23 @@ public class MiuixBottomNavigatorView extends LinearLayout implements OnItemSele
 
         @Override
         public boolean performClick() {
-            if (onNavigationItemSelected(info)) {
+            HapticFeedbackHelper.performHapticFeedback(this, HapticFeedbackHelper.MIUI_BUTTON_MIDDLE);
+            if (checkedId == getId()) return super.performClick();
+            if (onNavigationItemSelected(info, true)) {
                 setChecked(!isChecked());
-                updateAlphaWhenSelected();
             }
             return super.performClick();
         }
 
-        private void updateAlphaWhenSelected() {
-            if (isChecked) setAlpha(1.0f);
-            else setAlpha(0.5f);
+        private void updateSelectedState() {
+            icon.setSelected(isChecked);
+        }
+
+        private void repel() {
+            for (MenuInfo info : subMenuInfos) {
+                if (info.id == checkedId) continue;
+                if (info.singleView != null) info.setChecked(false);
+            }
         }
     }
 }

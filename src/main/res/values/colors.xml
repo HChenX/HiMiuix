@@ -27,6 +27,7 @@
 
     <!-- divider -->
     <color name="miuix_divider_color">#8D92AF</color>
+    <color name="miuix_bottom_divider_color">#1A000000</color>
 
     <!-- dialog -->
     <color name="miuix_dialog_background">@android:color/white</color>
@@ -63,4 +64,5 @@
 
     <!-- other -->
     <color name="miuix_card_other">#F0F0F0</color>
+    <color name="miuix_default_surface_color">#FFFFFF</color>
 </resources>

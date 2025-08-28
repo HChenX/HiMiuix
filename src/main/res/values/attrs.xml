@@ -155,6 +155,7 @@
 
     <declare-styleable name="MiuixBottomNavigatorView">
         <attr name="menu" format="reference" />
+        <attr name="android:hapticFeedbackEnabled" />
     </declare-styleable>
 
     <declare-styleable name="MenuGroup">

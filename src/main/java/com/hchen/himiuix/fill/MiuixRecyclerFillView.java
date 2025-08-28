@@ -56,7 +56,7 @@ public class MiuixRecyclerFillView extends RecyclerView {
         initialNavigationBarHeight();
 
         collapsibleTitleHeight = getResources().getDimensionPixelSize(R.dimen.miuix_appbar_collapsible_title_height);
-        defBottomHeight = getResources().getDimensionPixelSize(R.dimen.miuix_bottom_menu_max_height);
+        defBottomHeight = getResources().getDimensionPixelSize(R.dimen.miuix_bottom_menu_target_height);
         TypedArray array = getContext().obtainStyledAttributes(android.R.style.Widget_Toolbar, new int[]{android.R.attr.minHeight});
         defToolbarHeight = array.getDimensionPixelOffset(0, 0);
         array.recycle();
